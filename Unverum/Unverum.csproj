@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <RootNamespace>Unverum</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
+    <AssemblyName>Unverum</AssemblyName>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\RobotoMono-Regular.ttf" />
+    <None Remove="Assets\unverumpreview.png" />
+    <None Remove="GameBanana.png" />
+    <None Remove="Resources\Base\--PlaceholderCostumes--.pak" />
+    <None Remove="Resources\Base\--PlaceholderCostumes--.sig" />
+    <None Remove="Resources\CostumePatch.xdelta" />
+    <None Remove="Resources\JUMP_FORCE.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Base\--PlaceholderCostumes--.pak" />
+    <EmbeddedResource Include="Resources\Base\--PlaceholderCostumes--.sig" />
+    <EmbeddedResource Include="Resources\CostumePatch.xdelta" />
+    <EmbeddedResource Include="Resources\JUMP_FORCE.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FontAwesome5" Version="2.1.0" />
+    <PackageReference Include="gong-wpf-dragdrop" Version="2.3.2" />
+    <PackageReference Include="Onova" Version="2.6.2" />
+    <PackageReference Include="SharpCompress" Version="0.28.1" />
+    <PackageReference Include="xdelta3.net" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\GameBanana.png" />
+    <Resource Include="Assets\RobotoMono-Regular.ttf" />
+    <Resource Include="Assets\unverumpreview.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="UI\FetchWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Mods\Dragon Ball FighterZ\FighterZ Material Recreation\LeanMaterials\LeanMaterials.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Mods\Dragon Ball FighterZ\FighterZ Material Recreation\LeanMaterials\LeanMaterials.sig">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Mods\Dragon Ball FighterZ\FighterZ Material Recreation\mod.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UI\FetchWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>
