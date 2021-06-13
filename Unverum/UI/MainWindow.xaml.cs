@@ -258,6 +258,46 @@ namespace Unverum
             GameBox.IsEnabled = false;
             await Task.Run(() =>
             {
+                var index = 0;
+                Dispatcher.Invoke(() =>
+                {
+                    index = GameBox.SelectedIndex;
+                });
+                if (!String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder) && Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
+                    || !String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
+                {
+                    if ((GameFilter)index == GameFilter.MHOJ2)
+                    {
+                        var resetResult = MessageBox.Show($@"{Global.config.CurrentGame} is already setup.{Environment.NewLine}Remove setup?", $@"Notification", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (resetResult == MessageBoxResult.Yes)
+                        {
+                            foreach (var file in Directory.GetFiles(Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder), "*", SearchOption.TopDirectoryOnly))
+                                if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                                    || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
+                                    File.Move(file, file.Replace("HeroGame.", "HeroGame-WindowsNoEditor_0_P.", StringComparison.InvariantCultureIgnoreCase), true);
+                            Global.config.Configs[Global.config.CurrentGame].ModsFolder = null;
+                            Global.config.Configs[Global.config.CurrentGame].Launcher = null;
+                            Global.UpdateConfig();
+                            Dispatcher.Invoke(() =>
+                            {
+                                BuildButton.IsEnabled = false;
+                                LaunchButton.IsEnabled = false;
+                                GameBox.IsEnabled = true;
+                            });
+                            Global.logger.WriteLine($"Removed setup for {Global.config.CurrentGame}", LoggerType.Info);
+                            return;
+                        }
+                    }
+                    var dialogResult = MessageBox.Show($@"Setup again?", $@"Notification", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (dialogResult == MessageBoxResult.No)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            GameBox.IsEnabled = true;
+                        });
+                        return;
+                    }
+                }
                 if (SetupGame())
                 {
                     Dispatcher.Invoke(() =>
