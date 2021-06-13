@@ -462,7 +462,7 @@ namespace Unverum
                 // DBFZ specific
                 if (Global.config.CurrentGame == "Dragon Ball FighterZ")
                 {
-                    var parent = Global.config.Configs[Global.config.CurrentGame].Launcher.Replace("{Global.s}Binaries{Global.s}Win64{Global.s}RED-Win64-Shipping-eac-nop-loaded.exe", String.Empty);
+                    var parent = Global.config.Configs[Global.config.CurrentGame].Launcher.Replace($"{Global.s}Binaries{Global.s}Win64{Global.s}RED-Win64-Shipping-eac-nop-loaded.exe", String.Empty);
                     SplashFolder = $"{parent}{Global.s}Content{Global.s}Splash";
                     MoviesFolder = $"{parent}{Global.s}Content{Global.s}Movies";
                     CostumePatched = Setup.CheckCostumePatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
