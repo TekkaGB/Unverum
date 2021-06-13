@@ -40,7 +40,7 @@ namespace Unverum
                 {
                     GameBananaItemUpdate[] updates = response.Updates;
                     string updateTitle = updates[0].Title;
-                    Match onlineVersionMatch = Regex.Match(updateTitle, @"(?<version>([1-9]+\.?)+)[^a-zA-Z]");
+                    Match onlineVersionMatch = Regex.Match(updateTitle, @"(?<version>([0-9]+\.?)+)[^a-zA-Z]");
                     string onlineVersion = null;
                     if (onlineVersionMatch.Success)
                     {

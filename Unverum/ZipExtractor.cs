@@ -18,7 +18,7 @@ namespace Unverum
         public async Task ExtractPackageAsync(string sourceFilePath, string destDirPath,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
-            if (Path.GetExtension(sourceFilePath).Equals(".7z", StringComparison.InvariantCultureIgnoreCase))
+            try
             {
                 using (var archive = SevenZipArchive.Open(sourceFilePath))
                 {
@@ -32,7 +32,7 @@ namespace Unverum
                     }
                 }
             }
-            else
+            catch
             {
                 using (Stream stream = File.OpenRead(sourceFilePath))
                 using (var reader = ReaderFactory.Open(stream))
