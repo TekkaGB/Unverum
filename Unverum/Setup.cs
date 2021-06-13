@@ -75,11 +75,9 @@ namespace Unverum
                 Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
                 return true;
             }
-            else
-            {
+            else if (!String.IsNullOrEmpty(dialog.FileName))
                 Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-                return false;
-            }
+            return false;
         }
         public static bool MHOJ2()
         {
@@ -99,7 +97,7 @@ namespace Unverum
                 foreach (var file in Directory.GetFiles(paks, "*", SearchOption.TopDirectoryOnly))
                     if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
                         || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
-                        File.Move(file, file.Replace("-WindowsNoEditor_0_P", String.Empty, StringComparison.InvariantCultureIgnoreCase));
+                        File.Move(file, file.Replace("-WindowsNoEditor_0_P", String.Empty, StringComparison.InvariantCultureIgnoreCase), true);
                 var ModsFolder = $"{paks}{Global.s}~mods";
                 Directory.CreateDirectory(ModsFolder);
                 Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
@@ -108,11 +106,9 @@ namespace Unverum
                 Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
                 return true;
             }
-            else
-            {
+            else if (!String.IsNullOrEmpty(dialog.FileName))
                 Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-                return false;
-            }
+            return false;
         }
         public static bool KHIII()
         {
@@ -136,11 +132,9 @@ namespace Unverum
                 Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
                 return true;
             }
-            else
-            {
+            else if (!String.IsNullOrEmpty(dialog.FileName))
                 Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-                return false;
-            }
+            return false;
         }
         public static void CheckJFPatch(string exe)
         {
@@ -182,11 +176,9 @@ namespace Unverum
                 Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
                 return true;
             }
-            else
-            {
+            else if (!String.IsNullOrEmpty(dialog.FileName))
                 Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-                return false;
-            }
+            return false;
         }
         public static bool DBFZ()
         {
@@ -221,11 +213,9 @@ namespace Unverum
                 Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
                 return true;
             }
-            else
-            {
+            else if (!String.IsNullOrEmpty(dialog.FileName))
                 Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-                return false;
-            }
+            return false;
         }
     }
 }
