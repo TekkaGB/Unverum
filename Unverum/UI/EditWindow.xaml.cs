@@ -15,15 +15,12 @@ namespace Unverum
     public partial class EditWindow : Window
     {
         public Mod _mod;
-        private Logger _logger;
-        private string assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        public EditWindow(Mod mod, Logger logger)
+        public EditWindow(Mod mod)
         {
             InitializeComponent();
             _mod = mod;
             NameBox.Text = _mod.name;
             Title = $"Edit {_mod.name}";
-            _logger = logger;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -35,8 +32,8 @@ namespace Unverum
         {
             if (!NameBox.Text.Equals(_mod.name, StringComparison.InvariantCultureIgnoreCase))
             {
-                var oldDirectory = $"{assemblyLocation}/Mods/{_mod.name}";
-                var newDirectory = $"{assemblyLocation}/Mods/{NameBox.Text}";
+                var oldDirectory = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{_mod.name}";
+                var newDirectory = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{NameBox.Text}";
                 if (!Directory.Exists(newDirectory))
                 {
                     try
@@ -45,11 +42,11 @@ namespace Unverum
                     }
                     catch (Exception ex)
                     {
-                        _logger.WriteLine($"Couldn't rename {oldDirectory} to {newDirectory} ({ex.Message})", LoggerType.Error);
+                        Global.logger.WriteLine($"Couldn't rename {oldDirectory} to {newDirectory} ({ex.Message})", LoggerType.Error);
                     }
                 }
                 else
-                    _logger.WriteLine($"{newDirectory} already exists", LoggerType.Error);
+                    Global.logger.WriteLine($"{newDirectory} already exists", LoggerType.Error);
             }
             Close();
         }

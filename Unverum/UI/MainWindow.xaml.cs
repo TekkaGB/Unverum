@@ -374,7 +374,7 @@ namespace Unverum
                 {
                     try
                     {
-                        Directory.Delete($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{row.name}", true);
+                        Directory.Delete($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{row.name}", true);
                         Global.logger.WriteLine($@"Deleting {row.name}.", LoggerType.Info);
                         ShowMetadata(null);
                     }
@@ -482,7 +482,7 @@ namespace Unverum
             Mod row = (Mod)ModGrid.SelectedItem;
             if (row != null)
             {
-                EditWindow ew = new EditWindow(row, Global.logger);
+                EditWindow ew = new EditWindow(row);
                 ew.ShowDialog();
             }
         }
@@ -491,7 +491,7 @@ namespace Unverum
             Mod row = (Mod)ModGrid.SelectedItem;
             if (row != null)
             {
-                FetchWindow fw = new FetchWindow(row, Global.logger);
+                FetchWindow fw = new FetchWindow(row);
                 fw.ShowDialog();
                 if (fw.success)
                     ShowMetadata(row.name);

@@ -18,14 +18,11 @@ namespace Unverum
     {
         public bool success;
         public Mod _mod;
-        private Logger _logger;
-        private string assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        public FetchWindow(Mod mod, Logger logger)
+        public FetchWindow(Mod mod)
         {
             InitializeComponent();
             _mod = mod;
             Title = $"Fetch Metadata for {_mod.name}";
-            _logger = logger;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -94,17 +91,17 @@ namespace Unverum
                     else
                         metadata.lastupdate = new DateTime(1970, 1, 1);
                     string metadataString = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
-                    File.WriteAllText($@"{assemblyLocation}/Mods/{_mod.name}/mod.json", metadataString);
+                    File.WriteAllText($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{_mod.name}{Global.s}mod.json", metadataString);
                     success = true;
                     Close();
                 }
                 catch (Exception ex)
                 {
-                    _logger.WriteLine(ex.Message, LoggerType.Error);
+                    Global.logger.WriteLine(ex.Message, LoggerType.Error);
                 }
             }
             else
-                _logger.WriteLine($"{UrlBox.Text} is invalid. The url should have the following format: https://gamebanana.com/<Mod Category>/<Mod ID>", LoggerType.Error);
+                Global.logger.WriteLine($"{UrlBox.Text} is invalid. The url should have the following format: https://gamebanana.com/<Mod Category>/<Mod ID>", LoggerType.Error);
         }
     }
 }
