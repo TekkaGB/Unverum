@@ -397,7 +397,6 @@ namespace Unverum
                 return;
             }
 
-            ContextMenu contextMenu = element.ContextMenu;
             if (ModGrid.SelectedItem == null)
                 element.ContextMenu.Visibility = Visibility.Collapsed;
             else
@@ -456,22 +455,30 @@ namespace Unverum
         {
             await Task.Run(() =>
             {
+                // Get other folders using the mods folder
                 string SplashFolder = null;
                 string MoviesFolder = null;
-                bool? CostumePatched = null;
+                string SoundsFolder = null;
+                var ContentFolder = new DirectoryInfo(Global.config.Configs[Global.config.CurrentGame].ModsFolder).Parent.Parent.FullName;
+                if (Directory.Exists($"{ContentFolder}{Global.s}Splash"))
+                    SplashFolder = $"{ContentFolder}{Global.s}Splash";
+                if (Directory.Exists($"{ContentFolder}{Global.s}Movies"))
+                    MoviesFolder = $"{ContentFolder}{Global.s}Movies";
+                else if (Directory.Exists($"{ContentFolder}{Global.s}CriWareData"))
+                    MoviesFolder = $"{ContentFolder}{Global.s}CriWareData{Global.s}Movie";
+                if (Directory.Exists($"{ContentFolder}{Global.s}Sound"))
+                    SoundsFolder = $"{ContentFolder}{Global.s}Sound";
+                else if (Directory.Exists($"{ContentFolder}{Global.s}CriWareData"))
+                    SoundsFolder = $"{ContentFolder}{Global.s}CriWareData";
                 // DBFZ specific
+                bool? CostumePatched = null;
                 if (Global.config.CurrentGame == "Dragon Ball FighterZ")
-                {
-                    var parent = Global.config.Configs[Global.config.CurrentGame].Launcher.Replace($"{Global.s}Binaries{Global.s}Win64{Global.s}RED-Win64-Shipping-eac-nop-loaded.exe", String.Empty);
-                    SplashFolder = $"{parent}{Global.s}Content{Global.s}Splash";
-                    MoviesFolder = $"{parent}{Global.s}Content{Global.s}Movies";
                     CostumePatched = Setup.CheckCostumePatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
-                }
-                if (!ModLoader.Restart(path, MoviesFolder, SplashFolder))
+                if (!ModLoader.Restart(path, MoviesFolder, SplashFolder, SoundsFolder))
                     return;
                 List<string> mods = Global.config.Configs[Global.config.CurrentGame].ModList.Where(x => x.enabled).Select(y => $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{y.name}").ToList();
                 mods.Reverse();
-                ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder);
+                ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder, SoundsFolder);
             });
         }
 

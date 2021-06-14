@@ -9,7 +9,7 @@ namespace Unverum
     public static class ModLoader
     {
         // Restore all backups created from previous build
-        public static bool Restart(string path, string movies, string splash)
+        public static bool Restart(string path, string movies, string splash, string sound)
         {
             try
             {
@@ -21,7 +21,9 @@ namespace Unverum
                     RestoreDirectory(movies);
                 if (!String.IsNullOrEmpty(splash) && Directory.Exists(splash))
                     RestoreDirectory(splash);
-                Global.logger.WriteLine("Restored mods, splash, and movies", LoggerType.Info);
+                if (!String.IsNullOrEmpty(sound) && Directory.Exists(sound))
+                    RestoreDirectory(sound);
+                Global.logger.WriteLine("Restored folders", LoggerType.Info);
             }
             catch (Exception e)
             {
@@ -68,32 +70,26 @@ namespace Unverum
             }
             return counter;
         }
-        private static void ModSplash(string file, string path)
+
+        private static void ReplaceAsset(string file, string path)
         {
-            var splash = $"{path}{Global.s}Splash.bmp";
-            if (File.Exists(splash))
+            var filesFound = 0;
+            foreach (var oldFile in Directory.GetFiles(path, "*", SearchOption.AllDirectories)
+                            .Where(a => Path.GetFileName(a).Equals(Path.GetFileName(file),
+                            StringComparison.InvariantCultureIgnoreCase)))
             {
-                if (!File.Exists($"{splash}.bak"))
-                    File.Copy(splash, $"{splash}.bak", true);
-                File.Copy(file, splash, true);
-                Global.logger.WriteLine($"Copied over {file} to {splash}", LoggerType.Info);
+                if (!File.Exists($"{oldFile}.bak"))
+                    File.Copy(oldFile, $"{oldFile}.bak", true);
+                File.Copy(file, oldFile, true);
+                Global.logger.WriteLine($"Replaced {oldFile} with {file}", LoggerType.Info);
+                filesFound++;
             }
-        }
-        private static void ModMovies(string file, string path)
-        {
-            var wwMovie = $"{path}{Global.s}mv_opening_ww_pakchunk1.mp4";
-            var newPath = $"{path}{Global.s}{Path.GetFileName(file)}";
-            // Rename to worldwide op if the name doesnt match with anything
-            if (!File.Exists(newPath))
-                newPath = wwMovie;
-            if (!File.Exists($"{newPath}.bak"))
-                File.Copy(newPath, $"{newPath}.bak", true);
-            File.Copy(file, newPath, true);
-            Global.logger.WriteLine($"Copied over {file} to {newPath}", LoggerType.Info);
+            if (filesFound == 0)
+                Global.logger.WriteLine($"Coudln't find {file} within {path}", LoggerType.Warning);
         }
 
         // Copy over mod files in order of ModList
-        public static void Build(string path, List<string> mods, bool? patched, string movies, string splash)
+        public static void Build(string path, List<string> mods, bool? patched, string movies, string splash, string sound)
         {
             string sig = null;
             var sigs = Directory.GetFiles(Path.GetDirectoryName(path), "*.sig", SearchOption.TopDirectoryOnly);
@@ -111,7 +107,7 @@ namespace Unverum
                 // Copy over .paks and .sigs to ~mods folder in order
                 if (CopyFolder(mod, folder, sig) > 0)
                 {
-                    Global.logger.WriteLine($"Copied {mod} over to {folder}", LoggerType.Info);
+                    Global.logger.WriteLine($"Copied paks and sigs from {mod} over to {folder}", LoggerType.Info);
                     folderLetter--;
                     if (folderLetter == '`')
                     {
@@ -120,21 +116,27 @@ namespace Unverum
                     }
                 }
                 // Copy over mp4s and bmps to the appropriate folders while storing backups
-                if (!String.IsNullOrEmpty(movies) || !String.IsNullOrEmpty(splash))
+                if (!String.IsNullOrEmpty(movies) || !String.IsNullOrEmpty(splash) || !String.IsNullOrEmpty(sound))
                 foreach (var file in Directory.GetFiles(mod, "*", SearchOption.AllDirectories))
                 {
-                    var ext = Path.GetExtension(file);
+                    var ext = Path.GetExtension(file).ToLowerInvariant();
                     switch (ext)
                     {
+                        case ".usm":
+                        case ".uasset":
                         case ".mp4":
                             if (!String.IsNullOrEmpty(movies) && Directory.Exists(movies))
-                                ModMovies(file, movies);
+                                ReplaceAsset(file, movies);
                             break;
                         case ".bmp":
                             if (!String.IsNullOrEmpty(splash) && Directory.Exists(splash))
-                                ModSplash(file, splash);
+                                ReplaceAsset(file, splash);
                             break;
-                    }
+                        case ".awb":
+                            if (!String.IsNullOrEmpty(sound) && Directory.Exists(sound))
+                                ReplaceAsset(file, sound);
+                            break;
+                        }
                 }
             }
             // Costume Patched placeholder files as lowest priority
