@@ -115,7 +115,7 @@ namespace Unverum
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.DefaultExt = ".exe";
             dialog.Filter = $"Executable Files (KINGDOM HEARTS III.exe)|KINGDOM HEARTS III.exe";
-            dialog.Title = $"Select KINGDOM HEARTS III.exe from your Steam Install folder";
+            dialog.Title = $"Select KINGDOM HEARTS III.exe from your Epic Games Install folder";
             dialog.Multiselect = false;
             dialog.InitialDirectory = Global.assemblyLocation;
             dialog.ShowDialog();
