@@ -169,6 +169,9 @@ namespace Unverum
                 }
             }
 
+            // Move all enabled mods to top
+            Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderByDescending(x => x.enabled).ToList());
+
             await Task.Run(() =>
             {
                 App.Current.Dispatcher.Invoke((Action)delegate
