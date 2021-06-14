@@ -433,20 +433,20 @@ namespace Unverum
             if (Global.config.Configs[Global.config.CurrentGame].ModsFolder != null && Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
             {
                 GameBox.IsEnabled = false;
-                ModGrid.IsHitTestVisible = false;
-                ConfigButton.IsHitTestVisible = false;
-                BuildButton.IsHitTestVisible = false;
-                LaunchButton.IsHitTestVisible = false;
-                OpenModsButton.IsHitTestVisible = false;
-                UpdateButton.IsHitTestVisible = false;
+                ModGrid.IsEnabled = false;
+                ConfigButton.IsEnabled = false;
+                BuildButton.IsEnabled = false;
+                LaunchButton.IsEnabled = false;
+                OpenModsButton.IsEnabled = false;
+                UpdateButton.IsEnabled = false;
                 Refresh();
                 await Build(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
-                ModGrid.IsHitTestVisible = true;
-                ConfigButton.IsHitTestVisible = true;
-                BuildButton.IsHitTestVisible = true;
-                LaunchButton.IsHitTestVisible = true;
-                OpenModsButton.IsHitTestVisible = true;
-                UpdateButton.IsHitTestVisible = true;
+                ModGrid.IsEnabled = true;
+                ConfigButton.IsEnabled = true;
+                BuildButton.IsEnabled = true;
+                LaunchButton.IsEnabled = true;
+                OpenModsButton.IsEnabled = true;
+                UpdateButton.IsEnabled = true;
                 GameBox.IsEnabled = true;
                 MessageBox.Show($@"Finished building loadout and ready to launch!", "Notification", MessageBoxButton.OK);
             }
