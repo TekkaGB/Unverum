@@ -806,24 +806,36 @@ namespace Unverum
             else
                 AltButton.Visibility = Visibility.Collapsed;
             DescPanel.DataContext = button.DataContext;
+            MediaPanel.DataContext = button.DataContext;
             DescText.ScrollToHome();
             var text = "";
             text += item.ConvertedText;
             DescText.Document = ConvertToFlowDocument(text);
             ImageLeft.IsEnabled = true;
             ImageRight.IsEnabled = true;
+            BigImageLeft.IsEnabled = true;
+            BigImageRight.IsEnabled = true;
             imageCount = item.Media.Where(x => x.Type == "image").ToList().Count;
             imageCounter = 0;
             if (imageCount > 0)
             {
                 Grid.SetColumnSpan(DescText, 1);
                 ImagePanel.Visibility = Visibility.Visible;
-                Screenshot.Source = new BitmapImage(new Uri($"{item.Media[imageCounter].Base}/{item.Media[imageCounter].File}"));
+                var image = new BitmapImage(new Uri($"{item.Media[imageCounter].Base}/{item.Media[imageCounter].File}"));
+                Screenshot.Source = image;
+                BigScreenshot.Source = image;
                 CaptionText.Text = item.Media[imageCounter].Caption;
-                if (CaptionText.Text != null)
+                BigCaptionText.Text = item.Media[imageCounter].Caption;
+                if (!String.IsNullOrEmpty(CaptionText.Text))
+                {
+                    BigCaptionText.Visibility = Visibility.Visible;
                     CaptionText.Visibility = Visibility.Visible;
+                }
                 else
+                {
+                    BigCaptionText.Visibility = Visibility.Collapsed;
                     CaptionText.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
@@ -834,6 +846,8 @@ namespace Unverum
             {
                 ImageLeft.IsEnabled = false;
                 ImageRight.IsEnabled = false;
+                BigImageLeft.IsEnabled = false;
+                BigImageRight.IsEnabled = false;
             }
 
             DescPanel.Visibility = Visibility.Visible;
@@ -842,6 +856,15 @@ namespace Unverum
         {
             DescPanel.Visibility = Visibility.Collapsed;
         }
+        private void CloseMedia_Click(object sender, RoutedEventArgs e)
+        {
+            MediaPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void Image_Click(object sender, RoutedEventArgs e)
+        {
+            MediaPanel.Visibility = Visibility.Visible;
+        }
 
         private void ImageLeft_Click(object sender, RoutedEventArgs e)
         {
@@ -849,12 +872,21 @@ namespace Unverum
             var item = button.DataContext as GameBananaRecord;
             if (--imageCounter == -1)
                 imageCounter = imageCount - 1;
-            Screenshot.Source = new BitmapImage(new Uri($"{item.Media[imageCounter].Base}/{item.Media[imageCounter].File}"));
+            var image = new BitmapImage(new Uri($"{item.Media[imageCounter].Base}/{item.Media[imageCounter].File}"));
+            Screenshot.Source = image;
             CaptionText.Text = item.Media[imageCounter].Caption;
-            if (CaptionText.Text != null)
+            BigScreenshot.Source = image;
+            BigCaptionText.Text = item.Media[imageCounter].Caption;
+            if (!String.IsNullOrEmpty(CaptionText.Text))
+            {
+                BigCaptionText.Visibility = Visibility.Visible;
                 CaptionText.Visibility = Visibility.Visible;
+            }
             else
+            {
+                BigCaptionText.Visibility = Visibility.Collapsed;
                 CaptionText.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ImageRight_Click(object sender, RoutedEventArgs e)
@@ -863,12 +895,21 @@ namespace Unverum
             var item = button.DataContext as GameBananaRecord;
             if (++imageCounter == imageCount)
                 imageCounter = 0;
-            Screenshot.Source = new BitmapImage(new Uri($"{item.Media[imageCounter].Base}/{item.Media[imageCounter].File}"));
+            var image = new BitmapImage(new Uri($"{item.Media[imageCounter].Base}/{item.Media[imageCounter].File}"));
+            Screenshot.Source = image;
             CaptionText.Text = item.Media[imageCounter].Caption;
-            if (CaptionText.Text != null)
+            BigScreenshot.Source = image;
+            BigCaptionText.Text = item.Media[imageCounter].Caption;
+            if (!String.IsNullOrEmpty(CaptionText.Text))
+            {
+                BigCaptionText.Visibility = Visibility.Visible;
                 CaptionText.Visibility = Visibility.Visible;
+            }
             else
+            {
+                BigCaptionText.Visibility = Visibility.Collapsed;
                 CaptionText.Visibility = Visibility.Collapsed;
+            }
         }
         private static bool selected = false;
 
@@ -1244,6 +1285,10 @@ namespace Unverum
                 grid.Columns = 4;
             else 
                 grid.Columns = 3;
+        }
+        private void OnResize(object sender, RoutedEventArgs e)
+        {
+            BigScreenshot.MaxHeight = ActualHeight - 240;
         }
 
         private void PageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
