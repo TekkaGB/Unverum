@@ -41,6 +41,8 @@ namespace Unverum
     public class GameBananaItemFile
     {
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
+        [JsonPropertyName("_idRow")]
+        public string Id { get; set; }
         [JsonPropertyName("_sFile")]
         public string FileName { get; set; }
 
@@ -70,19 +72,17 @@ namespace Unverum
         [JsonIgnore]
         public string TimeSinceUpload => StringConverters.FormatTimeAgo(DateTime.UtcNow - DateAdded);
     }
-    public class GameBananaAPIV3
+    public class GameBananaGame
     {
-        [JsonPropertyName("_aSubmitter")]
-        public GameBananaMember Member { get; set; }
-        [JsonPropertyName("_aCategory")]
-        public GameBananaCategory Category { get; set; }
-        [JsonPropertyName("_aFiles")]
-        public List<GameBananaItemFile> Files { get; set; }
+        [JsonPropertyName("_sName")]
+        public string Name { get; set; }
     }
     public class GameBananaAPIV4
     {
         [JsonPropertyName("_sName")]
         public string Title { get; set; }
+        [JsonPropertyName("_aGame")]
+        public GameBananaGame Game { get; set; }
         [JsonPropertyName("_sProfileUrl")]
         public Uri Link { get; set; }
         [JsonIgnore]
@@ -101,6 +101,8 @@ namespace Unverum
         [JsonIgnore]
         public string CategoryName => RootCategory == null ? StringConverters.FormatSingular(null, Category.Name)
             : StringConverters.FormatSingular(RootCategory.Name, Category.Name);
+        [JsonPropertyName("_aFiles")]
+        public List<GameBananaItemFile> Files { get; set; }
         [JsonPropertyName("_tsDateUpdated")]
         public long DateUpdatedLong { get; set; }
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1);

@@ -10,13 +10,13 @@ namespace Unverum
     public partial class DownloadWindow : Window
     {
         public bool YesNo = false;
-        public DownloadWindow(GameBananaItem item)
+        public DownloadWindow(GameBananaAPIV4 record)
         {
             InitializeComponent();
-            DownloadText.Text = $"{item.Name}\nSubmitted by {item.Owner}";
+            DownloadText.Text = $"{record.Title}\nSubmitted by {record.Owner.Name}";
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
-            bitmap.UriSource = item.EmbedImage;
+            bitmap.UriSource = record.Image;
             bitmap.EndInit();
             Preview.Source = bitmap;
         }

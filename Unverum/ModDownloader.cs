@@ -25,10 +25,9 @@ namespace Unverum
         private string MOD_ID;
         private string fileName;
         private bool cancelled;
-        private HttpClient client = new HttpClient();
-        private CancellationTokenSource cancellationToken = new CancellationTokenSource();
-        private GameBananaItem response = new GameBananaItem();
-        private GameBananaAPIV3 data = new GameBananaAPIV3();
+        private HttpClient client = new();
+        private CancellationTokenSource cancellationToken = new();
+        private GameBananaAPIV4 response = new();
         private ProgressBox progressBox;
         public async void BrowserDownload(string game, GameBananaRecord record)
         {
@@ -73,7 +72,7 @@ namespace Unverum
                         await DownloadFile(URL_TO_ARCHIVE, fileName, new Progress<DownloadProgress>(ReportUpdateProgress),
                             CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Token));
                         if (!cancelled)
-                            await ExtractFile(fileName, response.Game.Replace(":", String.Empty));
+                            await ExtractFile(fileName, response.Game.Name.Replace(":", String.Empty), response);
                     }
                 }
             }
@@ -86,15 +85,13 @@ namespace Unverum
             try
             {
                 string responseString = await client.GetStringAsync(URL);
-                response = JsonSerializer.Deserialize<GameBananaItem>(responseString);
-                fileName = response.Files[DL_ID].FileName;
-                string dataString = await client.GetStringAsync($"https://gamebanana.com/apiv3/{MOD_TYPE}/{MOD_ID}");
-                data = JsonSerializer.Deserialize<GameBananaAPIV3>(dataString);
+                response = JsonSerializer.Deserialize<GameBananaAPIV4>(responseString);
+                fileName = response.Files.Where(x => x.Id == DL_ID).ToArray()[0].FileName;
                 return true;
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Error while fetching data: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Error while fetching data {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
         }
@@ -123,9 +120,7 @@ namespace Unverum
                 DL_ID = match.Value;
                 MOD_TYPE = data[1];
                 MOD_ID = data[2];
-                URL = $"https://api.gamebanana.com/Core/Item/Data?itemtype={MOD_TYPE}&itemid={MOD_ID}&fields=name,Files().aFiles(),Preview().sStructuredDataFullsizeUrl()," +
-                    $"Preview().sSubFeedImageUrl(),Owner().name,description,Updates().bSubmissionHasUpdates(),Game().name," +
-                        $"Updates().aGetLatestUpdates(),RootCategory().name&return_keys=1";
+                URL = $"https://gamebanana.com/apiv4/{MOD_TYPE}/{MOD_ID}";
                 return true;
             }
             catch (Exception e)
@@ -218,19 +213,18 @@ namespace Unverum
             });
 
         }
-        // Extract download to Mods directory
-        private async Task ExtractFile(string fileName, string game)
+        private async Task ExtractFile(string fileName, string game, GameBananaAPIV4 record)
         {
             await Task.Run(() =>
             {
                 string _ArchiveSource = $@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}{fileName}";
                 string _ArchiveType = Path.GetExtension(fileName);
-                string ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(response.Name.Split(Path.GetInvalidFileNameChars()))}";
+                string ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(record.Title.Split(Path.GetInvalidFileNameChars()))}";
                 // Find a unique destination if it already exists
                 var counter = 2;
                 while (Directory.Exists(ArchiveDestination))
                 {
-                    ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{response.Name} ({counter})";
+                    ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(record.Title.Split(Path.GetInvalidFileNameChars()))} ({counter})";
                     ++counter;
                 }
                 if (File.Exists(_ArchiveSource))
@@ -260,7 +254,6 @@ namespace Unverum
                                 {
                                     if (!reader.Entry.IsDirectory)
                                     {
-                                        Console.WriteLine(reader.Entry.Key);
                                         reader.WriteEntryToDirectory(ArchiveDestination, new ExtractionOptions()
                                         {
                                             ExtractFullPath = true,
@@ -273,26 +266,15 @@ namespace Unverum
                         if (!File.Exists($@"{ArchiveDestination}{Global.s}mod.json"))
                         {
                             Metadata metadata = new Metadata();
-                            metadata.submitter = response.Owner;
-                            metadata.description = response.Description;
-                            metadata.preview = response.EmbedImage;
-                            metadata.homepage = new Uri($"https://gamebanana.com/{MOD_TYPE.ToLower()}s/{MOD_ID}");
-                            metadata.avi = data.Member.Avatar;
-                            metadata.upic = data.Member.Upic;
-                            metadata.cat = data.Category.Name;
-                            metadata.caticon = data.Category.Icon;
-                            metadata.section = data.Category.Model.Replace("Category", "");
-                            if (metadata.section.Equals("Mod", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                if (metadata.cat.Equals(response.RootCat, StringComparison.InvariantCultureIgnoreCase))
-                                    metadata.section = "";
-                                else
-                                    metadata.section = response.RootCat.Substring(0, response.RootCat.Length - 1);
-                            }
-                            if (response.HasUpdates)
-                                metadata.lastupdate = response.Updates[0].DateAdded;
-                            else
-                                metadata.lastupdate = new DateTime(1970, 1, 1);
+                            metadata.submitter = record.Owner.Name;
+                            metadata.description = record.Description;
+                            metadata.preview = record.Image;
+                            metadata.homepage = record.Link;
+                            metadata.avi = record.Owner.Avatar;
+                            metadata.upic = record.Owner.Upic;
+                            metadata.cat = record.CategoryName;
+                            metadata.caticon = record.Category.Icon;
+                            metadata.lastupdate = record.DateUpdated;
                             string metadataString = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
                             File.WriteAllText($@"{ArchiveDestination}{Global.s}mod.json", metadataString);
                         }
@@ -313,7 +295,7 @@ namespace Unverum
                     File.Delete(_ArchiveSource);
                 }
             });
-            
+
         }
         private async Task DownloadFile(string uri, string fileName, Progress<DownloadProgress> progress, CancellationTokenSource cancellationToken)
         {
