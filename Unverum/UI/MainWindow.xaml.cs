@@ -707,6 +707,14 @@ namespace Unverum
             var item = button.DataContext as GameBananaRecord;
             new ModDownloader().BrowserDownload(Global.games[GameFilterBox.SelectedIndex], item);
         }
+        private void AltDownload_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            var item = button.DataContext as GameBananaRecord;
+            new AltLinkWindow(item.AlternateFileSources, item.Title, 
+                (GameFilterBox.SelectedValue as ComboBoxItem).Content.ToString().Trim().Replace(":", String.Empty),
+                item.Link.AbsoluteUri).ShowDialog();
+        }
         private void Homepage_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -761,8 +769,17 @@ namespace Unverum
         }
         private void MoreInfo_Click(object sender, RoutedEventArgs e)
         {
+            HomepageButton.Content = $"{(TypeBox.SelectedValue as ComboBoxItem).Content.ToString().Trim().TrimEnd('s')} Page";
             Button button = sender as Button;
             var item = button.DataContext as GameBananaRecord;
+            if (item.Compatible)
+                DownloadButton.Visibility = Visibility.Visible;
+            else
+                DownloadButton.Visibility = Visibility.Collapsed;
+            if (item.HasAltLinks)
+                AltButton.Visibility = Visibility.Visible;
+            else
+                AltButton.Visibility = Visibility.Collapsed;
             DescPanel.DataContext = button.DataContext;
             DescText.ScrollToHome();
             var text = "";

@@ -194,7 +194,7 @@ namespace Unverum
                     }
                     // Download the update
                     var files = item.Files;
-                    string downloadUrl, fileName;
+                    string downloadUrl = null, fileName = null;
 
                     if (files.Count > 1)
                     {
@@ -211,8 +211,26 @@ namespace Unverum
                     }
                     else
                     {
-                        Global.logger.WriteLine($"An update is available for {Path.GetFileName(mod)} but no downloadable files are available.", LoggerType.Warning);
-                        return;
+                        Global.logger.WriteLine($"An update is available for {Path.GetFileName(mod)} but no downloadable files are available directly from GameBanana.", LoggerType.Info);
+                    }
+                    Uri uri = CreateUri(metadata.homepage.AbsoluteUri);
+                    string itemType = uri.Segments[1];
+                    itemType = char.ToUpper(itemType[0]) + itemType.Substring(1, itemType.Length - 3);
+                    string itemId = uri.Segments[2];
+                    // Parse the response
+                    using (var client = new HttpClient())
+                    {
+                        string responseString = await client.GetStringAsync($"https://gamebanana.com/apiv4/{itemType}/{itemId}");
+                        var response = JsonSerializer.Deserialize<GameBananaAPIV4>(responseString);
+                        if (response.AlternateFileSources != null)
+                        {
+                            var choice = MessageBox.Show($"Alternate file sources were found for {Path.GetFileName(mod)}! Would you like to manually update?", "Unverum", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                            if (choice == MessageBoxResult.Yes)
+                            {
+                                new AltLinkWindow(response.AlternateFileSources, Path.GetFileName(mod), Global.config.CurrentGame, metadata.homepage.AbsoluteUri, true).ShowDialog();
+                                return;
+                            }
+                        }
                     }
                     if (downloadUrl != null && fileName != null)
                     {

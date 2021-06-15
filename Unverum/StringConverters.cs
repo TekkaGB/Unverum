@@ -94,6 +94,8 @@ namespace Unverum
         }
         public static string FormatSingular(string rootCat, string cat)
         {
+            if (rootCat == null)
+                return cat.TrimEnd('s');
             rootCat = rootCat.Replace("User Interface", "UI");
 
             if (cat == "Skin Packs")

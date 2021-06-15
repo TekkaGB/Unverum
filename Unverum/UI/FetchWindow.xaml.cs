@@ -59,37 +59,19 @@ namespace Unverum
                     var MOD_TYPE = char.ToUpper(url.Segments[1][0]) + url.Segments[1].Substring(1, url.Segments[1].Length - 3);
                     var MOD_ID = url.Segments[2];
                     var client = new HttpClient();
-                    var requestUrl = $"https://gamebanana.com/apiv3/{MOD_TYPE}/{MOD_ID}";
-                    string dataString = await client.GetStringAsync(requestUrl);
-                    var data = JsonSerializer.Deserialize<GameBananaAPIV3>(dataString);
-
-                    requestUrl = $"https://api.gamebanana.com/Core/Item/Data?itemtype={MOD_TYPE}&itemid={MOD_ID}&fields=" +
-                        $"Preview().sStructuredDataFullsizeUrl(),Owner().name,description,Updates().bSubmissionHasUpdates()," +
-                        $"Updates().aGetLatestUpdates(),RootCategory().name&return_keys=1";
+                    var requestUrl = $"https://gamebanana.com/apiv4/{MOD_TYPE}/{MOD_ID}";
                     string responseString = await client.GetStringAsync(requestUrl);
-                    var response = JsonSerializer.Deserialize<GameBananaItem>(responseString);
+                    var record = JsonSerializer.Deserialize<GameBananaAPIV4>(responseString);
                     var metadata = new Metadata();
-
-                    metadata.submitter = response.Owner;
-                    metadata.description = response.Description;
-                    metadata.preview = response.EmbedImage;
-                    metadata.homepage = url;
-                    metadata.avi = data.Member.Avatar;
-                    metadata.upic = data.Member.Upic;
-                    metadata.cat = data.Category.Name;
-                    metadata.caticon = data.Category.Icon;
-                    metadata.section = data.Category.Model.Replace("Category", "");
-                    if (metadata.section.Equals("Mod", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        if (metadata.cat.Equals(response.RootCat, StringComparison.InvariantCultureIgnoreCase))
-                            metadata.section = "";
-                        else
-                            metadata.section = response.RootCat.Substring(0, response.RootCat.Length - 1);
-                    }
-                    if (response.HasUpdates)
-                        metadata.lastupdate = response.Updates[0].DateAdded;
-                    else
-                        metadata.lastupdate = new DateTime(1970, 1, 1);
+                    metadata.submitter = record.Owner.Name;
+                    metadata.description = record.Description;
+                    metadata.preview = record.Image;
+                    metadata.homepage = record.Link;
+                    metadata.avi = record.Owner.Avatar;
+                    metadata.upic = record.Owner.Upic;
+                    metadata.cat = record.CategoryName;
+                    metadata.caticon = record.Category.Icon;
+                    metadata.lastupdate = record.DateUpdated;
                     string metadataString = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
                     File.WriteAllText($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{_mod.name}{Global.s}mod.json", metadataString);
                     success = true;

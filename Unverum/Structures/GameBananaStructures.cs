@@ -79,6 +79,36 @@ namespace Unverum
         [JsonPropertyName("_aFiles")]
         public List<GameBananaItemFile> Files { get; set; }
     }
+    public class GameBananaAPIV4
+    {
+        [JsonPropertyName("_sName")]
+        public string Title { get; set; }
+        [JsonPropertyName("_sProfileUrl")]
+        public Uri Link { get; set; }
+        [JsonIgnore]
+        public Uri Image => Media.Where(x => x.Type == "image").ToList().Count > 0 ? new Uri($"{Media[0].Base}/{Media[0].File}")
+            : new Uri("https://images.gamebanana.com/static/img/DefaultEmbeddables/Sound.jpg");
+        [JsonPropertyName("_aPreviewMedia")]
+        public List<GameBananaImage> Media { get; set; }
+        [JsonPropertyName("_sDescription")]
+        public string Description { get; set; }
+        [JsonPropertyName("_aSubmitter")]
+        public GameBananaMember Owner { get; set; }
+        [JsonPropertyName("_aCategory")]
+        public GameBananaCategory Category { get; set; }
+        [JsonPropertyName("_aSuperCategory")]
+        public GameBananaCategory RootCategory { get; set; }
+        [JsonIgnore]
+        public string CategoryName => RootCategory == null ? StringConverters.FormatSingular(null, Category.Name)
+            : StringConverters.FormatSingular(RootCategory.Name, Category.Name);
+        [JsonPropertyName("_tsDateUpdated")]
+        public long DateUpdatedLong { get; set; }
+        private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
+
+        [JsonIgnore]
+        public DateTime DateUpdated => Epoch.AddSeconds(DateUpdatedLong);
+        public List<GameBananaAlternateFileSource> AlternateFileSources { get; set; }
+    }
     public class GameBananaInstallerIntegration
     {
         [JsonPropertyName("_sDownloadUrl")]
@@ -142,6 +172,10 @@ namespace Unverum
         public string Title { get; set; }
         [JsonPropertyName("_sProfileUrl")]
         public Uri Link { get; set; }
+        [JsonPropertyName("_aAlternateFileSources")]
+        public List<GameBananaAlternateFileSource> AlternateFileSources { get; set; }
+        [JsonIgnore]
+        public bool HasAltLinks => AlternateFileSources != null;
         [JsonIgnore]
         public Uri Image => Media.Where(x => x.Type == "image").ToList().Count > 0 ? new Uri($"{Media[0].Base}/{Media[0].File}") 
             : new Uri("https://images.gamebanana.com/static/img/DefaultEmbeddables/Sound.jpg");
@@ -232,6 +266,13 @@ namespace Unverum
         public double TotalPages { get; set; }
         public DateTime TimeFetched = DateTime.UtcNow;
         public bool IsValid => (DateTime.UtcNow - TimeFetched).TotalMinutes < 30;
+    }
+    public class GameBananaAlternateFileSource
+    {
+        [JsonPropertyName("url")]
+        public Uri Url { get; set; }
+        [JsonPropertyName("description")]
+        public string Description { get; set; } = "Mirror";
     }
     public class GameBananaImage
     {
