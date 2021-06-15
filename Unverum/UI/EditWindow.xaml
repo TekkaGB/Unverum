@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Unverum" FocusManager.FocusedElement="{Binding ElementName=NameBox}"
-        mc:Ignorable="d" Background="#202020"
-        Height="120" Width="400" MinHeight="120" MinWidth="400">
+        mc:Ignorable="d" Background="#202020" WindowStartupLocation="CenterScreen"
+        Height="120" Width="500" MinHeight="120" MinWidth="500">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

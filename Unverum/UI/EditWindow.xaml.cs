@@ -15,12 +15,18 @@ namespace Unverum
     public partial class EditWindow : Window
     {
         public Mod _mod;
+        public string directory = null;
         public EditWindow(Mod mod)
         {
             InitializeComponent();
-            _mod = mod;
-            NameBox.Text = _mod.name;
-            Title = $"Edit {_mod.name}";
+            if (mod != null)
+            {
+                _mod = mod;
+                NameBox.Text = _mod.name;
+                Title = $"Edit {_mod.name}";
+            }
+            else
+                Title = $"Create Name of New Mod for {Global.config.CurrentGame}";
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -29,6 +35,24 @@ namespace Unverum
         }
 
         private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_mod != null)
+                EditName();
+            else
+                CreateName();
+        }
+        private void CreateName()
+        {
+            var newDirectory = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{NameBox.Text}";
+            if (!Directory.Exists(newDirectory))
+            {
+                directory = newDirectory;
+                Close();
+            }
+            else
+                Global.logger.WriteLine($"{newDirectory} already exists", LoggerType.Error);
+        }
+        private void EditName()
         {
             if (!NameBox.Text.Equals(_mod.name, StringComparison.InvariantCultureIgnoreCase))
             {

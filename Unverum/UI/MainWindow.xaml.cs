@@ -549,17 +549,42 @@ namespace Unverum
         }
         private void ModsFolder_Click(object sender, RoutedEventArgs e)
         {
-            var folderName = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
-            if (Directory.Exists(folderName))
+            var choice = new AddChoiceWindow();
+            choice.ShowDialog();
+            if (choice.create != null && (bool)choice.create)
             {
-                try
+                var nameWindow = new EditWindow(null);
+                nameWindow.ShowDialog();
+                if (nameWindow.directory != null)
                 {
-                    Process process = Process.Start("explorer.exe", folderName);
-                    Global.logger.WriteLine($@"Opened {folderName}.", LoggerType.Info);
+                    OpenFileDialog dialog = new OpenFileDialog();
+                    dialog.DefaultExt = ".pak";
+                    dialog.Filter = "UE4 Package Files (*.pak)|*.pak";
+                    dialog.Title = $"Select .pak to add in {Path.GetFileName(nameWindow.directory)}";
+                    dialog.Multiselect = false;
+                    dialog.InitialDirectory = Global.assemblyLocation;
+                    dialog.ShowDialog();
+                    if (!String.IsNullOrEmpty(dialog.FileName))
+                    {
+                        Directory.CreateDirectory(nameWindow.directory);
+                        File.Copy(dialog.FileName, $"{nameWindow.directory}{Global.s}{Path.GetFileName(dialog.FileName)}", true);
+                    }
                 }
-                catch (Exception ex)
+            }
+            else if (choice.create != null && !(bool)choice.create) 
+            { 
+                var folderName = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
+                if (Directory.Exists(folderName))
                 {
-                    Global.logger.WriteLine($@"Couldn't open {folderName}. ({ex.Message})", LoggerType.Error);
+                    try
+                    {
+                        Process process = Process.Start("explorer.exe", folderName);
+                        Global.logger.WriteLine($@"Opened {folderName}.", LoggerType.Info);
+                    }
+                    catch (Exception ex)
+                    {
+                        Global.logger.WriteLine($@"Couldn't open {folderName}. ({ex.Message})", LoggerType.Error);
+                    }
                 }
             }
         }

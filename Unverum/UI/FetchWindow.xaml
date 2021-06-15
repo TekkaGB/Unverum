@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Unverum" FocusManager.FocusedElement="{Binding ElementName=UrlBox}"
-        mc:Ignorable="d" Background="#202020" Title="Fetch Metadata"
+        mc:Ignorable="d" Background="#202020" Title="Fetch Metadata" WindowStartupLocation="CenterScreen"
         Height="120" Width="500" MinHeight="120" MinWidth="500">
     <Grid>
         <Grid.RowDefinitions>
