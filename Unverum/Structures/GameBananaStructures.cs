@@ -109,6 +109,7 @@ namespace Unverum
 
         [JsonIgnore]
         public DateTime DateUpdated => Epoch.AddSeconds(DateUpdatedLong);
+        [JsonPropertyName("_aAlternateFileSources")]
         public List<GameBananaAlternateFileSource> AlternateFileSources { get; set; }
     }
     public class GameBananaInstallerIntegration
@@ -172,6 +173,8 @@ namespace Unverum
     {
         [JsonPropertyName("_sName")]
         public string Title { get; set; }
+        [JsonIgnore]
+        public bool IsSpoiler => Title.ToUpperInvariant().StartsWith("(SPOILER)");
         [JsonPropertyName("_sProfileUrl")]
         public Uri Link { get; set; }
         [JsonPropertyName("_aAlternateFileSources")]
