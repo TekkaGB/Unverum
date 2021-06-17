@@ -576,6 +576,10 @@ namespace Unverum
                     {
                         Directory.CreateDirectory(nameWindow.directory);
                         File.Copy(dialog.FileName, $"{nameWindow.directory}{Global.s}{Path.GetFileName(dialog.FileName)}", true);
+                        // Copy over sig if it exists
+                        var sigs = Directory.GetFiles(Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder), "*.sig", SearchOption.TopDirectoryOnly);
+                        if (sigs.Length > 0)
+                            File.Copy(sigs[0], Path.ChangeExtension($"{nameWindow.directory}{Global.s}{Path.GetFileName(dialog.FileName)}", ".sig"), true);
                     }
                 }
             }
