@@ -65,12 +65,12 @@ namespace Unverum
             e.Handled = true;
             App.Current.Dispatcher.Invoke((Action)delegate
             {
-                ((MainWindow)Current.MainWindow).ModGrid.IsHitTestVisible = true;
-                ((MainWindow)Current.MainWindow).ConfigButton.IsHitTestVisible = true;
-                ((MainWindow)Current.MainWindow).BuildButton.IsHitTestVisible = true;
-                ((MainWindow)Current.MainWindow).LaunchButton.IsHitTestVisible = true;
-                ((MainWindow)Current.MainWindow).OpenModsButton.IsHitTestVisible = true;
-                ((MainWindow)Current.MainWindow).UpdateButton.IsHitTestVisible = true;
+                ((MainWindow)Current.MainWindow).ModGrid.IsEnabled = true;
+                ((MainWindow)Current.MainWindow).ConfigButton.IsEnabled = true;
+                ((MainWindow)Current.MainWindow).LaunchButton.IsEnabled = true;
+                ((MainWindow)Current.MainWindow).OpenModsButton.IsEnabled = true;
+                ((MainWindow)Current.MainWindow).UpdateButton.IsEnabled = true;
+                ((MainWindow)Current.MainWindow).GameBox.IsEnabled = true;
             });
         }
     }

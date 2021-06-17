@@ -146,10 +146,25 @@
                                 <Border.Background>
                                     <SolidColorBrush Color="#101010" Opacity="0.9"/>
                                 </Border.Background>
-                                <StackPanel Orientation="Horizontal" Margin="10" >
-                                    <Image Grid.Column="0" VerticalAlignment="Center" Source="{Binding Path=Category.Icon}" Margin="0,0,10,0" Stretch="Uniform" Height="35" Width="35"/>
-                                    <TextBlock Foreground="#f2f2f2" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" Text="{Binding Path=CategoryName}"/>
-                                </StackPanel>
+                                <Grid HorizontalAlignment="Center" Margin="10" Grid.Row="5" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" VerticalAlignment="Center" Source="{Binding Path=Category.Icon}" Margin="0,0,10,0" Stretch="Uniform" Height="35" />
+                                    <TextBlock Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold" Foreground="#f2f2f2" Text="{Binding Path=CategoryName}" >
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Grid.Column" Value="0"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=Category.HasIcon}" Value="True">
+                                                        <Setter Property="Grid.Column" Value="1"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
                             </Border>
                         </Popup>
                     </Grid>
@@ -383,7 +398,6 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <ComboBox Margin="10,0,0,0" Name="GameBox" Height="35" MinWidth="250" FontSize="18" FontWeight="Bold" SelectionChanged="GameBox_SelectionChanged">
                             <ComboBoxItem xml:space="preserve" IsSelected="True"> Dragon Ball FighterZ</ComboBoxItem>
@@ -394,10 +408,9 @@
                             <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
                         </ComboBox>
                         <Button FontSize="18" FontWeight="Bold" Name="ConfigButton" Margin="10,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" Content="Setup" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Setup_Click" />
-                        <Button FontSize="18" FontWeight="Bold" Name="BuildButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Content="Build" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Build_Click"/>
-                        <Button FontSize="18" FontWeight="Bold" Name="LaunchButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="3" Content="Launch" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Launch_Click"/>
-                        <Button FontSize="18" FontWeight="Bold" Name="OpenModsButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="4" Content="Add Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="ModsFolder_Click"/>
-                        <Button FontSize="18" FontWeight="Bold" Name="UpdateButton" Margin="0,0,10,0"  Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="5" Content="Update Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Update_Click"/>
+                        <Button FontSize="18" FontWeight="Bold" Name="LaunchButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Content="Launch" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Launch_Click"/>
+                        <Button FontSize="18" FontWeight="Bold" Name="OpenModsButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="3" Content="Add Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="ModsFolder_Click"/>
+                        <Button FontSize="18" FontWeight="Bold" Name="UpdateButton" Margin="0,0,10,0"  Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="4" Content="Update Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Update_Click"/>
 
                         <Grid Name="MiddleGrid" Grid.Row="1" Grid.ColumnSpan="7">
                             <Grid.ColumnDefinitions>

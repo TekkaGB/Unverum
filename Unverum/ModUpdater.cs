@@ -25,12 +25,12 @@ namespace Unverum
             updateCounter = 0;
             if (!Directory.Exists(path))
             {
-                main.ModGrid.IsHitTestVisible = true;
-                main.ConfigButton.IsHitTestVisible = true;
-                main.BuildButton.IsHitTestVisible = true;
-                main.LaunchButton.IsHitTestVisible = true;
-                main.OpenModsButton.IsHitTestVisible = true;
-                main.UpdateButton.IsHitTestVisible = true;
+                main.GameBox.IsEnabled = false;
+                main.ModGrid.IsEnabled = false;
+                main.ConfigButton.IsEnabled = false;
+                main.LaunchButton.IsEnabled = false;
+                main.OpenModsButton.IsEnabled = false;
+                main.UpdateButton.IsEnabled = false;
                 main.Activate();
                 return;
             }
@@ -78,12 +78,11 @@ namespace Unverum
             if (urlCount == 0 && requestUrls[urlCount] == $"https://api.gamebanana.com/Core/Item/Data?return_keys=1")
             {
                 Global.logger.WriteLine("No updates available.", LoggerType.Info);
-                main.ModGrid.IsHitTestVisible = true;
-                main.ConfigButton.IsHitTestVisible = true;
-                main.BuildButton.IsHitTestVisible = true;
-                main.LaunchButton.IsHitTestVisible = true;
-                main.OpenModsButton.IsHitTestVisible = true;
-                main.UpdateButton.IsHitTestVisible = true;
+                main.GameBox.IsEnabled = true;
+                main.ModGrid.IsEnabled = true;
+                main.ConfigButton.IsEnabled = true;
+                main.LaunchButton.IsEnabled = true;
+                main.OpenModsButton.IsEnabled = true;
                 return;
             }
             else if (requestUrls[urlCount] == $"https://api.gamebanana.com/Core/Item/Data?return_keys=1")
@@ -102,12 +101,11 @@ namespace Unverum
                     catch (Exception e)
                     {
                         Global.logger.WriteLine($"{requestUrl} {e.Message}", LoggerType.Error);
-                        main.ModGrid.IsHitTestVisible = true;
-                        main.ConfigButton.IsHitTestVisible = true;
-                        main.BuildButton.IsHitTestVisible = true;
-                        main.LaunchButton.IsHitTestVisible = true;
-                        main.OpenModsButton.IsHitTestVisible = true;
-                        main.UpdateButton.IsHitTestVisible = true;
+                        main.GameBox.IsEnabled = true;
+                        main.ModGrid.IsEnabled = true;
+                        main.ConfigButton.IsEnabled = true;
+                        main.LaunchButton.IsEnabled = true;
+                        main.OpenModsButton.IsEnabled = true;
                         return;
                     }
                 }
@@ -131,12 +129,11 @@ namespace Unverum
             else
                 Global.logger.WriteLine("Done checking for updates!", LoggerType.Info);
 
-            main.ModGrid.IsHitTestVisible = true;
-            main.ConfigButton.IsHitTestVisible = true;
-            main.BuildButton.IsHitTestVisible = true;
-            main.LaunchButton.IsHitTestVisible = true;
-            main.OpenModsButton.IsHitTestVisible = true;
-            main.UpdateButton.IsHitTestVisible = true;
+            main.GameBox.IsEnabled = true;
+            main.ModGrid.IsEnabled = true;
+            main.ConfigButton.IsEnabled = true;
+            main.LaunchButton.IsEnabled = true;
+            main.OpenModsButton.IsEnabled = true;
             main.Activate();
         }
         private static void ReportUpdateProgress(DownloadProgress progress)

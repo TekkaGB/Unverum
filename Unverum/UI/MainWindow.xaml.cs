@@ -104,7 +104,6 @@ namespace Unverum
             if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder) || !Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                 || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
-                BuildButton.IsEnabled = false;
                 LaunchButton.IsEnabled = false;
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
             }
@@ -283,7 +282,6 @@ namespace Unverum
                             Global.UpdateConfig();
                             Dispatcher.Invoke(() =>
                             {
-                                BuildButton.IsEnabled = false;
                                 LaunchButton.IsEnabled = false;
                                 GameBox.IsEnabled = true;
                             });
@@ -305,15 +303,51 @@ namespace Unverum
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        BuildButton.IsEnabled = true;
                         LaunchButton.IsEnabled = true;
                     });
                 }
             });
             GameBox.IsEnabled = true;
         }
-        private void Launch_Click(object sender, RoutedEventArgs e)
+        private async void Launch_Click(object sender, RoutedEventArgs e)
         {
+            if (Global.config.Configs[Global.config.CurrentGame].ModsFolder != null && Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
+            {
+                GameBox.IsEnabled = false;
+                ModGrid.IsEnabled = false;
+                ConfigButton.IsEnabled = false;
+                LaunchButton.IsEnabled = false;
+                OpenModsButton.IsEnabled = false;
+                UpdateButton.IsEnabled = false;
+                Refresh();
+                Global.logger.WriteLine($"Building loadout for {Global.config.CurrentGame}", LoggerType.Info);
+                try
+                {
+                    await Build(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
+                }
+                catch (Exception)
+                {
+                    Global.logger.WriteLine("Failed to build loadout, not launching", LoggerType.Error);
+                    ModGrid.IsEnabled = true;
+                    ConfigButton.IsEnabled = true;
+                    LaunchButton.IsEnabled = true;
+                    OpenModsButton.IsEnabled = true;
+                    UpdateButton.IsEnabled = true;
+                    GameBox.IsEnabled = true;
+                    return;
+                }
+                ModGrid.IsEnabled = true;
+                ConfigButton.IsEnabled = true;
+                LaunchButton.IsEnabled = true;
+                OpenModsButton.IsEnabled = true;
+                UpdateButton.IsEnabled = true;
+                GameBox.IsEnabled = true;
+            }
+            else
+            {
+                Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
+                return;
+            }
             if (Global.config.Configs[Global.config.CurrentGame].Launcher != null && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
                 Global.logger.WriteLine($"Launching {Global.config.Configs[Global.config.CurrentGame].Launcher}", LoggerType.Info);
@@ -426,32 +460,6 @@ namespace Unverum
                     }
                 }
             }
-        }
-
-        private async void Build_Click(object sender, RoutedEventArgs e)
-        {
-            if (Global.config.Configs[Global.config.CurrentGame].ModsFolder != null && Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
-            {
-                GameBox.IsEnabled = false;
-                ModGrid.IsEnabled = false;
-                ConfigButton.IsEnabled = false;
-                BuildButton.IsEnabled = false;
-                LaunchButton.IsEnabled = false;
-                OpenModsButton.IsEnabled = false;
-                UpdateButton.IsEnabled = false;
-                Refresh();
-                await Build(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
-                ModGrid.IsEnabled = true;
-                ConfigButton.IsEnabled = true;
-                BuildButton.IsEnabled = true;
-                LaunchButton.IsEnabled = true;
-                OpenModsButton.IsEnabled = true;
-                UpdateButton.IsEnabled = true;
-                GameBox.IsEnabled = true;
-                MessageBox.Show($@"Finished building loadout and ready to launch!", "Notification", MessageBoxButton.OK);
-            }
-            else
-                Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
         }
 
         private async Task Build(string path)
@@ -591,12 +599,12 @@ namespace Unverum
         private void Update_Click(object sender, RoutedEventArgs e)
         {
             Global.logger.WriteLine("Checking for updates...", LoggerType.Info);
-            ModGrid.IsHitTestVisible = false;
-            ConfigButton.IsHitTestVisible = false;
-            BuildButton.IsHitTestVisible = false;
-            LaunchButton.IsHitTestVisible = false;
-            OpenModsButton.IsHitTestVisible = false;
-            UpdateButton.IsHitTestVisible = false;
+            GameBox.IsEnabled = false;
+            ModGrid.IsEnabled = false;
+            ConfigButton.IsEnabled = false;
+            LaunchButton.IsEnabled = false;
+            OpenModsButton.IsEnabled = false;
+            UpdateButton.IsEnabled = false;
             ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
         }
         private Paragraph ConvertToFlowParagraph(string text)
@@ -1330,13 +1338,11 @@ namespace Unverum
             if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder) || !Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                 || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
-                BuildButton.IsEnabled = false;
                 LaunchButton.IsEnabled = false;
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
             }
             else
             {
-                BuildButton.IsEnabled = true;
                 LaunchButton.IsEnabled = true;
             }
 
