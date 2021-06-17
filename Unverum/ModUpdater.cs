@@ -83,6 +83,7 @@ namespace Unverum
                 main.ConfigButton.IsEnabled = true;
                 main.LaunchButton.IsEnabled = true;
                 main.OpenModsButton.IsEnabled = true;
+                main.UpdateButton.IsEnabled = true;
                 return;
             }
             else if (requestUrls[urlCount] == $"https://api.gamebanana.com/Core/Item/Data?return_keys=1")
@@ -106,6 +107,7 @@ namespace Unverum
                         main.ConfigButton.IsEnabled = true;
                         main.LaunchButton.IsEnabled = true;
                         main.OpenModsButton.IsEnabled = true;
+                        main.UpdateButton.IsEnabled = true;
                         return;
                     }
                 }
@@ -134,6 +136,7 @@ namespace Unverum
             main.ConfigButton.IsEnabled = true;
             main.LaunchButton.IsEnabled = true;
             main.OpenModsButton.IsEnabled = true;
+            main.UpdateButton.IsEnabled = true;
             main.Activate();
         }
         private static void ReportUpdateProgress(DownloadProgress progress)
