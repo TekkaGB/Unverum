@@ -321,13 +321,9 @@ namespace Unverum
                 UpdateButton.IsEnabled = false;
                 Refresh();
                 Global.logger.WriteLine($"Building loadout for {Global.config.CurrentGame}", LoggerType.Info);
-                try
+                if (!await Build(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
                 {
-                    await Build(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
-                }
-                catch (Exception)
-                {
-                    Global.logger.WriteLine("Failed to build loadout, not launching", LoggerType.Error);
+                    Global.logger.WriteLine($"Failed to build loadout, not building and launching", LoggerType.Error);
                     ModGrid.IsEnabled = true;
                     ConfigButton.IsEnabled = true;
                     LaunchButton.IsEnabled = true;
@@ -462,9 +458,9 @@ namespace Unverum
             }
         }
 
-        private async Task Build(string path)
+        private async Task<bool> Build(string path)
         {
-            await Task.Run(() =>
+            return await Task.Run(() =>
             {
                 // Get other folders using the mods folder
                 string SplashFolder = null;
@@ -486,10 +482,11 @@ namespace Unverum
                 if (Global.config.CurrentGame == "Dragon Ball FighterZ")
                     CostumePatched = Setup.CheckCostumePatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
                 if (!ModLoader.Restart(path, MoviesFolder, SplashFolder, SoundsFolder))
-                    return;
+                    return false;
                 List<string> mods = Global.config.Configs[Global.config.CurrentGame].ModList.Where(x => x.enabled).Select(y => $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{y.name}").ToList();
                 mods.Reverse();
                 ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder, SoundsFolder);
+                return true;
             });
         }
 

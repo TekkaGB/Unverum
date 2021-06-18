@@ -149,7 +149,7 @@ namespace Unverum
                     {
                         var baseFolder = $"{path}{Global.s}--Base--";
                         Directory.CreateDirectory(baseFolder);
-                        using (var stream = new FileStream($"{baseFolder}/{file}", FileMode.Create, FileAccess.Write))
+                        using (var stream = new FileStream($"{baseFolder}{Global.s}{file}", FileMode.Create, FileAccess.Write))
                         {
                             resource.CopyTo(stream);
                         }
