@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Net.Http;
 using System.Text.Json;
+using System.Windows.Input;
 
 namespace Unverum
 {
@@ -49,7 +50,7 @@ namespace Unverum
             return null;
         }
 
-        private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        private async void Fetch()
         {
             Uri url = CreateUri(UrlBox.Text);
             if (url != null)
@@ -84,6 +85,17 @@ namespace Unverum
             }
             else
                 Global.logger.WriteLine($"{UrlBox.Text} is invalid. The url should have the following format: https://gamebanana.com/<Mod Category>/<Mod ID>", LoggerType.Error);
+        }
+
+        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            Fetch();
+        }
+
+        private void UrlBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+                Fetch();
         }
     }
 }

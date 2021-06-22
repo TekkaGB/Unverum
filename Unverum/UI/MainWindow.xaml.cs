@@ -567,7 +567,6 @@ namespace Unverum
                     dialog.Filter = "UE4 Package Files (*.pak)|*.pak";
                     dialog.Title = $"Select .pak to add in {Path.GetFileName(nameWindow.directory)}";
                     dialog.Multiselect = false;
-                    dialog.InitialDirectory = Global.assemblyLocation;
                     dialog.ShowDialog();
                     if (!String.IsNullOrEmpty(dialog.FileName))
                     {

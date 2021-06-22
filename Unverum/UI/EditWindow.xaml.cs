@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.IO;
 using System.Reflection;
+using System.Windows.Input;
 
 namespace Unverum
 {
@@ -73,6 +74,17 @@ namespace Unverum
                     Global.logger.WriteLine($"{newDirectory} already exists", LoggerType.Error);
             }
             Close();
+        }
+
+        private void NameBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                if (_mod != null)
+                    EditName();
+                else
+                    CreateName();
+            }
         }
     }
 }
