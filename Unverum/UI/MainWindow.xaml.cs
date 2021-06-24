@@ -148,6 +148,7 @@ namespace Unverum
                 {
                     Mod m = new Mod();
                     m.name = Path.GetFileName(mod);
+                    m.enabled = true;
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
                         Global.ModList.Add(m);
