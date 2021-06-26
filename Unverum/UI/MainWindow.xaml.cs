@@ -101,7 +101,7 @@ namespace Unverum
 
             Global.ModList = Global.config.Configs[Global.config.CurrentGame].ModList;
 
-            if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder) || !Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
+            if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                 || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
                 LaunchButton.IsEnabled = false;
@@ -266,7 +266,7 @@ namespace Unverum
                 {
                     index = GameBox.SelectedIndex;
                 });
-                if (!String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder) && Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
+                if (!String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                     || !String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
                 {
                     if ((GameFilter)index == GameFilter.MHOJ2)
@@ -312,7 +312,7 @@ namespace Unverum
         }
         private async void Launch_Click(object sender, RoutedEventArgs e)
         {
-            if (Global.config.Configs[Global.config.CurrentGame].ModsFolder != null && Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
+            if (Global.config.Configs[Global.config.CurrentGame].ModsFolder != null)
             {
                 GameBox.IsEnabled = false;
                 ModGrid.IsEnabled = false;
@@ -321,6 +321,7 @@ namespace Unverum
                 OpenModsButton.IsEnabled = false;
                 UpdateButton.IsEnabled = false;
                 Refresh();
+                Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
                 Global.logger.WriteLine($"Building loadout for {Global.config.CurrentGame}", LoggerType.Info);
                 if (!await Build(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
                 {
@@ -350,9 +351,12 @@ namespace Unverum
                 Global.logger.WriteLine($"Launching {Global.config.Configs[Global.config.CurrentGame].Launcher}", LoggerType.Info);
                 try
                 {
-                    var ps = new ProcessStartInfo(Global.config.Configs[Global.config.CurrentGame].Launcher)
+                    var path = Global.config.Configs[Global.config.CurrentGame].Launcher;
+                    var ps = new ProcessStartInfo(path)
                     {
-                        WorkingDirectory = Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)
+                        WorkingDirectory = Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher),
+                        UseShellExecute = true,
+                        Verb = "open"
                     };
                     Process.Start(ps);
                 }
@@ -1339,7 +1343,7 @@ namespace Unverum
             Global.logger.WriteLine($"Game switched to {Global.config.CurrentGame}", LoggerType.Info);
             Refresh();
             Global.UpdateConfig();
-            if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder) || !Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
+            if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                 || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
                 LaunchButton.IsEnabled = false;
