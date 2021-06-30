@@ -398,6 +398,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <ComboBox Margin="10,0,0,0" Name="GameBox" Height="35" MinWidth="250" FontSize="18" FontWeight="Bold" SelectionChanged="GameBox_SelectionChanged">
                             <ComboBoxItem xml:space="preserve" IsSelected="True"> Dragon Ball FighterZ</ComboBoxItem>
@@ -406,11 +407,14 @@
                             <ComboBoxItem xml:space="preserve"> Guilty Gear -Strive-</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Jump Force</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
+                            <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
                         </ComboBox>
                         <Button FontSize="18" FontWeight="Bold" Name="ConfigButton" Margin="10,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" Content="Setup" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Setup_Click" />
                         <Button FontSize="18" FontWeight="Bold" Name="LaunchButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Content="Launch" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Launch_Click"/>
-                        <Button FontSize="18" FontWeight="Bold" Name="OpenModsButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="3" Content="Add Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="ModsFolder_Click"/>
-                        <Button FontSize="18" FontWeight="Bold" Name="UpdateButton" Margin="0,0,10,0"  Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="4" Content="Update Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Update_Click"/>
+                        <Button FontSize="18" FontWeight="Bold" Name="OpenModsButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="4" Content="Add Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="ModsFolder_Click"/>
+                        <Button FontSize="18" FontWeight="Bold" Name="UpdateButton" Margin="0,0,10,0"  Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="5" Content="Update Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Update_Click"/>
+
+                        <ComboBox Grid.Column="3" Margin="0,0,10,0" Height="35" FontSize="18" FontWeight="Bold" Name="LauncherOptionsBox"/>
 
                         <Grid Name="MiddleGrid" Grid.Row="1" Grid.ColumnSpan="7">
                             <Grid.ColumnDefinitions>
@@ -619,6 +623,7 @@
                             <ComboBoxItem xml:space="preserve"> Guilty Gear -Strive-</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Jump Force</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
+                            <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
                         </ComboBox>
                         <ComboBox IsEnabled="False" Margin="0,0,10,0" Name="FilterBox" Height="35" Width="130" FontSize="18" FontWeight="Bold" SelectionChanged="FilterSelectionChanged">
                             <ComboBoxItem xml:space="preserve"> Featured</ComboBoxItem>

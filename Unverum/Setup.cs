@@ -54,7 +54,7 @@ namespace Unverum
                 return false;
             }
         }
-        public static bool Generic(string exe)
+        public static bool Generic(string exe, string projectName)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.DefaultExt = ".exe";
@@ -67,7 +67,7 @@ namespace Unverum
                 && Path.GetFileName(dialog.FileName).Equals(exe, StringComparison.InvariantCultureIgnoreCase))
             {
                 var parent = Path.GetDirectoryName(dialog.FileName);
-                var ModsFolder = $"{parent}{Global.s}RED{Global.s}Content{Global.s}Paks{Global.s}~mods";
+                var ModsFolder = $"{parent}{Global.s}{projectName}{Global.s}Content{Global.s}Paks{Global.s}~mods";
                 Directory.CreateDirectory(ModsFolder);
                 Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
                 Global.config.Configs[Global.config.CurrentGame].Launcher = dialog.FileName;

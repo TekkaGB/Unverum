@@ -36,6 +36,7 @@ namespace Unverum
         private FlowDocument defaultFlow = new FlowDocument();
         private string defaultText = "Unverum Mod Manager is here to help out with all your UE4 Mods!\n\n" +
             "(Right Click Row > Fetch Metadata and confirm the GameBanana URL of the mod to fetch metadata to show here.)";
+        private ObservableCollection<String> LauncherOptions = new ObservableCollection<String>(new string[] { " Executable", " Steam" });
         public MainWindow()
         {
             InitializeComponent();
@@ -107,6 +108,12 @@ namespace Unverum
                 LaunchButton.IsEnabled = false;
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
             }
+
+            if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
+                LauncherOptions[1] = " Epic Games";
+
+            LauncherOptionsBox.ItemsSource = LauncherOptions;
+            LauncherOptionsBox.SelectedIndex = Convert.ToInt32(Global.config.Configs[Global.config.CurrentGame].LauncherOption);
 
             Directory.CreateDirectory($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}");
 
@@ -245,13 +252,15 @@ namespace Unverum
                 case GameFilter.MHOJ2:
                     return Setup.MHOJ2();
                 case GameFilter.GBVS:
-                    return Setup.Generic("GBVS.exe");
+                    return Setup.Generic("GBVS.exe", "RED");
                 case GameFilter.GGS:
-                    return Setup.Generic("GGST.exe");
+                    return Setup.Generic("GGST.exe", "RED");
                 case GameFilter.JF:
                     return Setup.JF();
                 case GameFilter.KHIII:
                     return Setup.KHIII();
+                case GameFilter.SN:
+                    return Setup.Generic("ScarletNexus.exe", "ScarletNexus");
             }
             return false;
         }
@@ -348,10 +357,44 @@ namespace Unverum
             }
             if (Global.config.Configs[Global.config.CurrentGame].Launcher != null && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
-                Global.logger.WriteLine($"Launching {Global.config.Configs[Global.config.CurrentGame].Launcher}", LoggerType.Info);
+                var path = Global.config.Configs[Global.config.CurrentGame].Launcher;
                 try
                 {
-                    var path = Global.config.Configs[Global.config.CurrentGame].Launcher;
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = Convert.ToBoolean(LauncherOptionsBox.SelectedIndex);
+                    Global.UpdateConfig();
+                    if (Global.config.Configs[Global.config.CurrentGame].LauncherOption)
+                    {
+                        var id = "";
+                        var epic = false;
+                        switch ((GameFilter)GameBox.SelectedIndex)
+                        {
+                            case GameFilter.DBFZ:
+                                Global.logger.WriteLine($"Mods will not work since DBFZ is being launched through Steam", LoggerType.Warning);
+                                id = "678950";
+                                break;
+                            case GameFilter.MHOJ2:
+                                id = "1058450";
+                                break;
+                            case GameFilter.GBVS:
+                                id = "1090630";
+                                break;
+                            case GameFilter.GGS:
+                                id = "1384160";
+                                break;
+                            case GameFilter.JF:
+                                id = "816020";
+                                break;
+                            case GameFilter.KHIII:
+                                id = "fd711544a06543e0ab1b0808de334120";
+                                epic = true;
+                                break;
+                            case GameFilter.SN:
+                                id = "775500";
+                                break;
+                        }
+                        path = epic ? $"com.epicgames.launcher://apps/{id}?action=launch&silent=true" : $"steam://rungameid/{id}";
+                    }
+                    Global.logger.WriteLine($"Launching {path}", LoggerType.Info);
                     var ps = new ProcessStartInfo(path)
                     {
                         WorkingDirectory = Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher),
@@ -362,7 +405,7 @@ namespace Unverum
                 }
                 catch (Exception ex)
                 {
-                    Global.logger.WriteLine($"Couldn't launch {Global.config.Configs[Global.config.CurrentGame].Launcher} ({ex.Message})", LoggerType.Error);
+                    Global.logger.WriteLine($"Couldn't launch {path} ({ex.Message})", LoggerType.Error);
                 }
             }
             else
@@ -390,6 +433,9 @@ namespace Unverum
                     break;
                 case GameFilter.KHIII:
                     id = "9219";
+                    break;
+                case GameFilter.SN:
+                    id = "12028";
                     break;
             }
             try
@@ -490,7 +536,19 @@ namespace Unverum
                     return false;
                 List<string> mods = Global.config.Configs[Global.config.CurrentGame].ModList.Where(x => x.enabled).Select(y => $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{y.name}").ToList();
                 mods.Reverse();
-                ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder, SoundsFolder);
+                var reversed = false;
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    switch ((GameFilter)GameBox.SelectedIndex)
+                    {
+                        case GameFilter.SN:
+                        case GameFilter.GGS:
+                            reversed = true;
+                            break;
+                    }
+                });
+
+                ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder, SoundsFolder, reversed);
                 return true;
             });
         }
@@ -953,7 +1011,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)
@@ -1353,6 +1411,13 @@ namespace Unverum
             {
                 LaunchButton.IsEnabled = true;
             }
+            if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
+                LauncherOptions[1] = " Epic Games";
+            else
+                LauncherOptions[1] = " Steam";
+
+            LauncherOptionsBox.ItemsSource = LauncherOptions;
+            LauncherOptionsBox.SelectedIndex = Convert.ToInt32(Global.config.Configs[Global.config.CurrentGame].LauncherOption);
 
             DescriptionWindow.Document = defaultFlow;
             var bitmap = new BitmapImage(new Uri("pack://application:,,,/Unverum;component/Assets/unverumpreview.png"));

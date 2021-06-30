@@ -37,6 +37,7 @@ namespace Unverum
     public class GameConfig
     {
         public string Launcher { get; set; }
+        public bool LauncherOption { get; set; }
         public string ModsFolder { get; set; }
         public ObservableCollection<Mod> ModList { get; set; }
     }

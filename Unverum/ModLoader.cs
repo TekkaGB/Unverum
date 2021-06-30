@@ -85,17 +85,17 @@ namespace Unverum
                 filesFound++;
             }
             if (filesFound == 0)
-                Global.logger.WriteLine($"Coudln't find {file} within {path}", LoggerType.Warning);
+                Global.logger.WriteLine($"Couldn't find {file} within {path}", LoggerType.Warning);
         }
 
         // Copy over mod files in order of ModList
-        public static void Build(string path, List<string> mods, bool? patched, string movies, string splash, string sound)
+        public static void Build(string path, List<string> mods, bool? patched, string movies, string splash, string sound, bool reversed)
         {
             string sig = null;
             var sigs = Directory.GetFiles(Path.GetDirectoryName(path), "*.sig", SearchOption.TopDirectoryOnly);
             if (sigs.Length > 0)
                 sig = sigs[0];
-            var folderLetter = 'z';
+            var folderLetter = reversed ? 'a' : 'z';
             var tildes = 0;
             foreach (var mod in mods)
             {
@@ -108,10 +108,18 @@ namespace Unverum
                 if (CopyFolder(mod, folder, sig) > 0)
                 {
                     Global.logger.WriteLine($"Copied paks and sigs from {mod} over to {folder}", LoggerType.Info);
-                    folderLetter--;
+                    if (reversed)
+                        folderLetter--;
+                    else
+                        folderLetter++;
                     if (folderLetter == '`')
                     {
                         folderLetter = 'z';
+                        tildes++;
+                    }
+                    if (folderLetter == '{')
+                    {
+                        folderLetter = 'a';
                         tildes++;
                     }
                 }
