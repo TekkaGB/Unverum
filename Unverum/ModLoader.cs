@@ -109,9 +109,9 @@ namespace Unverum
                 {
                     Global.logger.WriteLine($"Copied paks and sigs from {mod} over to {folder}", LoggerType.Info);
                     if (reversed)
-                        folderLetter--;
-                    else
                         folderLetter++;
+                    else
+                        folderLetter--;
                     if (folderLetter == '`')
                     {
                         folderLetter = 'z';
