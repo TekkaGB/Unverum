@@ -536,19 +536,8 @@ namespace Unverum
                     return false;
                 List<string> mods = Global.config.Configs[Global.config.CurrentGame].ModList.Where(x => x.enabled).Select(y => $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{y.name}").ToList();
                 mods.Reverse();
-                var reversed = false;
-                App.Current.Dispatcher.Invoke(() =>
-                {
-                    switch ((GameFilter)GameBox.SelectedIndex)
-                    {
-                        case GameFilter.SN:
-                        case GameFilter.GGS:
-                            reversed = true;
-                            break;
-                    }
-                });
 
-                ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder, SoundsFolder, reversed);
+                ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder, SoundsFolder);
                 return true;
             });
         }
