@@ -112,9 +112,6 @@ namespace Unverum
             if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
                 LauncherOptions[1] = " Epic Games";
 
-            LauncherOptionsBox.ItemsSource = LauncherOptions;
-            LauncherOptionsBox.SelectedIndex = Convert.ToInt32(Global.config.Configs[Global.config.CurrentGame].LauncherOption);
-
             Directory.CreateDirectory($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}");
 
             // Watch mods folder to detect
@@ -133,6 +130,18 @@ namespace Unverum
             Preview.Source = bitmap;
             PreviewBG.Source = null;
 
+        }
+        private void WindowLoaded(object sender, RoutedEventArgs e)
+        {
+            OnFirstOpen();
+
+            if (Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
+                LauncherOptionsBox.IsEnabled = false;
+            else
+                LauncherOptionsBox.IsEnabled = true;
+
+            LauncherOptionsBox.ItemsSource = LauncherOptions;
+            LauncherOptionsBox.SelectedIndex = Convert.ToInt32(Global.config.Configs[Global.config.CurrentGame].LauncherOption);
         }
         private void OnModified(object sender, FileSystemEventArgs e)
         {
@@ -606,9 +615,10 @@ namespace Unverum
         }
         private void ModsFolder_Click(object sender, RoutedEventArgs e)
         {
-            var choice = new AddChoiceWindow();
+            var choice = new ChoiceWindow("Create New Mod", "Name a mod and choose the .pak file for it to use",
+                "Open Mods Folder", "Drag or extract mod folders into this directory");
             choice.ShowDialog();
-            if (choice.create != null && (bool)choice.create)
+            if (choice.choice != null && (bool)choice.choice)
             {
                 var nameWindow = new EditWindow(null);
                 nameWindow.ShowDialog();
@@ -634,7 +644,7 @@ namespace Unverum
                     }
                 }
             }
-            else if (choice.create != null && !(bool)choice.create) 
+            else if (choice.choice != null && !(bool)choice.choice) 
             { 
                 var folderName = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
                 if (Directory.Exists(folderName))
@@ -1368,50 +1378,96 @@ namespace Unverum
             RefreshFilter();
         }
 
+        private void OnFirstOpen()
+        {
+            if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase) && !Global.config.Configs[Global.config.CurrentGame].FirstOpen)
+            {
+                var store = Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase) ? "Epic Games" : "Steam";
+                var choice = new ChoiceWindow("Launch through Executable", "Launches the executable directly",
+                    $"Launch through {store}", $"Uses the {store} shortcut to launch", $"Launcher Options for {Global.config.CurrentGame}");
+                choice.ShowDialog();
+                if (choice.choice != null && (bool)choice.choice)
+                {
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = false;
+                    LauncherOptionsBox.SelectedIndex = 0;
+                }
+                else if (choice.choice != null && !(bool)choice.choice)
+                {
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = true;
+                    LauncherOptionsBox.SelectedIndex = 1;
+                }
+                else
+                {
+                    Global.logger.WriteLine($"No launch option chosen, defaulting to {store} shortcut", LoggerType.Warning);
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = true;
+                    LauncherOptionsBox.SelectedIndex = 1;
+                }
+                Global.config.Configs[Global.config.CurrentGame].FirstOpen = true;
+                Global.UpdateConfig();
+                Global.logger.WriteLine($"If you want to switch the Launch Method, use the dropdown box to the right of the Launch Button", LoggerType.Info);
+            }
+        }
+        private bool handle;
         private void GameBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded || Global.config == null)
                 return;
-            if (GameBox.SelectedIndex == 5)
-                DiscordButton.Visibility = Visibility.Collapsed;
-            else
-                DiscordButton.Visibility = Visibility.Visible;
-            Global.config.CurrentGame = (GameBox.SelectedValue as ComboBoxItem).Content.ToString().Trim().Replace(":", String.Empty);
-            if (!Global.config.Configs.ContainsKey(Global.config.CurrentGame))
-            {
-                Global.ModList = new();
-                Global.config.Configs.Add(Global.config.CurrentGame, new());
-            }
-            else
-                Global.ModList = Global.config.Configs[Global.config.CurrentGame].ModList;
-            var currentModDirectory = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
-            Directory.CreateDirectory(currentModDirectory);
-            ModsWatcher.Path = currentModDirectory;
-            Global.logger.WriteLine($"Game switched to {Global.config.CurrentGame}", LoggerType.Info);
-            Refresh();
-            Global.UpdateConfig();
-            if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
-                || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
-            {
-                LaunchButton.IsEnabled = false;
-                Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
-            }
-            else
-            {
-                LaunchButton.IsEnabled = true;
-            }
-            if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
-                LauncherOptions[1] = " Epic Games";
-            else
-                LauncherOptions[1] = " Steam";
+            handle = true;
+            
+        }
 
-            LauncherOptionsBox.ItemsSource = LauncherOptions;
-            LauncherOptionsBox.SelectedIndex = Convert.ToInt32(Global.config.Configs[Global.config.CurrentGame].LauncherOption);
+        private void GameBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (handle)
+            {
+                if (GameBox.SelectedIndex == 5)
+                    DiscordButton.Visibility = Visibility.Collapsed;
+                else
+                    DiscordButton.Visibility = Visibility.Visible;
+                Global.config.CurrentGame = (GameBox.SelectedValue as ComboBoxItem).Content.ToString().Trim().Replace(":", String.Empty);
+                if (!Global.config.Configs.ContainsKey(Global.config.CurrentGame))
+                {
+                    Global.ModList = new();
+                    Global.config.Configs.Add(Global.config.CurrentGame, new());
+                }
+                else
+                    Global.ModList = Global.config.Configs[Global.config.CurrentGame].ModList;
+                var currentModDirectory = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
+                Directory.CreateDirectory(currentModDirectory);
+                ModsWatcher.Path = currentModDirectory;
+                Global.logger.WriteLine($"Game switched to {Global.config.CurrentGame}", LoggerType.Info);
+                Refresh();
+                Global.UpdateConfig();
+                if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
+                    || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
+                {
+                    LaunchButton.IsEnabled = false;
+                    Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
+                }
+                else
+                {
+                    LaunchButton.IsEnabled = true;
+                }
+                if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
+                    LauncherOptions[1] = " Epic Games";
+                else
+                    LauncherOptions[1] = " Steam";
 
-            DescriptionWindow.Document = defaultFlow;
-            var bitmap = new BitmapImage(new Uri("pack://application:,,,/Unverum;component/Assets/unverumpreview.png"));
-            Preview.Source = bitmap;
-            PreviewBG.Source = null;
+                OnFirstOpen();
+
+                if (Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
+                    LauncherOptionsBox.IsEnabled = false;
+                else
+                    LauncherOptionsBox.IsEnabled = true;
+                LauncherOptionsBox.ItemsSource = LauncherOptions;
+                LauncherOptionsBox.SelectedIndex = Convert.ToInt32(Global.config.Configs[Global.config.CurrentGame].LauncherOption);
+
+                DescriptionWindow.Document = defaultFlow;
+                var bitmap = new BitmapImage(new Uri("pack://application:,,,/Unverum;component/Assets/unverumpreview.png"));
+                Preview.Source = bitmap;
+                PreviewBG.Source = null;
+                handle = false;
+            }
         }
     }
 }

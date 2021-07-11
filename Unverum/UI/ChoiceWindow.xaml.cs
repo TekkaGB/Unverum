@@ -20,22 +20,28 @@ namespace Unverum.UI
     /// <summary>
     /// Interaction logic for UpdateFileBox.xaml
     /// </summary>
-    public partial class AddChoiceWindow : Window
+    public partial class ChoiceWindow : Window
     {
-        public bool? create = null;
-        public AddChoiceWindow()
+        public bool? choice = null;
+        public ChoiceWindow(string _FirstOptionText, string _FirstOptionSubText, string _SecondOptionText, string _SecondOptionSubText, string title = null)
         {
             InitializeComponent();
+            FirstOptionText.Text = _FirstOptionText;
+            FirstOptionSubText.Text = _FirstOptionSubText;
+            SecondOptionText.Text = _SecondOptionText;
+            SecondOptionSubText.Text = _SecondOptionSubText;
+            if (title != null)
+                Title = title;
         }
 
         private void CreateMods_Click(object sender, RoutedEventArgs e)
         {
-            create = true;
+            choice = true;
             Close();
         }
         private void OpenMods_Click(object sender, RoutedEventArgs e)
         {
-            create = false;
+            choice = false;
             Close();
         }
 

@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
     <AssemblyName>Unverum</AssemblyName>
-    <AssemblyVersion>1.1.7.0</AssemblyVersion>
+    <AssemblyVersion>1.1.8.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -60,7 +60,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="UI\AddChoiceWindow.xaml">
+    <Page Update="UI\ChoiceWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

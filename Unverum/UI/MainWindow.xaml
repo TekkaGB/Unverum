@@ -8,7 +8,7 @@
         Background="#131313"
         Title="Unverum" SizeChanged="OnResize"
         mc:Ignorable="d" Closing="Window_Closing" WindowStartupLocation="CenterScreen"
-        Height="750" Width="1050" MinHeight="750" MinWidth="1050">
+        Height="750" Width="1050" MinHeight="750" MinWidth="1050" Loaded="WindowLoaded">
     <Window.Resources>
         <FontFamily x:Key="Monospace">../Assets/#Roboto Mono</FontFamily>
         <DataTemplate x:Key="ModTemplate">
@@ -400,7 +400,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <ComboBox Margin="10,0,0,0" Name="GameBox" Height="35" MinWidth="250" FontSize="18" FontWeight="Bold" SelectionChanged="GameBox_SelectionChanged">
+                        <ComboBox Margin="10,0,0,0" Name="GameBox" Height="35" MinWidth="250" FontSize="18" FontWeight="Bold" SelectionChanged="GameBox_SelectionChanged" DropDownClosed="GameBox_DropDownClosed">
                             <ComboBoxItem xml:space="preserve" IsSelected="True"> Dragon Ball FighterZ</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> My Hero One's Justice 2</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Granblue Fantasy: Versus</ComboBoxItem>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Unverum.UI;
 
 namespace Unverum
 {
@@ -38,6 +39,7 @@ namespace Unverum
     {
         public string Launcher { get; set; }
         public bool LauncherOption { get; set; }
+        public bool FirstOpen { get; set; }
         public string ModsFolder { get; set; }
         public ObservableCollection<Mod> ModList { get; set; }
     }
