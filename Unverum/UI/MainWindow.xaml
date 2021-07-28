@@ -441,16 +441,16 @@
                                         <Setter Property="FontWeight" Value="SemiBold"/>
                                     </Style>
                                 </DataGrid.Resources>
-								<DataGrid.ColumnHeaderStyle>
-									<Style TargetType="DataGridColumnHeader">
-										<Setter Property="Background" Value="#303030" />
-										<Setter Property="Foreground" Value="#f2f2f2"/>
-										<Setter Property="Height" Value="17"/>
-										<Setter Property="FontSize" Value="12"/>
-										<Setter Property="FontWeight" Value="SemiBold"/>
-										<EventSetter Event="Click" Handler="SortAlphabeticallyAndGroupEnabled_Click"/>
-									</Style>
-								</DataGrid.ColumnHeaderStyle>
+				<DataGrid.ColumnHeaderStyle>
+					<Style TargetType="DataGridColumnHeader">
+						<Setter Property="Background" Value="#303030" />
+						<Setter Property="Foreground" Value="#f2f2f2"/>
+						<Setter Property="Height" Value="17"/>
+						<Setter Property="FontSize" Value="12"/>
+						<Setter Property="FontWeight" Value="SemiBold"/>
+						<EventSetter Event="Click" Handler="SortAlphabeticallyAndGroupEnabled_Click"/>
+					</Style>
+				</DataGrid.ColumnHeaderStyle>
                                 <DataGrid.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Fetch Metadata" IsCheckable="False" Click="FetchItem_Click"/>
