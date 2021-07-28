@@ -1469,5 +1469,19 @@ namespace Unverum
                 handle = false;
             }
         }
+
+        private void SortAlphabeticallyAndGroupEnabled_Click(object sender, RoutedEventArgs e)
+        {
+            DataGridColumnHeader colHeader = sender as DataGridColumnHeader;
+            if(colHeader != null && colHeader.Column.Header.Equals("Name"))
+            {
+                ModGrid.Items.SortDescriptions.Clear();
+                ModGrid.Items.SortDescriptions.Add(new SortDescription("enabled", ListSortDirection.Descending));
+                ModGrid.Items.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
+                Global.logger.WriteLine("Sorted!", LoggerType.Info);
+                ModGrid.Items.Refresh();
+            }
+            e.Handled = true;
+        }
     }
 }
