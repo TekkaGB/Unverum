@@ -185,9 +185,6 @@ namespace Unverum
                 }
             }
 
-            // Move all enabled mods to top
-            Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderByDescending(x => x.enabled).ToList());
-
             await Task.Run(() =>
             {
                 App.Current.Dispatcher.Invoke((Action)delegate
@@ -1470,16 +1467,31 @@ namespace Unverum
             }
         }
 
-        private void SortAlphabeticallyAndGroupEnabled_Click(object sender, RoutedEventArgs e)
+        private async void SortAlphabeticallyAndGroupEnabled_Click(object sender, RoutedEventArgs e)
         {
             DataGridColumnHeader colHeader = sender as DataGridColumnHeader;
-            if(colHeader != null && colHeader.Column.Header.Equals("Name"))
+            if (colHeader != null)
             {
-                ModGrid.Items.SortDescriptions.Clear();
-                ModGrid.Items.SortDescriptions.Add(new SortDescription("enabled", ListSortDirection.Descending));
-                ModGrid.Items.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
-                Global.logger.WriteLine("Sorted!", LoggerType.Info);
-                ModGrid.Items.Refresh();
+                if (colHeader.Column.Header.Equals("Name"))
+                {
+                    // Sort alphabetically
+                    Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderBy(x => x.name).ToList());
+                    Global.logger.WriteLine("Sorted alphabetically!", LoggerType.Info);
+                }
+                else if (colHeader.Column.Header.Equals("Enabled"))
+                {
+                    // Move all enabled mods to top
+                    Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderByDescending(x => x.enabled).ToList());
+                    Global.logger.WriteLine("Moved all enabled mods to the top!", LoggerType.Info);
+                }
+                await Task.Run(() =>
+                {
+                    App.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        ModGrid.ItemsSource = Global.ModList;
+                    });
+                });
+                Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
             }
             e.Handled = true;
         }
