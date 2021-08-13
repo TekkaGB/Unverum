@@ -667,7 +667,10 @@ namespace Unverum
             LaunchButton.IsEnabled = false;
             OpenModsButton.IsEnabled = false;
             UpdateButton.IsEnabled = false;
-            ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
+            });
         }
         private Paragraph ConvertToFlowParagraph(string text)
         {

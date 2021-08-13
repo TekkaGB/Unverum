@@ -45,12 +45,22 @@ namespace Unverum
             // Patched 1.27 exe
             else if (checksum.Equals("2f9c8178fc8a5cdb3ac1ff8fee888f89", StringComparison.InvariantCultureIgnoreCase))
             {
-                Global.logger.WriteLine($"Costume Patch already applied to {exe}.", LoggerType.Info);
-                return true;
+                var originalExe = exe.Replace("-eac-nop-loaded", String.Empty);
+                if (GetMD5Checksum(originalExe).Equals("1f716cdf0846d1db7bdf2b907fead008", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Global.logger.WriteLine($"Replacing {exe} with v1.28 with no costume patch.", LoggerType.Warning);
+                    File.Copy(originalExe, exe, true);
+                    return false;
+                }
+                else
+                {
+                    Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
+                    return true;
+                }
             }
             else
             {
-                Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27", LoggerType.Warning);
+                Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27 (v1.28 patch hopefully coming soon)", LoggerType.Warning);
                 return false;
             }
         }
