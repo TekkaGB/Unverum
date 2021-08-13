@@ -44,6 +44,34 @@ Included in the Unverum download is Lean's materials that some DBFZ mods utilize
 ### My Hero One's Justice 2
 Only implemented with My Hero One's Justice 2 is the option to undo the setup by clicking the Setup button again.  This will rename the pak and sig files so that mods can no longer be used.
 
+## Text Patching
+As of v1.2.0, Unverum now supports modularly patching specific parts of REDAsset.uexp/uasset which contains all the text for Dragon Ball FighterZ, Guilty Gear -STRIVE-, and Granblue Fantasy: Versus.  Unverum looks for a text.json in each mod folder. 
+
+An example of how it's setup would be:
+```
+{
+  "Entries": [
+    {
+      "header": "CHARA_NAME_L_HTN",
+      "text": "Pepsiman"
+    },
+    {
+      "header": "CHARA_NAME_S_HTN",
+      "text": "Pepsiman"
+    },
+    {
+      "header": "CHARA_NAME_DEMO_HTN",
+      "text": "Pepsiman"
+    }
+  ]
+}
+```
+This example replaces each instance of Hit with Pepsiman in the game DBFZ.
+
+You can put as many entries as you want.  The headers can be found in the hex of REDAsset.uexp which are followed by the text that goes with it.  You would want to put the header of the part you would want to replace.  The text property is what you would want to replace the text that goes with the header specified.
+
+Note that for each game update, Unverum would have to update the base files used to match the current version of the game.  If you're tech savvy enough, you can manually replace the files found under the Resources folder if I take too long.
+
 ## FAQ
 ### Are music/splash/movie mods supported?
 Yes. It'll look for .awb, .mp4, .bmp, .uasset, and .usm files to replace within the Content folder.  The files will be replaced only if they have the exact same name.
