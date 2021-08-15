@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
     <AssemblyName>Unverum</AssemblyName>
-    <AssemblyVersion>1.2.1.0</AssemblyVersion>
+    <AssemblyVersion>1.2.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +20,7 @@
     <None Remove="Resources\JUMP_FORCE.exe" />
     <None Remove="Resources\REDGame.uasset" />
     <None Remove="Resources\REDGame.uexp" />
+    <None Remove="Resources\v1.28_Patch.xdelta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +28,7 @@
     <EmbeddedResource Include="Resources\Base\--PlaceholderCostumes--.sig" />
     <EmbeddedResource Include="Resources\CostumePatch.xdelta" />
     <EmbeddedResource Include="Resources\JUMP_FORCE.exe" />
+    <EmbeddedResource Include="Resources\v1.28_Patch.xdelta" />
   </ItemGroup>
 
   <ItemGroup>

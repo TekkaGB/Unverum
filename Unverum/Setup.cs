@@ -24,33 +24,39 @@ namespace Unverum
                 }
             }
         }
+        public static void PatchExe(string exe, string patch)
+        {
+            var source = File.ReadAllBytes(exe);
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream($"Unverum.Resources.{patch}.xdelta"))
+            {
+                byte[] buffer = new byte[stream.Length];
+                stream.Read(buffer, 0, buffer.Length);
+                var decoded = Xdelta3Lib.Decode(source, buffer);
+                File.WriteAllBytes(exe, decoded.ToArray());
+            }
+            Global.logger.WriteLine($"Applied Costume Patch to {exe}.", LoggerType.Info);
+        }
         public static bool CheckCostumePatch(string exe)
         {
             var checksum = GetMD5Checksum(exe);
             // Unpatched 1.27 exe
             if (checksum.Equals("13a83d1fd8f4c71baaa580c69e6a46cf", StringComparison.InvariantCultureIgnoreCase))
             {
-                var source = File.ReadAllBytes(exe);
-                var assembly = Assembly.GetExecutingAssembly();
-                using (var stream = assembly.GetManifestResourceStream("Unverum.Resources.CostumePatch.xdelta"))
-                {
-                    byte[] buffer = new byte[stream.Length];
-                    stream.Read(buffer, 0, buffer.Length);
-                    var decoded = Xdelta3Lib.Decode(source, buffer);
-                    File.WriteAllBytes(exe, decoded.ToArray());
-                }
-                Global.logger.WriteLine($"Applied Costume Patch to {exe}.", LoggerType.Info);
+                PatchExe(exe, "CostumePatch");
                 return true;
             }
             // Patched 1.27 exe
             else if (checksum.Equals("2f9c8178fc8a5cdb3ac1ff8fee888f89", StringComparison.InvariantCultureIgnoreCase))
             {
+                // Switch 1.27 patched exe with 1.28 if it exists
                 var originalExe = exe.Replace("-eac-nop-loaded", String.Empty);
                 if (GetMD5Checksum(originalExe).Equals("1f716cdf0846d1db7bdf2b907fead008", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Global.logger.WriteLine($"Replacing {exe} with v1.28 with no costume patch.", LoggerType.Warning);
+                    Global.logger.WriteLine($"Replacing {exe} with v1.28.", LoggerType.Warning);
                     File.Copy(originalExe, exe, true);
-                    return false;
+                    PatchExe(exe, "v1.28_Patch");
+                    return true;
                 }
                 else
                 {
@@ -58,9 +64,20 @@ namespace Unverum
                     return true;
                 }
             }
+            // Unpatched 1.28 exe
+            else if (checksum.Equals("1f716cdf0846d1db7bdf2b907fead008", StringComparison.InvariantCultureIgnoreCase))
+            {
+                PatchExe(exe, "v1.28_Patch");
+                return true;
+            }
+            else if (checksum.Equals("ae356567060af7ffa7d0d9e293fafbd9", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
+                return true;
+            }
             else
             {
-                Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27 (v1.28 patch hopefully coming soon)", LoggerType.Warning);
+                Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27/v1.28", LoggerType.Warning);
                 return false;
             }
         }
