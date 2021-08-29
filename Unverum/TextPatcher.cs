@@ -24,23 +24,45 @@ namespace Unverum
     {
         public static bool ExtractBaseFiles()
         {
-            var outputFolder = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak";
+            var outputFolder = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}";
             var quickbms = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}quickbms{Global.s}quickbms_4gb_files.exe";
             var ue4bms = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}quickbms{Global.s}unreal_tournament_4.bms";
-            if (!Directory.Exists(outputFolder) || !File.Exists(quickbms) || !File.Exists(ue4bms))
+            Directory.CreateDirectory(outputFolder);
+            if (!File.Exists(quickbms) || !File.Exists(ue4bms))
             {
                 Global.logger.WriteLine($"Missing dependencies, text patching will not work (Try redownloading)", LoggerType.Error);
                 return false;
             }
-            // Delete previous text files if they exist
-            if (Directory.Exists($"{outputFolder}{Global.s}RED"))
-                Directory.Delete($"{outputFolder}{Global.s}RED", true);
             var pak = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder)}{Global.s}pakchunk0-WindowsNoEditor.pak";
             if (!File.Exists(pak))
             {
                 Global.logger.WriteLine($"Couldn't find {pak} to extract text files from, text patching will not work", LoggerType.Error);
                 return false;
             }
+            Global.logger.WriteLine($"Checking pak file...", LoggerType.Info);
+            var pakLength = new FileInfo(pak).Length;
+            // First time
+            if (Global.config.Configs[Global.config.CurrentGame].PakLength == null)
+            {
+                Global.config.Configs[Global.config.CurrentGame].PakLength = pakLength;
+                Global.UpdateConfig();
+            }
+            // File size matches (no need to reextract)
+            else if (pakLength.Equals(Global.config.Configs[Global.config.CurrentGame].PakLength)
+                && File.Exists($"{outputFolder}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset")
+                && File.Exists($"{outputFolder}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
+            {
+                Global.logger.WriteLine($"Base files already extracted, continuing to next step", LoggerType.Info);
+                return true;
+            }
+            // File size mismatch
+            else if (!pakLength.Equals(Global.config.Configs[Global.config.CurrentGame].PakLength))
+            {
+                Global.logger.WriteLine("Game files have been updated, reextracting base files for text patching", LoggerType.Info);
+                Global.config.Configs[Global.config.CurrentGame].PakLength = pakLength;
+                Global.UpdateConfig();
+            }
+            // Extract files
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
@@ -71,7 +93,8 @@ namespace Unverum
                 process.Start();
                 process.WaitForExit();
             }
-            if (Directory.Exists($"{outputFolder}{Global.s}RED"))
+            if (File.Exists($"{outputFolder}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset")
+                && File.Exists($"{outputFolder}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
             {
                 Global.logger.WriteLine($"Successfully extracted base files for text patching", LoggerType.Info);
                 return true;
@@ -84,7 +107,7 @@ namespace Unverum
         }
         public static Dictionary<string, Entry> GetEntries()
         {
-            var file = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
+            var file = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
             if (!File.Exists(file) || !File.Exists(Path.ChangeExtension(file, ".uasset")))
                 return null;
             var bytes = File.ReadAllBytes(file);
@@ -130,9 +153,14 @@ namespace Unverum
         }
         public static void WriteToFile(Dictionary<string, Entry> dict)
         {
-            var uexp = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
-            var uasset = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset";
-            var bytes = File.ReadAllBytes(uexp).ToList();
+            // Delete previous text files if they exist
+            if (Directory.Exists($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED"))
+                Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED", true);
+            var inputUexp = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
+            var inputUasset = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset";
+            var outputUexp = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
+            var outputUasset = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset";
+            var bytes = File.ReadAllBytes(inputUexp).ToList();
             foreach (var key in dict.Keys.Where(x => !String.IsNullOrEmpty(dict[x].textToReplace)))
             {
                 var text = Encoding.Unicode.GetBytes(dict[key].textToReplace);
@@ -146,12 +174,14 @@ namespace Unverum
             var size = BitConverter.GetBytes(bytes.Count - 56);
             bytes.RemoveRange(36, 8);
             bytes.InsertRange(36, size.Concat(size));
-            File.WriteAllBytes(uexp, bytes.ToArray());
+            Directory.CreateDirectory(Path.GetDirectoryName(outputUexp));
+            File.WriteAllBytes(outputUexp, bytes.ToArray());
             // Update offset in uasset
-            var asset = File.ReadAllBytes(uasset).ToList();
+            var asset = File.ReadAllBytes(inputUasset).ToList();
             asset.RemoveRange(521, 4);
             asset.InsertRange(521, BitConverter.GetBytes(bytes.Count - 4));
-            File.WriteAllBytes(uasset, asset.ToArray());
+            Directory.CreateDirectory(Path.GetDirectoryName(outputUasset));
+            File.WriteAllBytes(outputUasset, asset.ToArray());
         }
     }
 }
