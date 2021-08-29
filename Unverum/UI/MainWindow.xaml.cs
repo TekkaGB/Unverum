@@ -360,7 +360,7 @@ namespace Unverum
             {
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
                 return;
-            }
+            }/*
             if (Global.config.Configs[Global.config.CurrentGame].Launcher != null && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
                 var path = Global.config.Configs[Global.config.CurrentGame].Launcher;
@@ -415,7 +415,7 @@ namespace Unverum
                 }
             }
             else
-                Global.logger.WriteLine($"Please click Setup before starting!", LoggerType.Warning);
+                Global.logger.WriteLine($"Please click Setup before starting!", LoggerType.Warning);*/
         }
         private void GameBanana_Click(object sender, RoutedEventArgs e)
         {

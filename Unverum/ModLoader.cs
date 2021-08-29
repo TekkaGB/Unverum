@@ -94,19 +94,6 @@ namespace Unverum
         public static void Build(string path, List<string> mods, bool? patched, string movies, string splash, string sound)
         {
             var missing = false;
-            var game = String.Empty;
-            switch (Global.config.CurrentGame)
-            {
-                case "Dragon Ball FighterZ":
-                    game = "DBFZ";
-                    break;
-                case "Guilty Gear -Strive-":
-                    game = "GGS";
-                    break;
-                case "Granblue Fantasy Versus":
-                    game = "GBVS";
-                    break;
-            }
             Dictionary<string, Entry> entries = null;
             string sig = null;
             var sigs = Directory.GetFiles(Path.GetDirectoryName(path), "*.sig", SearchOption.TopDirectoryOnly);
@@ -162,7 +149,10 @@ namespace Unverum
                                     if (missing)
                                         continue;
                                     if (entries == null)
-                                        entries = TextPatcher.GetEntries(game);
+                                    {
+                                        if (TextPatcher.ExtractBaseFiles())
+                                            entries = TextPatcher.GetEntries();
+                                    }
                                     // Check if entries are still null
                                     if (entries == null)
                                     {
@@ -194,7 +184,7 @@ namespace Unverum
             if (entries != null)
             {
                 // Write uasset/uexp
-                TextPatcher.WriteToFile(entries, game);
+                TextPatcher.WriteToFile(entries);
                 var priorityName = String.Empty;
                 foreach (var tilde in Enumerable.Range(0, tildes))
                     priorityName += "~";

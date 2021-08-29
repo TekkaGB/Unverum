@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Unverum
 {
@@ -21,9 +22,69 @@ namespace Unverum
     }
     public static class TextPatcher
     {
-        public static Dictionary<string, Entry> GetEntries(string game)
+        public static bool ExtractBaseFiles()
         {
-            var file = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{game}{Global.s}REDGame.uexp";
+            var outputFolder = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak";
+            var quickbms = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}quickbms{Global.s}quickbms_4gb_files.exe";
+            var ue4bms = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}quickbms{Global.s}unreal_tournament_4.bms";
+            if (!Directory.Exists(outputFolder) || !File.Exists(quickbms) || !File.Exists(ue4bms))
+            {
+                Global.logger.WriteLine($"Missing dependencies, text patching will not work (Try redownloading)", LoggerType.Error);
+                return false;
+            }
+            // Delete previous text files if they exist
+            if (Directory.Exists($"{outputFolder}{Global.s}RED"))
+                Directory.Delete($"{outputFolder}{Global.s}RED", true);
+            var pak = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder)}{Global.s}pakchunk0-WindowsNoEditor.pak";
+            if (!File.Exists(pak))
+            {
+                Global.logger.WriteLine($"Couldn't find {pak} to extract text files from, text patching will not work", LoggerType.Error);
+                return false;
+            }
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.FileName = quickbms;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.WorkingDirectory = Path.GetDirectoryName(quickbms);
+            // Set encryption key
+            var args = String.Empty;
+            switch (Global.config.CurrentGame)
+            {
+                case "Dragon Ball FighterZ":
+                    args = "-a 0";
+                    break;
+                case "Guilty Gear -Strive-":
+                    args = "-a 1";
+                    break;
+                case "Granblue Fantasy Versus":
+                    args = "-a 2";
+                    break;
+            }
+            startInfo.Arguments = $@"-Y {args} -f ""*INT/REDGame.*"" unreal_tournament_4.bms ""{pak}"" ""{outputFolder}""";
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardInput = true;
+            Global.logger.WriteLine($"Extracting base files for text patching...", LoggerType.Info);
+            using (Process process = new Process())
+            {
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
+            }
+            if (Directory.Exists($"{outputFolder}{Global.s}RED"))
+            {
+                Global.logger.WriteLine($"Successfully extracted base files for text patching", LoggerType.Info);
+                return true;
+            }
+            else
+            {
+                Global.logger.WriteLine($"Failed to extract base files, text patching will not work", LoggerType.Error);
+                return false;
+            }
+        }
+        public static Dictionary<string, Entry> GetEntries()
+        {
+            var file = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
             if (!File.Exists(file) || !File.Exists(Path.ChangeExtension(file, ".uasset")))
                 return null;
             var bytes = File.ReadAllBytes(file);
@@ -67,9 +128,11 @@ namespace Unverum
             }
             return dict;
         }
-        public static void WriteToFile(Dictionary<string, Entry> dict, string game)
+        public static void WriteToFile(Dictionary<string, Entry> dict)
         {
-            var bytes = File.ReadAllBytes($"{Global.assemblyLocation}{Global.s}Resources{Global.s}{game}{Global.s}REDGame.uexp").ToList();
+            var uexp = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
+            var uasset = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset";
+            var bytes = File.ReadAllBytes(uexp).ToList();
             foreach (var key in dict.Keys.Where(x => !String.IsNullOrEmpty(dict[x].textToReplace)))
             {
                 var text = Encoding.Unicode.GetBytes(dict[key].textToReplace);
@@ -79,18 +142,16 @@ namespace Unverum
                 bytes.InsertRange(dict[key].offset, text);
             }
 
-            Directory.CreateDirectory($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT");
-
             // Update header offsets
             var size = BitConverter.GetBytes(bytes.Count - 56);
             bytes.RemoveRange(36, 8);
             bytes.InsertRange(36, size.Concat(size));
-            File.WriteAllBytes($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp", bytes.ToArray());
+            File.WriteAllBytes(uexp, bytes.ToArray());
             // Update offset in uasset
-            var asset = File.ReadAllBytes($"{Global.assemblyLocation}{Global.s}Resources{Global.s}{game}{Global.s}REDGame.uasset").ToList();
+            var asset = File.ReadAllBytes(uasset).ToList();
             asset.RemoveRange(521, 4);
             asset.InsertRange(521, BitConverter.GetBytes(bytes.Count - 4));
-            File.WriteAllBytes($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset", asset.ToArray());
+            File.WriteAllBytes(uasset, asset.ToArray());
         }
     }
 }

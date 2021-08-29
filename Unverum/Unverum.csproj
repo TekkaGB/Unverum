@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
     <AssemblyName>Unverum</AssemblyName>
-    <AssemblyVersion>1.2.2.0</AssemblyVersion>
+    <AssemblyVersion>1.2.3.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,6 +52,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Dependencies\quickbms\quickbms_4gb_files.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\quickbms\unreal_tournament_4.bms">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Dependencies\u4pak\lib\bz2.pyd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -475,24 +481,6 @@
     <None Update="Mods\Dragon Ball FighterZ\FighterZ Material Recreation\mod.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\DBFZ\REDGame.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DBFZ\REDGame.uexp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\GBVS\REDGame.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\GBVS\REDGame.uexp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\GGS\REDGame.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\GGS\REDGame.uexp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -507,10 +495,6 @@
     <Page Update="UI\AltLinkWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\GBVS\" />
   </ItemGroup>
 
 </Project>

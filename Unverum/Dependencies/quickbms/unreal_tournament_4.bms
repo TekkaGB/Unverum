@@ -1,0 +1,336 @@
+# Unreal Engine 4 - Unreal Tournament 4 (*WindowsNoEditor.pak) (script 0.4.25)
+# script for QuickBMS http://quickbms.aluigi.org
+
+math NO_TAIL_INFO = 0   # set it to 1 for archives with corrupt/missing tail information
+
+quickbmsver "0.10"
+
+math TOC_FILE = 0
+
+# set your AES_KEY here as text or C string ("\x11\x22...") or umodel hex (0x1122...)
+set AES_KEY binary ""
+putarray 10 -1 "b9uW0RKNY91be8HN3Lemi68j6Xsi2l7fQJYsp5oR4al4C4c9kY5E0l90411l9P3L"   # Dragonball FighterZ
+putarray 10 -1 "0x3D96F3E41ED4B90B6C96CA3B2393F8911A5F6A48FE71F54B495E8F1AFD94CD73" # Guilty Gear -STRIVE-
+putarray 10 -1 "0x2A472D4B6150645367566B597033733676397924423F4528482B4D6251655468" # Granblue Fantasy Versus
+putarray 10 -1 ""
+math AES_KEY_IS_SET = 0
+
+math ALTERNATIVE_MODE = 0
+
+get ARCHIVE_NAME basename
+get ARCHIVE_PATH FILEPATH
+
+math VERSION = 0
+
+math CHUNK_OFFSET_ABSOLUTE = -1 # default, enabled
+
+# 1 = HIT
+math WORKAROUND = 0
+
+if NO_TAIL_INFO != 0
+    get OFFSET asize
+    math ALTERNATIVE_MODE = 1
+else
+    # update from ssh
+    callfunction GET_MAGIC 1 -0xac # for version 8
+	
+	if MAGIC != 0x5a6f12e1
+        callfunction GET_MAGIC 1 -0x2c  # previous versions 3-6
+        if MAGIC != 0x5a6f12e1
+            goto 0 0 SEEK_END
+            get TMP asize
+            math TMP - 0x100    # just a limit
+            findloc MAGIC_OFF long 0x5a6f12e1 0 "" TMP
+            if MAGIC_OFF == ""
+                math MAGIC = 0
+            else
+                callfunction GET_MAGIC 1 MAGIC_OFF
+            endif
+        endif
+	else
+		math WORKAROUND = 4
+	endif
+    
+    if MAGIC == 0
+        callfunction GET_MAGIC 1 -0xcc  # Fortnite iOS
+        math WORKAROUND = 3
+    endif
+
+    endian guess MAGIC      # 0x5a6f12e1:le, 0xe1126f5a:be
+    if MAGIC == 0x1233a     # HIT game
+        math WORKAROUND = 1
+    elif MAGIC == 0x1066a   # OverHit
+        math WORKAROUND = 1
+    elif MAGIC == 0x13aed   # OverHit
+        math WORKAROUND = 1
+    elif ARCHIVE_NAME & "OverHit"
+        math WORKAROUND = 1
+    elif ARCHIVE_NAME == "0"    # HIT
+        math WORKAROUND = 1
+    elif ARCHIVE_PATH & "Gears of War 4"
+        math WORKAROUND = 2
+    endif
+    get VERSION long
+    endian guess VERSION
+    get OFFSET longlong
+    get SIZE longlong
+    getdstring HASH 20
+    if WORKAROUND == 1
+        math VERSION = 3
+    endif
+
+    if VERSION >= 3
+        goto MAGIC_OFF
+        goto -1 0 SEEK_CUR
+        get ENCRYPTED byte
+        if ENCRYPTED != 0
+            callfunction SET_AES_KEY 1
+            log MEMORY_FILE10 OFFSET SIZE
+            encryption "" ""
+            math TOC_FILE = -10 # MEMORY_FILE10 is -10
+        endif
+    endif
+
+    goto OFFSET # don't use TOC_FILE
+    callfunction GET_NAME 1
+endif
+
+# mobile version 10 is not supported
+
+if ALTERNATIVE_MODE == 0
+    get FILES long TOC_FILE
+else
+    math FILES = 0x7fffffff
+    math MAX_OFF = OFFSET
+    goto 0
+    set NAME string ""
+endif
+
+math CHUNK_SIZE = 0x10000   # just in case...
+for i = 0 < FILES
+    if ALTERNATIVE_MODE == 0
+        callfunction GET_NAME 1
+        if NAMESZ == 0  # lame work-around for Conan Exiles
+            callfunction GET_NAME 1
+        endif
+    endif
+    savepos TMP_OFF TOC_FILE
+
+    get OFFSET longlong TOC_FILE
+    if WORKAROUND == 2
+        get ZSIZE long TOC_FILE
+        get SIZE long TOC_FILE
+        get ZIP byte TOC_FILE
+	elif WORKAROUND == 4
+		get ZSIZE longlong TOC_FILE
+        get SIZE longlong TOC_FILE
+        get ZIP byte TOC_FILE
+    else
+        get ZSIZE longlong TOC_FILE
+        get SIZE longlong TOC_FILE
+        get ZIP long TOC_FILE
+    endif
+    if WORKAROUND == 1
+        getdstring HASH 20 TOC_FILE
+    elif VERSION <= 1
+        get TSTAMP longlong TOC_FILE
+    endif
+    if WORKAROUND == 2
+    else
+        getdstring HASH 20 TOC_FILE
+    endif
+    math CHUNKS = 0
+    math ENCRYPTED = 0
+    if VERSION >= 3
+        if ZIP != 0
+            get CHUNKS long TOC_FILE
+            for x = 0 < CHUNKS
+                get CHUNK_OFFSET longlong TOC_FILE
+                get CHUNK_END_OFFSET longlong TOC_FILE
+                putarray 0 x CHUNK_OFFSET
+                putarray 1 x CHUNK_END_OFFSET
+            next x
+        endif
+        if WORKAROUND == 2
+        else
+            get ENCRYPTED byte TOC_FILE
+        endif
+        get CHUNK_SIZE long TOC_FILE
+    endif
+    if WORKAROUND == 1
+        if ARCHIVE_NAME == "0"  # HIT game only!
+            math ENCRYPTED = 0
+        endif
+    endif
+    if ALTERNATIVE_MODE != 0
+        savepos TMP_OFF TOC_FILE
+        math OFFSET + TMP_OFF
+    endif
+
+    #comtype copy    # for AES, do not enable or quickbms 0.9.2 will fail
+      if ZIP == 3 # JoyfunRPG / Faith of Danschant
+        comtype oodle
+    elif ZIP & 1
+        comtype zlib
+    elif ZIP & 2
+        comtype gzip
+    elif ZIP & 4
+        comtype snappy
+        if VERSION >= 5 # was 6
+            comtype oodle
+        endif
+        if WORKAROUND == 2
+            comtype lz4
+        endif
+    elif ZIP & 0x10
+        comtype oodle
+    else
+        math ZIP = 0
+    endif
+
+    if CHUNKS > 0
+        log NAME 0 0
+        append
+        math TMP_SIZE = SIZE
+        if CHUNK_OFFSET_ABSOLUTE < 0 && OFFSET != 0
+            getarray CHUNK_OFFSET 0 0
+            if CHUNK_OFFSET u< OFFSET
+                math CHUNK_OFFSET_ABSOLUTE = 0
+            else
+                math CHUNK_OFFSET_ABSOLUTE = 1
+            endif
+        endif
+        for x = 0 < CHUNKS
+            getarray CHUNK_OFFSET 0 x
+            getarray CHUNK_END_OFFSET 1 x
+            math CHUNK_ZSIZE = CHUNK_END_OFFSET
+            math CHUNK_ZSIZE - CHUNK_OFFSET
+            math CHUNK_XSIZE = CHUNK_ZSIZE
+            if ENCRYPTED != 0
+                callfunction SET_AES_KEY 1
+                math CHUNK_XSIZE x 16
+            endif
+            if TMP_SIZE u< CHUNK_SIZE
+                math CHUNK_SIZE = TMP_SIZE
+            endif
+            if CHUNK_OFFSET_ABSOLUTE == 0
+                math CHUNK_OFFSET + OFFSET
+            endif
+            if ZIP == 0
+                log NAME CHUNK_OFFSET CHUNK_SIZE 0 CHUNK_XSIZE
+            else
+                clog NAME CHUNK_OFFSET CHUNK_ZSIZE CHUNK_SIZE 0 CHUNK_XSIZE
+            endif
+            math TMP_SIZE - CHUNK_SIZE
+        next x
+        append
+    else
+        # the file offset points to an entry containing
+        # the "same" OFFSET ZSIZE SIZE ZIP HASH ZERO fields,
+        # just an additional backup... so let's skip them
+        savepos BASE_OFF TOC_FILE
+        math BASE_OFF - TMP_OFF
+        math OFFSET + BASE_OFF
+        math XSIZE = ZSIZE
+        if ENCRYPTED != 0
+            callfunction SET_AES_KEY 1
+            math XSIZE x 16
+        endif
+        if ZIP == 0
+            log NAME OFFSET SIZE 0 XSIZE
+        else
+            clog NAME OFFSET ZSIZE SIZE 0 XSIZE
+        endif
+    endif
+    encryption "" ""
+
+    if ALTERNATIVE_MODE != 0
+        math OFFSET + ZSIZE
+        goto OFFSET
+        if OFFSET == MAX_OFF
+            break
+        endif
+        if VERSION >= 4
+            padding 0x800   # necessary for WitchIt
+        endif
+    endif
+next i
+
+startfunction SET_AES_KEY_ASK
+    math AES_KEY_IS_SET = 1
+    strlen TMP AES_KEY 1
+    if TMP > 0
+        if AES_KEY strncmp "0x"
+            string AES_KEY << 2
+            string AES_KEY h AES_KEY
+        endif
+    else
+        print "The archive is encrypted, select the number of the key to use or type yours:"
+        for z = 0
+            getarray KEY 10 z
+            if KEY == ""
+                break
+            endif
+            print "%z%: %KEY%"
+        next z
+            print "%z%: press RETURN for no encryption (Lineage 2 Revolution)"
+        set KEY string quickbms_arg1
+        strlen TMP KEY
+        if KEY == ""
+            math AES_KEY_IS_SET = -1
+            set AES_KEY string "no key, encryption disabled"
+        elif TMP <= 2
+            getarray AES_KEY 10 KEY
+            if AES_KEY strncmp "0x"
+                string AES_KEY << 2
+                string AES_KEY h AES_KEY
+            endif
+        elif KEY strncmp "0x"
+            string KEY << 2
+            string AES_KEY h KEY
+        else
+            set AES_KEY binary KEY
+        endif
+    endif
+    print "KEY: %AES_KEY%"
+endfunction
+
+startfunction SET_AES_KEY
+    if AES_KEY_IS_SET == 0
+        callfunction SET_AES_KEY_ASK 1
+    endif
+    if AES_KEY_IS_SET > 0
+        encryption aes AES_KEY "" 0 32
+    endif
+endfunction
+
+startfunction GET_NAME
+    get NAMESZ signed_long TOC_FILE
+    if NAMESZ >= 0
+        if NAMESZ > 0x200
+            math ALTERNATIVE_MODE = 1
+        else
+            getdstring NAME NAMESZ TOC_FILE
+        endif
+    else
+        math NAMESZ n NAMESZ
+        if NAMESZ > 0x200
+            math ALTERNATIVE_MODE = 1
+        else
+            math NAMESZ * 2
+            getdstring NAME NAMESZ TOC_FILE
+            set NAME unicode NAME
+        endif
+    endif
+endfunction
+
+startfunction GET_MAGIC
+    if GET_MAGIC_ARG1 < 0
+        get MAGIC_OFF asize
+        math MAGIC_OFF + GET_MAGIC_ARG1
+    else
+        math MAGIC_OFF = GET_MAGIC_ARG1
+    endif
+    goto MAGIC_OFF
+    get MAGIC long
+endfunction
