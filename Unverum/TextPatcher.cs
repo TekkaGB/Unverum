@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Unverum
 {
@@ -17,8 +18,6 @@ namespace Unverum
     {
         public string header { get; set; }
         public string text { get; set; }
-        public string textToReplace { get; set; }
-        public int offset { get; set; }
     }
     public static class TextPatcher
     {
@@ -116,15 +115,18 @@ namespace Unverum
             // Split by the delimiter 0x0D0A
             var entries = allText.Split("\r\n");
             var counter = 0;
-            var offset = 54;
             var dict = new Dictionary<string, Entry>();
             // Convert array of strings to dictionary
             while (counter < entries.Length - 1)
             {
-                offset += (entries[counter].Length + 2) * 2;
-                if (!dict.ContainsKey(entries[counter]))
-                    dict.Add(entries[counter], new Entry { text = entries[counter + 1], offset = offset});
-                offset += (entries[counter + 1].Length + 2) * 2;
+                // Append duplicate headers
+                var index = 2;
+                while (dict.ContainsKey(entries[counter]))
+                {
+                    entries[counter] = $"{entries[counter]} ({index})";
+                    index++;
+                }
+                dict.Add(entries[counter], new Entry { text = entries[counter + 1] });
                 counter += 2;
             }
             return dict;
@@ -134,20 +136,13 @@ namespace Unverum
         {
             if (dict.ContainsKey(entry.header))
             {
-                var entryToReplace = dict[entry.header];
-                var offset = entryToReplace.offset;
-                var diff = (entry.text.Length - entryToReplace.text.Length) * 2;
-                entryToReplace.textToReplace = entry.text;
-                dict[entry.header] = entryToReplace;
-                Global.logger.WriteLine($"Replacing {entryToReplace.text} with {entryToReplace.textToReplace} at {entry.header}", LoggerType.Info);
-                // Update offsets
-                foreach (var key in dict.Keys)
-                    if (dict[key].offset > offset)
-                        dict[key].offset += diff;
+                Global.logger.WriteLine($"Replacing {dict[entry.header].text} with {entry.text} at {entry.header}", LoggerType.Info);
+                dict[entry.header].text = entry.text;
             }
             else
             {
-                Global.logger.WriteLine($"Couldn't find header {entry.header}", LoggerType.Warning);
+                Global.logger.WriteLine($"Appending header: {entry.header} with text: {entry.text}", LoggerType.Info);
+                dict.Add(entry.header, new Entry { text = entry.text });
             }
             return dict;
         }
@@ -161,15 +156,18 @@ namespace Unverum
             var outputUexp = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
             var outputUasset = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset";
             var bytes = File.ReadAllBytes(inputUexp).ToList();
-            foreach (var key in dict.Keys.Where(x => !String.IsNullOrEmpty(dict[x].textToReplace)))
+            bytes.RemoveRange(54, bytes.Count - 54);
+            // Append dictionary of entries
+            foreach (var key in dict.Keys)
             {
-                var text = Encoding.Unicode.GetBytes(dict[key].textToReplace);
-                // Remove original text
-                bytes.RemoveRange(dict[key].offset, dict[key].text.Length * 2);
-                // Insert new text
-                bytes.InsertRange(dict[key].offset, text);
+                var header = Encoding.Unicode.GetBytes($"{Regex.Replace(key, @" \(\d+\)", String.Empty)}\r\n");
+                var text = Encoding.Unicode.GetBytes($"{dict[key].text}\r\n");
+                bytes.AddRange(header);
+                bytes.AddRange(text);
             }
-
+            // End with footer
+            var footer = new byte[] { 0xC1, 0x83, 0x2A, 0x9E };
+            bytes.AddRange(footer);
             // Update header offsets
             var size = BitConverter.GetBytes(bytes.Count - 56);
             bytes.RemoveRange(36, 8);

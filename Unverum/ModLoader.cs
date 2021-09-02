@@ -89,7 +89,37 @@ namespace Unverum
             if (filesFound == 0)
                 Global.logger.WriteLine($"Couldn't find {file} within {path}", LoggerType.Warning);
         }
-
+        private static void PakFiles(string path, string output, string sig)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.FileName = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}u4pak.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.WorkingDirectory = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak";
+            startInfo.Arguments = $"pack \"{output}{Global.s}Unverum.pak\" {path}";
+            using (Process process = new Process())
+            {
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
+            }
+            var pak = $"{output}{Global.s}Unverum.pak";
+            if (File.Exists(pak))
+            {
+                if (sig != null)
+                {
+                    var newSig = Path.ChangeExtension(pak, ".sig");
+                    // Copy over original game's .sig
+                    if (File.Exists(sig))
+                        File.Copy(sig, newSig, true);
+                    else
+                        Global.logger.WriteLine($"Couldn't find .sig file to go with {pak}", LoggerType.Warning);
+                }
+            }
+            else
+                Global.logger.WriteLine($"Failed to create pak!", LoggerType.Error);
+        }
         // Copy over mod files in order of ModList
         public static void Build(string path, List<string> mods, bool? patched, string movies, string splash, string sound)
         {
@@ -126,57 +156,68 @@ namespace Unverum
                     var ext = Path.GetExtension(file).ToLowerInvariant();
                     switch (ext)
                     {
+                        case ".txt":
+                                if (Path.GetFileName(file).Equals("dblist.txt", StringComparison.InvariantCultureIgnoreCase) &&
+                                    Global.config.CurrentGame.Equals("My Hero One's Justice 2", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    var dblistFile = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}dblist.txt";
+                                    if (File.Exists(dblistFile))
+                                        File.AppendAllLines(dblistFile, File.ReadLines(file));
+                                    else
+                                        File.Copy(file, dblistFile, true);
+                                }
+                                break;
                         case ".usm":
                         case ".uasset":
                         case ".mp4":
-                            if (!String.IsNullOrEmpty(movies) && Directory.Exists(movies))
-                                ReplaceAsset(file, movies);
-                            break;
+                                if (!String.IsNullOrEmpty(movies) && Directory.Exists(movies))
+                                    ReplaceAsset(file, movies);
+                                break;
                         case ".bmp":
-                            if (!String.IsNullOrEmpty(splash) && Directory.Exists(splash))
-                                ReplaceAsset(file, splash);
-                            break;
+                                if (!String.IsNullOrEmpty(splash) && Directory.Exists(splash))
+                                    ReplaceAsset(file, splash);
+                                break;
                         case ".awb":
-                            if (!String.IsNullOrEmpty(sound) && Directory.Exists(sound))
-                                ReplaceAsset(file, sound);
-                            break;
+                                if (!String.IsNullOrEmpty(sound) && Directory.Exists(sound))
+                                    ReplaceAsset(file, sound);
+                                break;
                         case ".json":
-                            if (Path.GetFileName(file).Equals("text.json", StringComparison.InvariantCultureIgnoreCase) &&
-                                    (Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase)
-                                    || Global.config.CurrentGame.Equals("Guilty Gear -Strive-", StringComparison.InvariantCultureIgnoreCase)
-                                    || Global.config.CurrentGame.Equals("Granblue Fantasy Versus", StringComparison.InvariantCultureIgnoreCase)))
-                            {
-                                    if (missing)
-                                        continue;
-                                    if (entries == null)
-                                    {
-                                        if (TextPatcher.ExtractBaseFiles())
-                                            entries = TextPatcher.GetEntries();
-                                    }
-                                    // Check if entries are still null
-                                    if (entries == null)
-                                    {
-                                        missing = true;
-                                        continue;
-                                    }
+                                if (Path.GetFileName(file).Equals("text.json", StringComparison.InvariantCultureIgnoreCase) &&
+                                        (Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase)
+                                        || Global.config.CurrentGame.Equals("Guilty Gear -Strive-", StringComparison.InvariantCultureIgnoreCase)
+                                        || Global.config.CurrentGame.Equals("Granblue Fantasy Versus", StringComparison.InvariantCultureIgnoreCase)))
+                                {
+                                        if (missing)
+                                            continue;
+                                        if (entries == null)
+                                        {
+                                            if (TextPatcher.ExtractBaseFiles())
+                                                entries = TextPatcher.GetEntries();
+                                        }
+                                        // Check if entries are still null
+                                        if (entries == null)
+                                        {
+                                            missing = true;
+                                            continue;
+                                        }
                                     
-                                    var text = File.ReadAllText(file);
-                                    TextEntries replacements;
-                                    try
-                                    {
-                                        replacements = JsonSerializer.Deserialize<TextEntries>(text);
+                                        var text = File.ReadAllText(file);
+                                        TextEntries replacements;
+                                        try
+                                        {
+                                            replacements = JsonSerializer.Deserialize<TextEntries>(text);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Global.logger.WriteLine(e.Message, LoggerType.Error);
+                                            continue;
+                                        }
+                                        foreach (var replacement in replacements.Entries)
+                                        {
+                                            entries = TextPatcher.ReplaceEntry(replacement, entries);
+                                        }
                                     }
-                                    catch (Exception e)
-                                    {
-                                        Global.logger.WriteLine(e.Message, LoggerType.Error);
-                                        continue;
-                                    }
-                                    foreach (var replacement in replacements.Entries)
-                                    {
-                                        entries = TextPatcher.ReplaceEntry(replacement, entries);
-                                    }
-                                }
-                            break;
+                                break;
                     }
                 }
             }
@@ -185,42 +226,29 @@ namespace Unverum
             {
                 // Write uasset/uexp
                 TextPatcher.WriteToFile(entries);
+
                 var priorityName = String.Empty;
                 foreach (var tilde in Enumerable.Range(0, tildes))
                     priorityName += "~";
                 priorityName += folderLetter;
                 var folder = $"{path}{Global.s}{priorityName}";
                 Directory.CreateDirectory(folder);
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.CreateNoWindow = true;
-                startInfo.UseShellExecute = false;
-                startInfo.FileName = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}u4pak.exe";
-                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                startInfo.WorkingDirectory = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak";
-                startInfo.Arguments = $"pack \"{folder}{Global.s}Text.pak\" RED";
-                using (Process process = new Process())
-                {
-                    process.StartInfo = startInfo;
-                    process.Start();
-                    process.WaitForExit();
-                }
-                var textPak = $"{folder}{Global.s}Text.pak";
-                if (File.Exists(textPak))
-                {
-                    if (sig != null)
-                    {
-                        var newSig = Path.ChangeExtension(textPak, ".sig");
-                        // Copy over original game's .sig
-                        if (File.Exists(sig))
-                            File.Copy(sig, newSig, true);
-                        else
-                            Global.logger.WriteLine($"Couldn't find .sig file to go with {textPak}", LoggerType.Warning);
-                    }
-                    // Delete loose files
-                    Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED", true);
-                }
-                else
-                    Global.logger.WriteLine($"Failed to create pak for text files!", LoggerType.Error);
+
+                PakFiles("RED", folder, sig);
+                // Delete loose files
+                Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED", true);
+            }
+            // Create pak if dblist is found for MHOJ2
+            if (File.Exists($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}dblist.txt"))
+            {
+                var priorityName = String.Empty;
+                foreach (var tilde in Enumerable.Range(0, tildes))
+                    priorityName += "~";
+                priorityName += folderLetter;
+                var folder = $"{path}{Global.s}{priorityName}";
+                Directory.CreateDirectory(folder);
+                PakFiles("dblist.txt", folder, sig);
+                //File.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}dblist.txt");
             }
             // Costume Patched placeholder files as lowest priority
             if (patched != null && (bool)patched)
