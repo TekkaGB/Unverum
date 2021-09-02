@@ -125,6 +125,7 @@ namespace Unverum
         {
             var missing = false;
             Dictionary<string, Entry> entries = null;
+            HashSet<string> db = null;
             string sig = null;
             var sigs = Directory.GetFiles(Path.GetDirectoryName(path), "*.sig", SearchOption.TopDirectoryOnly);
             if (sigs.Length > 0)
@@ -160,11 +161,20 @@ namespace Unverum
                                 if (Path.GetFileName(file).Equals("dblist.txt", StringComparison.InvariantCultureIgnoreCase) &&
                                     Global.config.CurrentGame.Equals("My Hero One's Justice 2", StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    var dblistFile = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}dblist.txt";
-                                    if (File.Exists(dblistFile))
-                                        File.AppendAllLines(dblistFile, File.ReadLines(file));
-                                    else
-                                        File.Copy(file, dblistFile, true);
+                                    var dblistFile = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}My Hero One's Justice 2{Global.s}HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt";
+                                    if (missing)
+                                        continue;
+                                    if (db == null && TextPatcher.ExtractBaseFiles("HeroGame.pak", "*dblist.txt",
+                                        $"HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt"))
+                                        db = File.ReadAllLines(dblistFile).ToHashSet();
+                                    // Check if db is still null
+                                    if (db == null)
+                                    {
+                                        missing = true;
+                                        continue;
+                                    }
+                                    Global.logger.WriteLine($"Appending dblist.txt from {mod}...", LoggerType.Info);
+                                    db.UnionWith(File.ReadAllLines(file));
                                 }
                                 break;
                         case ".usm":
@@ -189,11 +199,9 @@ namespace Unverum
                                 {
                                         if (missing)
                                             continue;
-                                        if (entries == null)
-                                        {
-                                            if (TextPatcher.ExtractBaseFiles())
+                                        if (entries == null && TextPatcher.ExtractBaseFiles("pakchunk0-WindowsNoEditor.pak", "*INT/REDGame.*", 
+                                                $"RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
                                                 entries = TextPatcher.GetEntries();
-                                        }
                                         // Check if entries are still null
                                         if (entries == null)
                                         {
@@ -216,7 +224,7 @@ namespace Unverum
                                         {
                                             entries = TextPatcher.ReplaceEntry(replacement, entries);
                                         }
-                                    }
+                                }
                                 break;
                     }
                 }
@@ -239,16 +247,20 @@ namespace Unverum
                 Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED", true);
             }
             // Create pak if dblist is found for MHOJ2
-            if (File.Exists($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}dblist.txt"))
+            if (db != null)
             {
+                var dbOutput = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt";
+                Directory.CreateDirectory(Path.GetDirectoryName(dbOutput));
+                File.WriteAllLines(dbOutput, db);
+
                 var priorityName = String.Empty;
                 foreach (var tilde in Enumerable.Range(0, tildes))
                     priorityName += "~";
                 priorityName += folderLetter;
                 var folder = $"{path}{Global.s}{priorityName}";
                 Directory.CreateDirectory(folder);
-                PakFiles("dblist.txt", folder, sig);
-                //File.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}dblist.txt");
+                PakFiles("HeroGame", folder, sig);
+                Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}HeroGame", true);
             }
             // Costume Patched placeholder files as lowest priority
             if (patched != null && (bool)patched)

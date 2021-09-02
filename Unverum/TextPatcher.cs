@@ -21,18 +21,19 @@ namespace Unverum
     }
     public static class TextPatcher
     {
-        public static bool ExtractBaseFiles()
+        public static bool ExtractBaseFiles(string pakName, string filter, string extractedPath)
         {
             var outputFolder = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}";
             var quickbms = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}quickbms{Global.s}quickbms_4gb_files.exe";
             var ue4bms = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}quickbms{Global.s}unreal_tournament_4.bms";
+            var file = $"{outputFolder}{Global.s}{extractedPath}";
             Directory.CreateDirectory(outputFolder);
             if (!File.Exists(quickbms) || !File.Exists(ue4bms))
             {
                 Global.logger.WriteLine($"Missing dependencies, text patching will not work (Try redownloading)", LoggerType.Error);
                 return false;
             }
-            var pak = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder)}{Global.s}pakchunk0-WindowsNoEditor.pak";
+            var pak = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder)}{Global.s}{pakName}";;
             if (!File.Exists(pak))
             {
                 Global.logger.WriteLine($"Couldn't find {pak} to extract text files from, text patching will not work", LoggerType.Error);
@@ -48,8 +49,7 @@ namespace Unverum
             }
             // File size matches (no need to reextract)
             else if (pakLength.Equals(Global.config.Configs[Global.config.CurrentGame].PakLength)
-                && File.Exists($"{outputFolder}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset")
-                && File.Exists($"{outputFolder}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
+                && File.Exists(file))
             {
                 Global.logger.WriteLine($"Base files already extracted, continuing to next step", LoggerType.Info);
                 return true;
@@ -81,26 +81,28 @@ namespace Unverum
                 case "Granblue Fantasy Versus":
                     args = "-a 2";
                     break;
+                case "My Hero One's Justice 2":
+                    args = "-a 3";
+                    break;
             }
-            startInfo.Arguments = $@"-Y {args} -f ""*INT/REDGame.*"" unreal_tournament_4.bms ""{pak}"" ""{outputFolder}""";
+            startInfo.Arguments = $@"-Y {args} -f ""{filter}"" unreal_tournament_4.bms ""{pak}"" ""{outputFolder}""";
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardInput = true;
-            Global.logger.WriteLine($"Extracting base files for text patching...", LoggerType.Info);
+            Global.logger.WriteLine($"Extracting base files for patching...", LoggerType.Info);
             using (Process process = new Process())
             {
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();
             }
-            if (File.Exists($"{outputFolder}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset")
-                && File.Exists($"{outputFolder}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
+            if (File.Exists(file))
             {
-                Global.logger.WriteLine($"Successfully extracted base files for text patching", LoggerType.Info);
+                Global.logger.WriteLine($"Successfully extracted base files for patching", LoggerType.Info);
                 return true;
             }
             else
             {
-                Global.logger.WriteLine($"Failed to extract base files, text patching will not work", LoggerType.Error);
+                Global.logger.WriteLine($"Failed to extract base files, patching will not work", LoggerType.Error);
                 return false;
             }
         }
