@@ -39,46 +39,48 @@ namespace Unverum
         }
         public static bool CheckCostumePatch(string exe)
         {
-            var checksum = GetMD5Checksum(exe);
-            // Unpatched 1.27 exe
-            if (checksum.Equals("13a83d1fd8f4c71baaa580c69e6a46cf", StringComparison.InvariantCultureIgnoreCase))
+            var checksum = GetMD5Checksum(exe).ToLowerInvariant();
+            var originalExe = exe.Replace("-eac-nop-loaded", String.Empty);
+            var originalChecksum = GetMD5Checksum(originalExe).ToLowerInvariant();
+            // Check unpatched exe (without eac tag)
+            switch (originalChecksum)
             {
-                PatchExe(exe, "CostumePatch");
-                return true;
-            }
-            // Patched 1.27 exe
-            else if (checksum.Equals("2f9c8178fc8a5cdb3ac1ff8fee888f89", StringComparison.InvariantCultureIgnoreCase))
-            {
-                // Switch 1.27 patched exe with 1.28 if it exists
-                var originalExe = exe.Replace("-eac-nop-loaded", String.Empty);
-                if (GetMD5Checksum(originalExe).Equals("1f716cdf0846d1db7bdf2b907fead008", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Global.logger.WriteLine($"Replacing {exe} with v1.28.", LoggerType.Warning);
-                    File.Copy(originalExe, exe, true);
-                    PatchExe(exe, "v1.28_Patch");
+                // Unpatched 1.27 exe
+                case "13a83d1fd8f4c71baaa580c69e6a46cf":
+                    // Patched 1.27 exe
+                    if (!checksum.Equals("2f9c8178fc8a5cdb3ac1ff8fee888f89", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        File.Copy(originalExe, exe, true);
+                        PatchExe(exe, "CostumePatch");
+                    }
+                    else
+                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
                     return true;
-                }
-                else
-                {
-                    Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
+                // Unpatched 1.28 exe
+                case "1f716cdf0846d1db7bdf2b907fead008":
+                    // Patched 1.28 exe
+                    if (!checksum.Equals("ae356567060af7ffa7d0d9e293fafbd9", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        File.Copy(originalExe, exe, true);
+                        PatchExe(exe, "v1.28_Patch");
+                    }
+                    else
+                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
                     return true;
-                }
-            }
-            // Unpatched 1.28 exe
-            else if (checksum.Equals("1f716cdf0846d1db7bdf2b907fead008", StringComparison.InvariantCultureIgnoreCase))
-            {
-                PatchExe(exe, "v1.28_Patch");
-                return true;
-            }
-            else if (checksum.Equals("ae356567060af7ffa7d0d9e293fafbd9", StringComparison.InvariantCultureIgnoreCase))
-            {
-                Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
-                return true;
-            }
-            else
-            {
-                Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27/v1.28", LoggerType.Warning);
-                return false;
+                // Unpatched 1.29 exe
+                case "2ddb93cb518b6036b7725552477117bd":
+                    // Patched 1.29 exe
+                    if (!checksum.Equals("8c442c2913b2be5e4a21730c7c15b39f", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        File.Copy(originalExe, exe, true);
+                        PatchExe(exe, "v1.29_Patch");
+                    }
+                    else
+                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
+                    return true;
+                default:
+                    Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27/v1.28/v1.29", LoggerType.Warning);
+                    return false;
             }
         }
         public static bool Generic(string exe, string projectName)
