@@ -538,8 +538,9 @@ namespace Unverum
                     SplashFolder = $"{ContentFolder}{Global.s}Splash";
                 if (Directory.Exists($"{ContentFolder}{Global.s}Movies"))
                     MoviesFolder = $"{ContentFolder}{Global.s}Movies";
-                else if (Directory.Exists($"{ContentFolder}{Global.s}CriWareData"))
-                    MoviesFolder = $"{ContentFolder}{Global.s}CriWareData{Global.s}Movie";
+                else if (Directory.Exists($"{ContentFolder}{Global.s}Binaries{Global.s}Movie"))
+                    MoviesFolder = $"{ContentFolder}{Global.s}Binaries{Global.s}Movie";
+                else if (Directory.Exists($"{ContentFolder}{Global.s}Movies"))
                 if (Directory.Exists($"{ContentFolder}{Global.s}Sound"))
                     SoundsFolder = $"{ContentFolder}{Global.s}Sound";
                 else if (Directory.Exists($"{ContentFolder}{Global.s}CriWareData"))
