@@ -408,6 +408,7 @@
                             <ComboBoxItem xml:space="preserve"> Jump Force</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
+                            <ComboBoxItem xml:space="preserve"> Tales of Arise</ComboBoxItem>
                         </ComboBox>
                         <Button FontSize="18" FontWeight="Bold" Name="ConfigButton" Margin="10,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" Content="Setup" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Setup_Click" />
                         <Button FontSize="18" FontWeight="Bold" Name="LaunchButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Content="Launch" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Launch_Click"/>
@@ -634,6 +635,7 @@
                             <ComboBoxItem xml:space="preserve"> Jump Force</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
+                            <ComboBoxItem xml:space="preserve"> Tales of Arise</ComboBoxItem>
                         </ComboBox>
                         <ComboBox IsEnabled="False" Margin="0,0,10,0" Name="FilterBox" Height="35" Width="130" FontSize="18" FontWeight="Bold" SelectionChanged="FilterSelectionChanged">
                             <ComboBoxItem xml:space="preserve"> Featured</ComboBoxItem>

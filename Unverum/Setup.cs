@@ -83,61 +83,74 @@ namespace Unverum
                     return false;
             }
         }
-        public static bool Generic(string exe, string projectName)
+        public static bool Generic(string exe, string projectName, string defaultPath)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.DefaultExt = ".exe";
-            dialog.Filter = $"Executable Files ({exe})|{exe}";
-            dialog.Title = $"Select {exe} from your Steam Install folder";
-            dialog.Multiselect = false;
-            dialog.InitialDirectory = Global.assemblyLocation;
-            dialog.ShowDialog();
-            if (!String.IsNullOrEmpty(dialog.FileName)
-                && Path.GetFileName(dialog.FileName).Equals(exe, StringComparison.InvariantCultureIgnoreCase))
+            if (!File.Exists(defaultPath))
             {
-                var parent = Path.GetDirectoryName(dialog.FileName);
-                var ModsFolder = $"{parent}{Global.s}{projectName}{Global.s}Content{Global.s}Paks{Global.s}~mods";
-                Directory.CreateDirectory(ModsFolder);
-                Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
-                Global.config.Configs[Global.config.CurrentGame].Launcher = dialog.FileName;
-                Global.UpdateConfig();
-                Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
-                return true;
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.DefaultExt = ".exe";
+                dialog.Filter = $"Executable Files ({exe})|{exe}";
+                dialog.Title = $"Select {exe} from your Steam Install folder";
+                dialog.Multiselect = false;
+                dialog.InitialDirectory = Global.assemblyLocation;
+                dialog.ShowDialog();
+                if (!String.IsNullOrEmpty(dialog.FileName)
+                    && Path.GetFileName(dialog.FileName).Equals(exe, StringComparison.InvariantCultureIgnoreCase))
+                    defaultPath = dialog.FileName;
+                else if (!String.IsNullOrEmpty(dialog.FileName))
+                {
+                    Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
+                    return false;
+                }
+                else
+                    return false;
             }
-            else if (!String.IsNullOrEmpty(dialog.FileName))
-                Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-            return false;
+            var parent = Path.GetDirectoryName(defaultPath);
+            var ModsFolder = $"{parent}{Global.s}{projectName}{Global.s}Content{Global.s}Paks{Global.s}~mods";
+            Directory.CreateDirectory(ModsFolder);
+            Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
+            Global.config.Configs[Global.config.CurrentGame].Launcher = defaultPath;
+            Global.UpdateConfig();
+            Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
+            return true;
         }
         public static bool MHOJ2()
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.DefaultExt = ".exe";
-            dialog.Filter = $"Executable Files (MHOJ2.exe)|MHOJ2.exe";
-            dialog.Title = $"Select MHOJ2.exe from your Steam Install folder";
-            dialog.Multiselect = false;
-            dialog.InitialDirectory = Global.assemblyLocation;
-            dialog.ShowDialog();
-            if (!String.IsNullOrEmpty(dialog.FileName)
-                && Path.GetFileName(dialog.FileName).Equals("MHOJ2.exe", StringComparison.InvariantCultureIgnoreCase))
+            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\My Hero One's Justice 2\MHOJ2.exe";
+            if (!File.Exists(defaultPath))
             {
-                var parent = dialog.FileName.Replace($"{Global.s}HeroGame{Global.s}Binaries{Global.s}Win64{Global.s}MHOJ2.exe", String.Empty);
-                var paks = $"{parent}{Global.s}HeroGame{Global.s}Content{Global.s}Paks";
-                // Rename paks for modding to work
-                foreach (var file in Directory.GetFiles(paks, "*", SearchOption.TopDirectoryOnly))
-                    if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
-                        || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
-                        File.Move(file, file.Replace("-WindowsNoEditor_0_P", String.Empty, StringComparison.InvariantCultureIgnoreCase), true);
-                var ModsFolder = $"{paks}{Global.s}~mods";
-                Directory.CreateDirectory(ModsFolder);
-                Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
-                Global.config.Configs[Global.config.CurrentGame].Launcher = dialog.FileName;
-                Global.UpdateConfig();
-                Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
-                return true;
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.DefaultExt = ".exe";
+                dialog.Filter = $"Executable Files (MHOJ2.exe)|MHOJ2.exe";
+                dialog.Title = $"Select MHOJ2.exe from your Steam Install folder";
+                dialog.Multiselect = false;
+                dialog.InitialDirectory = Global.assemblyLocation;
+                dialog.ShowDialog();
+                if (!String.IsNullOrEmpty(dialog.FileName)
+                    && Path.GetFileName(dialog.FileName).Equals("MHOJ2.exe", StringComparison.InvariantCultureIgnoreCase))
+                    defaultPath = dialog.FileName;
+                else if (!String.IsNullOrEmpty(dialog.FileName))
+                {
+                    Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
+                    return false;
+                }
+                else
+                    return false;
             }
-            else if (!String.IsNullOrEmpty(dialog.FileName))
-                Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-            return false;
+            var parent = defaultPath.Replace($"{Global.s}HeroGame{Global.s}Binaries{Global.s}Win64{Global.s}MHOJ2.exe", String.Empty);
+            var paks = $"{parent}{Global.s}HeroGame{Global.s}Content{Global.s}Paks";
+            // Rename paks for modding to work
+            foreach (var file in Directory.GetFiles(paks, "*", SearchOption.TopDirectoryOnly))
+                if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                    || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
+                    File.Move(file, file.Replace("-WindowsNoEditor_0_P", String.Empty, StringComparison.InvariantCultureIgnoreCase), true);
+            var ModsFolder = $"{paks}{Global.s}~mods";
+            Directory.CreateDirectory(ModsFolder);
+            Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
+            Global.config.Configs[Global.config.CurrentGame].Launcher = defaultPath;
+            Global.UpdateConfig();
+            Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
+            return true;
         }
         public static bool KHIII()
         {
@@ -183,6 +196,7 @@ namespace Unverum
         }
         public static bool JF()
         {
+            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\JUMP FORCE\JUMP_FORCE.exe";
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.DefaultExt = ".exe";
             dialog.Filter = "Executable Files (JUMP_FORCE.exe)|JUMP_FORCE.exe";
@@ -211,40 +225,48 @@ namespace Unverum
         }
         public static bool DBFZ()
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.DefaultExt = ".exe";
-            dialog.Filter = "Executable Files (DBFighterZ.exe)|DBFighterZ.exe";
-            dialog.Title = "Select DBFighterZ.exe from your Steam Install folder";
-            dialog.Multiselect = false;
-            dialog.InitialDirectory = Global.assemblyLocation;
-            dialog.ShowDialog();
-            if (!String.IsNullOrEmpty(dialog.FileName)
-                && Path.GetFileName(dialog.FileName).Equals("DBFighterZ.exe", StringComparison.InvariantCultureIgnoreCase))
+            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\DRAGON BALL FighterZ\DBFighterZ.exe";
+            if (!File.Exists(defaultPath))
             {
-                var parent = Path.GetDirectoryName(dialog.FileName);
-                var launcher = $"{parent}{Global.s}RED{Global.s}Binaries{Global.s}Win64{Global.s}RED-Win64-Shipping.exe";
-                var renamedLauncher = $"{parent}{Global.s}RED{Global.s}Binaries{Global.s}Win64{Global.s}RED-Win64-Shipping-eac-nop-loaded.exe";
-                var ModsFolder = $"{parent}{Global.s}RED{Global.s}Content{Global.s}Paks{Global.s}~mods";
-                if (File.Exists(launcher))
-                    File.Copy(launcher, renamedLauncher, true);
-                if (!File.Exists(renamedLauncher))
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.DefaultExt = ".exe";
+                dialog.Filter = "Executable Files (DBFighterZ.exe)|DBFighterZ.exe";
+                dialog.Title = "Select DBFighterZ.exe from your Steam Install folder";
+                dialog.Multiselect = false;
+                dialog.InitialDirectory = Global.assemblyLocation;
+                dialog.ShowDialog();
+                if (!String.IsNullOrEmpty(dialog.FileName)
+                    && Path.GetFileName(dialog.FileName).Equals("DBFighterZ.exe", StringComparison.InvariantCultureIgnoreCase))
+                    defaultPath = dialog.FileName;
+                else if (!String.IsNullOrEmpty(dialog.FileName))
                 {
-                    Global.logger.WriteLine($"Couldn't find {renamedLauncher}, select the correct exe", LoggerType.Error);
+                    Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
                     return false;
                 }
-
-                CheckCostumePatch(renamedLauncher);
-
-                Directory.CreateDirectory(ModsFolder);
-                Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
-                Global.config.Configs[Global.config.CurrentGame].Launcher = renamedLauncher;
-                Global.UpdateConfig();
-                Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
-                return true;
+                else
+                    return false;
             }
-            else if (!String.IsNullOrEmpty(dialog.FileName))
-                Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-            return false;
+            var parent = Path.GetDirectoryName(defaultPath);
+            var launcher = $"{parent}{Global.s}RED{Global.s}Binaries{Global.s}Win64{Global.s}RED-Win64-Shipping.exe";
+            var renamedLauncher = $"{parent}{Global.s}RED{Global.s}Binaries{Global.s}Win64{Global.s}RED-Win64-Shipping-eac-nop-loaded.exe";
+            var ModsFolder = $"{parent}{Global.s}RED{Global.s}Content{Global.s}Paks{Global.s}~mods";
+            if (File.Exists(launcher))
+                File.Copy(launcher, renamedLauncher, true);
+            if (!File.Exists(renamedLauncher))
+            {
+                Global.logger.WriteLine($"Couldn't find {renamedLauncher}, select the correct exe", LoggerType.Error);
+                return false;
+            }
+
+            CheckCostumePatch(renamedLauncher);
+
+            Directory.CreateDirectory(ModsFolder);
+            Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
+            Global.config.Configs[Global.config.CurrentGame].Launcher = renamedLauncher;
+            Global.UpdateConfig();
+            Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
+            return true;
+
         }
     }
 }

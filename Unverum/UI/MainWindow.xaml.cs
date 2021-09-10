@@ -258,15 +258,17 @@ namespace Unverum
                 case GameFilter.MHOJ2:
                     return Setup.MHOJ2();
                 case GameFilter.GBVS:
-                    return Setup.Generic("GBVS.exe", "RED");
+                    return Setup.Generic("GBVS.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\Granblue Fantasy Versus\GBVS.exe");
                 case GameFilter.GGS:
-                    return Setup.Generic("GGST.exe", "RED");
+                    return Setup.Generic("GGST.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\GUILTY GEAR -STRIVE-\GGST.exe");
                 case GameFilter.JF:
                     return Setup.JF();
                 case GameFilter.KHIII:
                     return Setup.KHIII();
                 case GameFilter.SN:
-                    return Setup.Generic("ScarletNexus.exe", "ScarletNexus");
+                    return Setup.Generic("ScarletNexus.exe", "ScarletNexus", @"C:\Program Files (x86)\Steam\steamapps\common\ScarletNexus\ScarletNexus.exe");
+                case GameFilter.ToA:
+                    return Setup.Generic("Tales of Arise.exe", "Arise", @"C:\Program Files (x86)\Steam\steamapps\common\Tales of Arise\Tales of Arise.exe");
             }
             return false;
         }
@@ -397,6 +399,9 @@ namespace Unverum
                             case GameFilter.SN:
                                 id = "775500";
                                 break;
+                            case GameFilter.ToA:
+                                id = "740130";
+                                break;
                         }
                         path = epic ? $"com.epicgames.launcher://apps/{id}?action=launch&silent=true" : $"steam://rungameid/{id}";
                     }
@@ -443,6 +448,9 @@ namespace Unverum
                 case GameFilter.SN:
                     id = "12028";
                     break;
+                case GameFilter.ToA:
+                    id = "13821";
+                    break;
             }
             try
             {
@@ -462,7 +470,9 @@ namespace Unverum
         {
             try
             {
-                var ps = new ProcessStartInfo($"https://discord.gg/tgFrebr")
+                var discordLink = (managerSelected && GameBox.SelectedIndex == 7) || (!managerSelected && GameFilterBox.SelectedIndex == 7) 
+                    ? "https://discord.gg/Se2XTnA" : "https://discord.gg/tgFrebr";
+                var ps = new ProcessStartInfo(discordLink)
                 {
                     UseShellExecute = true,
                     Verb = "open"
@@ -1010,7 +1020,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)
@@ -1152,6 +1162,7 @@ namespace Unverum
         }
         private void OnBrowserTabSelected(object sender, RoutedEventArgs e)
         {
+            managerSelected = false;
             if (!selected)
             {
                 InitializeBrowser();
@@ -1161,8 +1172,10 @@ namespace Unverum
             else
                 DiscordButton.Visibility = Visibility.Collapsed;
         }
+        bool managerSelected = true;
         private void OnManagerTabSelected(object sender, RoutedEventArgs e)
         {
+            managerSelected = true;
             if (GameBox.SelectedIndex != 5)
                 DiscordButton.Visibility = Visibility.Visible;
             else

@@ -19,7 +19,8 @@ namespace Unverum
         GGS,
         JF,
         KHIII,
-        SN
+        SN,
+        ToA
     }
     public enum FeedFilter
     {
@@ -131,6 +132,9 @@ namespace Unverum
                         break;
                     case GameFilter.SN:
                         url += "12028&";
+                        break;
+                    case GameFilter.ToA:
+                        url += "13821&";
                         break;
                 }
             }
