@@ -268,7 +268,7 @@ namespace Unverum
                 case GameFilter.SN:
                     return Setup.Generic("ScarletNexus.exe", "ScarletNexus", @"C:\Program Files (x86)\Steam\steamapps\common\ScarletNexus\ScarletNexus.exe");
                 case GameFilter.ToA:
-                    return Setup.Generic("Tales of Arise.exe", "Arise", @"C:\Program Files (x86)\Steam\steamapps\common\Tales of Arise\Tales of Arise.exe");
+                    return Setup.ToA();
             }
             return false;
         }

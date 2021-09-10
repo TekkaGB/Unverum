@@ -116,7 +116,7 @@ namespace Unverum
         }
         public static bool MHOJ2()
         {
-            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\My Hero One's Justice 2\MHOJ2.exe";
+            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\My Hero One's Justice 2\HeroGame\Binaries\Win64\MHOJ2.exe";
             if (!File.Exists(defaultPath))
             {
                 OpenFileDialog dialog = new OpenFileDialog();
@@ -144,6 +144,39 @@ namespace Unverum
                 if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
                     || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
                     File.Move(file, file.Replace("-WindowsNoEditor_0_P", String.Empty, StringComparison.InvariantCultureIgnoreCase), true);
+            var ModsFolder = $"{paks}{Global.s}~mods";
+            Directory.CreateDirectory(ModsFolder);
+            Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
+            Global.config.Configs[Global.config.CurrentGame].Launcher = defaultPath;
+            Global.UpdateConfig();
+            Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
+            return true;
+        }
+        public static bool ToA()
+        {
+            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\Tales of Arise\Arise\Binaries\Win64\Tales of Arise.exe";
+            if (!File.Exists(defaultPath))
+            {
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.DefaultExt = ".exe";
+                dialog.Filter = $"Executable Files (Tales of Arise.exe)|Tales of Arise.exe";
+                dialog.Title = $"Select Tales of Arise.exe from your Steam Install folder";
+                dialog.Multiselect = false;
+                dialog.InitialDirectory = Global.assemblyLocation;
+                dialog.ShowDialog();
+                if (!String.IsNullOrEmpty(dialog.FileName)
+                    && Path.GetFileName(dialog.FileName).Equals("Tales of Arise.exe", StringComparison.InvariantCultureIgnoreCase))
+                    defaultPath = dialog.FileName;
+                else if (!String.IsNullOrEmpty(dialog.FileName))
+                {
+                    Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
+                    return false;
+                }
+                else
+                    return false;
+            }
+            var parent = defaultPath.Replace($"{Global.s}Arise{Global.s}Binaries{Global.s}Win64{Global.s}Tales of Arise.exe", String.Empty);
+            var paks = $"{parent}{Global.s}Arise{Global.s}Content{Global.s}Paks";
             var ModsFolder = $"{paks}{Global.s}~mods";
             Directory.CreateDirectory(ModsFolder);
             Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
@@ -197,31 +230,37 @@ namespace Unverum
         public static bool JF()
         {
             var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\JUMP FORCE\JUMP_FORCE.exe";
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.DefaultExt = ".exe";
-            dialog.Filter = "Executable Files (JUMP_FORCE.exe)|JUMP_FORCE.exe";
-            dialog.Title = "Select JUMP_FORCE.exe from your Steam Install folder";
-            dialog.Multiselect = false;
-            dialog.InitialDirectory = Global.assemblyLocation;
-            dialog.ShowDialog();
-            if (!String.IsNullOrEmpty(dialog.FileName)
-                && Path.GetFileName(dialog.FileName).Equals("JUMP_FORCE.exe", StringComparison.InvariantCultureIgnoreCase))
+            if (!File.Exists(defaultPath))
             {
-                var parent = Path.GetDirectoryName(dialog.FileName);
-                var ModsFolder = $"{parent}{Global.s}JUMP_FORCE{Global.s}Content{Global.s}Paks{Global.s}~mods";
-
-                CheckJFPatch(dialog.FileName);
-
-                Directory.CreateDirectory(ModsFolder);
-                Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
-                Global.config.Configs[Global.config.CurrentGame].Launcher = dialog.FileName;
-                Global.UpdateConfig();
-                Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
-                return true;
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.DefaultExt = ".exe";
+                dialog.Filter = "Executable Files (JUMP_FORCE.exe)|JUMP_FORCE.exe";
+                dialog.Title = "Select JUMP_FORCE.exe from your Steam Install folder";
+                dialog.Multiselect = false;
+                dialog.InitialDirectory = Global.assemblyLocation;
+                dialog.ShowDialog();
+                if (!String.IsNullOrEmpty(dialog.FileName)
+                    && Path.GetFileName(dialog.FileName).Equals("JUMP_FORCE.exe", StringComparison.InvariantCultureIgnoreCase))
+                    defaultPath = dialog.FileName;
+                else if (!String.IsNullOrEmpty(dialog.FileName))
+                {
+                    Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
+                    return false;
+                }
+                else
+                    return false;
             }
-            else if (!String.IsNullOrEmpty(dialog.FileName))
-                Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-            return false;
+            var parent = Path.GetDirectoryName(defaultPath);
+            var ModsFolder = $"{parent}{Global.s}JUMP_FORCE{Global.s}Content{Global.s}Paks{Global.s}~mods";
+
+            CheckJFPatch(defaultPath);
+
+            Directory.CreateDirectory(ModsFolder);
+            Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
+            Global.config.Configs[Global.config.CurrentGame].Launcher = defaultPath;
+            Global.UpdateConfig();
+            Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
+            return true;
         }
         public static bool DBFZ()
         {
