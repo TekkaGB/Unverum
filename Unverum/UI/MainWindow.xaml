@@ -423,7 +423,11 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <DataGrid Margin="10,5,3,3" Name="ModGrid" AutoGenerateColumns="False" GridLinesVisibility="None" VerticalScrollBarVisibility="Auto"  BorderBrush="#424242"
+                            <Grid Visibility="Collapsed" Name="DropBox" Margin="10,5,3,3" Panel.ZIndex="2" DragLeave="Add_Leave" DragEnter="Add_Enter" Drop="Add_Drop" AllowDrop="True" Background="Transparent">
+                                <Border Opacity="0.7" Background="Black"/>
+                                <TextBlock Foreground="#f2f2f2" FontSize="40" Panel.ZIndex="3" VerticalAlignment="Center" HorizontalAlignment="Center">Drop files to create mod</TextBlock>
+                            </Grid>
+                            <DataGrid DragEnter="Add_Enter" Margin="10,5,3,3" Name="ModGrid" AutoGenerateColumns="False" GridLinesVisibility="None" VerticalScrollBarVisibility="Auto"  BorderBrush="#424242"
                           EnableColumnVirtualization="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"
                           CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AlternatingRowBackground="#2A2A2A"
                           dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" HeadersVisibility="Column" 

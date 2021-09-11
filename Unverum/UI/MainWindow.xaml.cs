@@ -621,6 +621,88 @@ namespace Unverum
                     ShowMetadata(row.name);
             }
         }
+        private void Add_Enter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Handled = true;
+                e.Effects = DragDropEffects.Move;
+                DropBox.Visibility = Visibility.Visible;
+            }
+        }
+        private void Add_Leave(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            DropBox.Visibility = Visibility.Collapsed;
+        }
+        private void Add_Drop(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] fileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+                CreateMod(fileList);
+            }
+            DropBox.Visibility = Visibility.Collapsed;
+        }
+        private void CreateMod(string[] files)
+        {
+            var nameWindow = new EditWindow(null);
+            nameWindow.ShowDialog();
+            if (nameWindow.directory != null)
+            {
+                Directory.CreateDirectory(nameWindow.directory);
+                string defaultSig = null;
+                if (Directory.Exists(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
+                {
+                    var sigs = Directory.GetFiles(Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder), "*.sig", SearchOption.TopDirectoryOnly);
+                    if (sigs.Length > 0)
+                        defaultSig = sigs[0];
+                }
+                foreach (var file in files)
+                {
+                    // Get the file attributes for file or directory
+                    FileAttributes attr = File.GetAttributes(file);
+
+                    if (attr.HasFlag(FileAttributes.Directory))
+                    {
+                        foreach (string path in Directory.GetFiles(file, "*.*", SearchOption.AllDirectories))
+                        {
+                            var newPath = path.Replace(file, $"{nameWindow.directory}{Global.s}{Path.GetFileName(file)}");
+                            Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+                            File.Copy(path, newPath, true);
+                            if (Path.GetExtension(path).Equals(".pak", StringComparison.InvariantCultureIgnoreCase) && defaultSig != null)
+                            {
+                                var sig = Path.ChangeExtension(path, ".sig");
+                                var newPathSig = Path.ChangeExtension(newPath, ".sig");
+                                // Check if mod folder has corresponding .sig
+                                if (File.Exists(sig))
+                                    File.Copy(sig, newPathSig, true);
+                                // Otherwise copy over original game's .sig
+                                else if (File.Exists(defaultSig))
+                                    File.Copy(defaultSig, newPathSig, true);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var newPath = $"{nameWindow.directory}{Global.s}{Path.GetFileName(file)}";
+                        File.Copy(file, newPath, true);
+                        if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase) && defaultSig != null)
+                        {
+                            var sig = Path.ChangeExtension(file, ".sig");
+                            var newPathSig = Path.ChangeExtension(newPath, ".sig");
+                            // Check if mod folder has corresponding .sig
+                            if (File.Exists(sig))
+                                File.Copy(sig, newPathSig, true);
+                            // Otherwise copy over original game's .sig
+                            else if (File.Exists(defaultSig))
+                                File.Copy(defaultSig, newPathSig, true);
+                        }
+                    }
+                }
+            }
+        }
         private void ModsFolder_Click(object sender, RoutedEventArgs e)
         {
             var choice = new ChoiceWindow("Create New Mod", "Name a mod and choose the .pak file for it to use",
