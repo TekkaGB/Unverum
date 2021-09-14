@@ -36,7 +36,7 @@ namespace Unverum
                    MessageBox.Show("Error whilst checking for Unverum update: No response from GameBanana API");
                     return false;
                 }
-                if (response.HasUpdates)
+                if (response.HasUpdates != null && (bool)response.HasUpdates)
                 {
                     GameBananaItemUpdate[] updates = response.Updates;
                     string updateTitle = updates[0].Title;

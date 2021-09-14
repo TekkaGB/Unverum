@@ -64,7 +64,7 @@ namespace Unverum
                     var MOD_ID = url.Segments[2];
                     requestUrls[urlCount] += $"itemtype[]={MOD_TYPE}&itemid[]={MOD_ID}&fields[]=Updates().bSubmissionHasUpdates()," +
                         $"Updates().aGetLatestUpdates(),Files().aFiles(),Preview().sStructuredDataFullsizeUrl()&";
-                    if (++modCount > 24)
+                    if (++modCount > 49)
                     {
                         requestUrls[urlCount] += "return_keys=1";
                         ++urlCount;
@@ -156,7 +156,7 @@ namespace Unverum
             // If lastupdate doesn't exist, add one
             if (metadata.lastupdate == null)
             {
-                if (item.HasUpdates)
+                if (item.HasUpdates != null && (bool)item.HasUpdates)
                     metadata.lastupdate = item.Updates[0].DateAdded;
                 else
                     metadata.lastupdate = new DateTime(1970, 1, 1);
@@ -164,7 +164,7 @@ namespace Unverum
                 File.WriteAllText($@"{mod}{Global.s}mod.json", metadataString);
                 return;
             }
-            if (item.HasUpdates)
+            if (item.HasUpdates != null && (bool)item.HasUpdates)
             {
                 var update = item.Updates[0];
                 // Compares dates of last update to current
