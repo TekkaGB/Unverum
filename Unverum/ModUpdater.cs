@@ -64,7 +64,7 @@ namespace Unverum
                     var MOD_ID = url.Segments[2];
                     requestUrls[urlCount] += $"itemtype[]={MOD_TYPE}&itemid[]={MOD_ID}&fields[]=Updates().bSubmissionHasUpdates()," +
                         $"Updates().aGetLatestUpdates(),Files().aFiles(),Preview().sStructuredDataFullsizeUrl()&";
-                    if (++modCount > 49)
+                    if (++modCount > 24)
                     {
                         requestUrls[urlCount] += "return_keys=1";
                         ++urlCount;
