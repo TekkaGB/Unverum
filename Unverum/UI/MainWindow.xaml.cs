@@ -363,6 +363,7 @@ namespace Unverum
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
                 return;
             }
+            if (LaunchCheckbox.IsChecked ?? false) return; // ret if no run checkbox is checked
             if (Global.config.Configs[Global.config.CurrentGame].Launcher != null && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
                 var path = Global.config.Configs[Global.config.CurrentGame].Launcher;
