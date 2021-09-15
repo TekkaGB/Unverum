@@ -1574,8 +1574,8 @@ namespace Unverum
                 if (colHeader.Column.Header.Equals("Name"))
                 {
                     // Sort alphabetically
-                    Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderBy(x => x.name).ToList());
-                    Global.logger.WriteLine("Sorted alphabetically!", LoggerType.Info);
+                    Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderBy(x => x.name, new NaturalSort()).ToList());
+                    Global.logger.WriteLine("Sorted alphanumerically!", LoggerType.Info);
                 }
                 else if (colHeader.Column.Header.Equals("Enabled"))
                 {
