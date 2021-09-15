@@ -277,6 +277,7 @@ namespace Unverum
                     await client.DownloadAsync(uri, fs, fileName, progress, cancellationToken.Token);
                 }
                 progressBox.Close();
+                ClearDirectory(mod);
                 await ExtractFile(fileName, mod, updateTime);
             }
             catch (OperationCanceledException)
