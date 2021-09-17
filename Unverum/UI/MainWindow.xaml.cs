@@ -1468,7 +1468,7 @@ namespace Unverum
                 filterSelect = true;
                 if (!searched)
                 {
-                    FilterBox.ItemsSource = FilterBoxListWhenSearched;
+                    FilterBox.ItemsSource = FilterBoxList;
                     FilterBox.SelectedIndex = 1;
                 }
                 // Set Categories
@@ -1522,7 +1522,7 @@ namespace Unverum
         {
             if (!filterSelect && IsLoaded)
             {
-                if (!searched)
+                if (searched)
                 {
                     filterSelect = true;
                     FilterBox.ItemsSource = FilterBoxList;
