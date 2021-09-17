@@ -1648,28 +1648,7 @@ namespace Unverum
             }
             e.Handled = true;
         }
-
-        private void SearchBar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == System.Windows.Input.Key.Enter)
-            {
-                if (!filterSelect && IsLoaded && !String.IsNullOrWhiteSpace(SearchBar.Text))
-                {
-                    filterSelect = true;
-                    FilterBox.ItemsSource = FilterBoxListWhenSearched;
-                    FilterBox.SelectedIndex = 3;
-                    NSFWCheckbox.IsChecked = true;
-                    filterSelect = false;
-                    searched = true;
-                    page = 1;
-                    RefreshFilter();
-                }
-            }
-        }
-        private static readonly List<string> FilterBoxList = new string[] { " Featured", " Recent", " Popular" }.ToList();
-        private static readonly List<string> FilterBoxListWhenSearched = new string[] { " Featured", " Recent", " Popular", "- - -" }.ToList();
-
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        private void Search()
         {
             if (!filterSelect && IsLoaded && !String.IsNullOrWhiteSpace(SearchBar.Text))
             {
@@ -1677,11 +1656,35 @@ namespace Unverum
                 FilterBox.ItemsSource = FilterBoxListWhenSearched;
                 FilterBox.SelectedIndex = 3;
                 NSFWCheckbox.IsChecked = true;
+                // Set categories
+                if (cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Any(x => x.RootID == 0))
+                    CatBox.ItemsSource = All.Concat(cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Where(x => x.RootID == 0).OrderBy(y => y.ID));
+                else
+                    CatBox.ItemsSource = None;
+                CatBox.SelectedIndex = 0;
+                var cat = (GameBananaCategory)CatBox.SelectedValue;
+                if (cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Any(x => x.RootID == cat.ID))
+                    SubCatBox.ItemsSource = All.Concat(cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Where(x => x.RootID == cat.ID).OrderBy(y => y.ID));
+                else
+                    SubCatBox.ItemsSource = None;
+                SubCatBox.SelectedIndex = 0;
                 filterSelect = false;
                 searched = true;
                 page = 1;
                 RefreshFilter();
             }
+        }
+        private void SearchBar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+                Search();
+        }
+        private static readonly List<string> FilterBoxList = new string[] { " Featured", " Recent", " Popular" }.ToList();
+        private static readonly List<string> FilterBoxListWhenSearched = new string[] { " Featured", " Recent", " Popular", " - - -" }.ToList();
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            Search();
         }
     }
 }

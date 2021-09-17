@@ -676,13 +676,13 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                    <TextBox Margin="5,0,35,0" Grid.Column="5" KeyDown="SearchBar_KeyDown" Name="SearchBar" Height="35" MinWidth="200" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
-                        <Button Grid.Column="5" HorizontalAlignment="Right" Click="SearchButton_Click" Name="SearchButton" Height="35" Width="35">
+                    <TextBox Margin="5,0,35,0" Grid.Column="5" IsEnabled="False" KeyDown="SearchBar_KeyDown" Name="SearchBar" Height="35" MinWidth="200" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
+                    <Button Grid.Column="5" IsEnabled="False" HorizontalAlignment="Right" Click="SearchButton_Click" Name="SearchButton" Height="35" Width="35">
                             <fa5:ImageAwesome Icon="Solid_Search" Foreground="#f2f2f2" Margin="3"/>
                         </Button>
                     <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5,0,0,0" >
-                        <CheckBox Name="NSFWCheckbox" Unchecked="NSFWCheckbox_Checked" Checked="NSFWCheckbox_Checked"  Margin="0,0,5,0" VerticalAlignment="Center" />
-                        <TextBlock Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold">
+                        <CheckBox Name="NSFWCheckbox" IsEnabled="False" Unchecked="NSFWCheckbox_Checked" Checked="NSFWCheckbox_Checked"  Margin="0,0,5,0" VerticalAlignment="Center" />
+                        <TextBlock Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold">
                             Include<LineBreak/>
                             NSFW
                         </TextBlock>

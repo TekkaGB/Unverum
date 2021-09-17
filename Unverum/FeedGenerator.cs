@@ -56,7 +56,6 @@ namespace Unverum
             using (var httpClient = new HttpClient())
             {
                 var requestUrl = GenerateUrl(page, game, type, filter, category, subcategory, perPage, nsfw, search);
-                Global.logger.WriteLine(requestUrl, LoggerType.Info);
                 if (feed.ContainsKey(requestUrl) && feed[requestUrl].IsValid)
                 {
                     CurrentFeed = feed[requestUrl];
