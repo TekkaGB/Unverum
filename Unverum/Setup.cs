@@ -116,7 +116,7 @@ namespace Unverum
         }
         public static bool MHOJ2()
         {
-            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\My Hero One's Justice 2\HeroGame\Binaries\Win64\MHOJ2.exe";
+            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\My Hero Ones Justice 2\HeroGame\Binaries\Win64\MHOJ2.exe";
             if (!File.Exists(defaultPath))
             {
                 OpenFileDialog dialog = new OpenFileDialog();

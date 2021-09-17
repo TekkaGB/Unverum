@@ -8,7 +8,7 @@
         Background="#131313"
         Title="Unverum" SizeChanged="OnResize"
         mc:Ignorable="d" Closing="Window_Closing" WindowStartupLocation="CenterScreen"
-        Height="750" Width="1280" MinHeight="750" MinWidth="1260" Loaded="WindowLoaded">
+        Height="750" Width="1280" MinHeight="750" MinWidth="1280" Loaded="WindowLoaded">
     <Window.Resources>
         <FontFamily x:Key="Monospace">../Assets/#Roboto Mono</FontFamily>
         <DataTemplate x:Key="ModTemplate">
