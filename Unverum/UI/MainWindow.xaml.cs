@@ -1233,12 +1233,14 @@ namespace Unverum
                     gameCounter++;
                 }
             }
+            filterSelect = true;
             GameFilterBox.SelectedIndex = GameBox.SelectedIndex;
+            FilterBox.ItemsSource = FilterBoxList;
             CatBox.ItemsSource = All.Concat(cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Where(x => x.RootID == 0).OrderBy(y => y.ID));
             SubCatBox.ItemsSource = None;
-            filterSelect = true;
             CatBox.SelectedIndex = 0;
             SubCatBox.SelectedIndex = 0;
+            FilterBox.SelectedIndex = 1;
             filterSelect = false;
             RefreshFilter();
             selected = true;
@@ -1284,9 +1286,12 @@ namespace Unverum
                 RefreshFilter();
         }
         private static bool filterSelect;
-        private static Random rand = new Random();
+        private static bool searched = false;
         private async void RefreshFilter()
         {
+            NSFWCheckbox.IsEnabled = false;
+            SearchBar.IsEnabled = false;
+            SearchButton.IsEnabled = false;
             GameFilterBox.IsEnabled = false;
             FilterBox.IsEnabled = false;
             TypeBox.IsEnabled = false;
@@ -1305,8 +1310,9 @@ namespace Unverum
             FeedBox.Visibility = Visibility.Collapsed;
             PageLeft.IsEnabled = false;
             PageRight.IsEnabled = false;
+            var search = searched ? SearchBar.Text : null;
             await FeedGenerator.GetFeed(page, (GameFilter)GameFilterBox.SelectedIndex, (TypeFilter)TypeBox.SelectedIndex, (FeedFilter)FilterBox.SelectedIndex, (GameBananaCategory)CatBox.SelectedItem,
-                (GameBananaCategory)SubCatBox.SelectedItem, (PerPageBox.SelectedIndex + 1) * 10, (bool)NSFWCheckbox.IsChecked);
+                (GameBananaCategory)SubCatBox.SelectedItem, (PerPageBox.SelectedIndex + 1) * 10, (bool)NSFWCheckbox.IsChecked, search);
             FeedBox.ItemsSource = FeedGenerator.CurrentFeed.Records;
             if (FeedGenerator.error)
             {
@@ -1360,12 +1366,25 @@ namespace Unverum
             PageBox.IsEnabled = true;
             PerPageBox.IsEnabled = true;
             GameFilterBox.IsEnabled = true;
+            SearchBar.IsEnabled = true;
+            SearchButton.IsEnabled = true;
+            NSFWCheckbox.IsEnabled = true;
         }
 
         private void FilterSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (IsLoaded)
+            if (IsLoaded && !filterSelect)
             {
+                if (!searched)
+                {
+                    filterSelect = true;
+                    var temp = FilterBox.SelectedIndex;
+                    FilterBox.ItemsSource = FilterBoxList;
+                    FilterBox.SelectedIndex = temp;
+                    filterSelect = false;
+                }
+                SearchBar.Clear();
+                searched = false;
                 page = 1;
                 RefreshFilter();
             }
@@ -1374,11 +1393,18 @@ namespace Unverum
         {
             if (IsLoaded && !filterSelect)
             {
+                SearchBar.Clear();
+                searched = false;
                 if (GameFilterBox.SelectedIndex != 5)
                     DiscordButton.Visibility = Visibility.Visible;
                 else
                     DiscordButton.Visibility = Visibility.Collapsed;
                 filterSelect = true;
+                if (!searched)
+                {
+                    FilterBox.ItemsSource = FilterBoxList;
+                    FilterBox.SelectedIndex = 1;
+                }
                 // Set categories
                 if (cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Any(x => x.RootID == 0))
                     CatBox.ItemsSource = All.Concat(cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Where(x => x.RootID == 0).OrderBy(y => y.ID));
@@ -1400,7 +1426,14 @@ namespace Unverum
         {
             if (IsLoaded && !filterSelect)
             {
+                SearchBar.Clear();
+                searched = false;
                 filterSelect = true;
+                if (!searched)
+                {
+                    FilterBox.ItemsSource = FilterBoxList;
+                    FilterBox.SelectedIndex = 1;
+                }
                 // Set categories
                 if (cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Any(x => x.RootID == 0))
                     CatBox.ItemsSource = All.Concat(cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Where(x => x.RootID == 0).OrderBy(y => y.ID));
@@ -1422,7 +1455,14 @@ namespace Unverum
         {
             if (IsLoaded && !filterSelect)
             {
+                SearchBar.Clear();
+                searched = false;
                 filterSelect = true;
+                if (!searched)
+                {
+                    FilterBox.ItemsSource = FilterBoxListWhenSearched;
+                    FilterBox.SelectedIndex = 1;
+                }
                 // Set Categories
                 var cat = (GameBananaCategory)CatBox.SelectedValue;
                 if (cats[(GameFilter)GameFilterBox.SelectedIndex][(TypeFilter)TypeBox.SelectedIndex].Any(x => x.RootID == cat.ID))
@@ -1439,6 +1479,8 @@ namespace Unverum
         {
             if (!filterSelect && IsLoaded)
             {
+                SearchBar.Clear();
+                searched = false;
                 page = 1;
                 RefreshFilter();
             }
@@ -1470,8 +1512,20 @@ namespace Unverum
         }
         private void NSFWCheckbox_Checked(object sender, RoutedEventArgs e)
         {
-            page = 1;
-            RefreshFilter();
+            if (!filterSelect && IsLoaded)
+            {
+                if (!searched)
+                {
+                    filterSelect = true;
+                    FilterBox.ItemsSource = FilterBoxList;
+                    FilterBox.SelectedIndex = 1;
+                    filterSelect = false;
+                }
+                SearchBar.Clear();
+                searched = false;
+                page = 1;
+                RefreshFilter();
+            }
         }
 
         private void OnFirstOpen()
@@ -1593,6 +1647,41 @@ namespace Unverum
                 Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
             }
             e.Handled = true;
+        }
+
+        private void SearchBar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                if (!filterSelect && IsLoaded && !String.IsNullOrWhiteSpace(SearchBar.Text))
+                {
+                    filterSelect = true;
+                    FilterBox.ItemsSource = FilterBoxListWhenSearched;
+                    FilterBox.SelectedIndex = 3;
+                    NSFWCheckbox.IsChecked = true;
+                    filterSelect = false;
+                    searched = true;
+                    page = 1;
+                    RefreshFilter();
+                }
+            }
+        }
+        private static readonly List<string> FilterBoxList = new string[] { " Featured", " Recent", " Popular" }.ToList();
+        private static readonly List<string> FilterBoxListWhenSearched = new string[] { " Featured", " Recent", " Popular", "- - -" }.ToList();
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!filterSelect && IsLoaded && !String.IsNullOrWhiteSpace(SearchBar.Text))
+            {
+                filterSelect = true;
+                FilterBox.ItemsSource = FilterBoxListWhenSearched;
+                FilterBox.SelectedIndex = 3;
+                NSFWCheckbox.IsChecked = true;
+                filterSelect = false;
+                searched = true;
+                page = 1;
+                RefreshFilter();
+            }
         }
     }
 }

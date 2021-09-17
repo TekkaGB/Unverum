@@ -26,7 +26,8 @@ namespace Unverum
     {
         Featured,
         Recent,
-        Popular
+        Popular,
+        None
     }
     public enum TypeFilter
     {
@@ -47,14 +48,15 @@ namespace Unverum
                 return -1;
             return Double.Parse(keys.First());
         }
-        public static async Task GetFeed(int page, GameFilter game, TypeFilter type, FeedFilter filter, GameBananaCategory category, GameBananaCategory subcategory, int perPage, bool nsfw)
+        public static async Task GetFeed(int page, GameFilter game, TypeFilter type, FeedFilter filter, GameBananaCategory category, GameBananaCategory subcategory, int perPage, bool nsfw, string search)
         {
             error = false;
             if (feed == null)
                 feed = new Dictionary<string, GameBananaModList>();
             using (var httpClient = new HttpClient())
             {
-                var requestUrl = GenerateUrl(page, game, type, filter, category, subcategory, perPage, nsfw);
+                var requestUrl = GenerateUrl(page, game, type, filter, category, subcategory, perPage, nsfw, search);
+                Global.logger.WriteLine(requestUrl, LoggerType.Info);
                 if (feed.ContainsKey(requestUrl) && feed[requestUrl].IsValid)
                 {
                     CurrentFeed = feed[requestUrl];
@@ -88,10 +90,10 @@ namespace Unverum
                     feed[requestUrl] = CurrentFeed;
             }
         }
-        private static string GenerateUrl(int page, GameFilter game, TypeFilter type, FeedFilter filter, GameBananaCategory category, GameBananaCategory subcategory, int perPage, bool nsfw)
+        private static string GenerateUrl(int page, GameFilter game, TypeFilter type, FeedFilter filter, GameBananaCategory category, GameBananaCategory subcategory, int perPage, bool nsfw, string search)
         {
             // Base
-            var url = "https://gamebanana.com/apiv4/";
+            var url = "https://gamebanana.com/apiv6/";
             switch (type)
             {
                 case TypeFilter.Mods:
@@ -105,7 +107,38 @@ namespace Unverum
                     break;
             }
             // Different starting endpoint if requesting all mods instead of specific category
-            if (category.ID != null)
+            if (search != null)
+            {
+                url += $"ByName?_sName=*{search}*&_idGameRow=";
+                switch (game)
+                {
+                    case GameFilter.DBFZ:
+                        url += "6246&";
+                        break;
+                    case GameFilter.MHOJ2:
+                        url += "11605&";
+                        break;
+                    case GameFilter.GBVS:
+                        url += "8897&";
+                        break;
+                    case GameFilter.GGS:
+                        url += "11534&";
+                        break;
+                    case GameFilter.JF:
+                        url += "7019&";
+                        break;
+                    case GameFilter.KHIII:
+                        url += "9219&";
+                        break;
+                    case GameFilter.SN:
+                        url += "12028&";
+                        break;
+                    case GameFilter.ToA:
+                        url += "13821&";
+                        break;
+                }
+            }
+            else if (category.ID != null)
                 url += "ByCategory?";
             else
             {
@@ -139,7 +172,8 @@ namespace Unverum
                 }
             }
             // Consistent args
-            url += $"&_sRecordSchema=FileDaddy&_nPerpage={perPage}";
+            url += $"_csvProperties=_sName,_sModelName,_sProfileUrl,_aSubmitter,_tsDateUpdated,_tsDateAdded,_aPreviewMedia,_sText,_sDescription,_aCategory,_aRootCategory,_aGame,_nViewCount," +
+                $"_nLikeCount,_nDownloadCount,_aFiles,_aModManagerIntegrations&_nPerpage={perPage}";
             if (!nsfw)
                 url += "&_aArgs[]=_sbIsNsfw = false";
             // Sorting filter

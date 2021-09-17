@@ -111,6 +111,10 @@ namespace Unverum
         public DateTime DateUpdated => Epoch.AddSeconds(DateUpdatedLong);
         [JsonPropertyName("_aAlternateFileSources")]
         public List<GameBananaAlternateFileSource> AlternateFileSources { get; set; }
+        [JsonPropertyName("_bHasUpdates")]
+        public bool? HasUpdates { get; set; }
+        [JsonPropertyName("_aLatestUpdates")]
+        public GameBananaItemUpdate[] Updates { get; set; }
     }
     public class GameBananaInstallerIntegration
     {

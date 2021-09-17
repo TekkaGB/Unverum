@@ -8,7 +8,7 @@
         Background="#131313"
         Title="Unverum" SizeChanged="OnResize"
         mc:Ignorable="d" Closing="Window_Closing" WindowStartupLocation="CenterScreen"
-        Height="750" Width="1050" MinHeight="750" MinWidth="1050" Loaded="WindowLoaded">
+        Height="750" Width="1280" MinHeight="750" MinWidth="1260" Loaded="WindowLoaded">
     <Window.Resources>
         <FontFamily x:Key="Monospace">../Assets/#Roboto Mono</FontFamily>
         <DataTemplate x:Key="ModTemplate">
@@ -520,7 +520,17 @@
                         <RowDefinition/>
                         <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
-                    <Grid Grid.RowSpan="3" Name="MediaPanel" Panel.ZIndex="5" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2.2*"/>
+                        <ColumnDefinition Width="1.2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1.5*"/>
+                        <ColumnDefinition Width="1.85*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="0.65*"/>
+                        <ColumnDefinition Width="0.4*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.RowSpan="3" Grid.ColumnSpan="8" Name="MediaPanel" Panel.ZIndex="5" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition Height="90"/>
@@ -559,7 +569,7 @@
                             </Button>
                         </StackPanel>
                     </Grid>
-                    <Grid Grid.RowSpan="3" Name="DescPanel" Panel.ZIndex="4" Visibility="Collapsed">
+                    <Grid Grid.ColumnSpan="8" Grid.RowSpan="3" Name="DescPanel" Panel.ZIndex="4" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="2"/>
@@ -606,12 +616,12 @@
                                 </Button.Resources>
                             </Button>
                             <Border Name="DownloadButton" Margin="0,0,20,0" Height="50" Width="200" CornerRadius="2" Background="#006ac1">
-                            <Button Margin="3" Click="Download_Click" Content="Download" IsEnabled="{Binding Path=Compatible}" FontSize="20" FontWeight="SemiBold" Foreground="#f2f2f2">
-                                <Button.Resources>
-                                    <Style TargetType="{x:Type Border}">
-                                        <Setter Property="CornerRadius" Value="2"/>
-                                    </Style>
-                                </Button.Resources>
+                                <Button Margin="3" Click="Download_Click" Content="Download" IsEnabled="{Binding Path=Compatible}" FontSize="20" FontWeight="SemiBold" Foreground="#f2f2f2">
+                                    <Button.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="2"/>
+                                        </Style>
+                                    </Button.Resources>
                                 </Button>
                             </Border>
                             <Button Name="HomepageButton" Click="Homepage_Click" Margin="0,0,20,0" Height="50" Width="200" FontSize="20" FontWeight="SemiBold" Foreground="#f2f2f2">
@@ -630,8 +640,7 @@
                             </Button>
                         </StackPanel>
                     </Grid>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <ComboBox IsEnabled="False" Margin="0,0,10,0" Name="GameFilterBox" Height="35" Width="250" FontSize="18" FontWeight="Bold" SelectionChanged="GameFilterSelectionChanged">
+                    <ComboBox Margin="10,0,0,0" IsEnabled="False" Name="GameFilterBox" Height="35" MinWidth="240" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" SelectionChanged="GameFilterSelectionChanged">
                             <ComboBoxItem xml:space="preserve"> Dragon Ball FighterZ</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> My Hero One's Justice 2</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Granblue Fantasy: Versus</ComboBoxItem>
@@ -641,17 +650,13 @@
                             <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Tales of Arise</ComboBoxItem>
                         </ComboBox>
-                        <ComboBox IsEnabled="False" Margin="0,0,10,0" Name="FilterBox" Height="35" Width="130" FontSize="18" FontWeight="Bold" SelectionChanged="FilterSelectionChanged">
-                            <ComboBoxItem xml:space="preserve"> Featured</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve" IsSelected="True"> Recent</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Popular</ComboBoxItem>
-                        </ComboBox>
-                        <ComboBox IsEnabled="False" Margin="0,0,10,0" FontWeight="Bold" FontSize="18" Name="TypeBox" Height="35" Width="100" SelectionChanged="TypeFilterSelectionChanged">
+                    <ComboBox Margin="5,0,0,0" Grid.Column="1" IsEnabled="False" Name="FilterBox" Height="35" MinWidth="130" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" SelectionChanged="FilterSelectionChanged"/>
+                    <ComboBox Margin="5,0,0,0" Grid.Column="2" IsEnabled="False" FontWeight="Bold" FontSize="18" Name="TypeBox" Height="35" HorizontalAlignment="Stretch" MinWidth="100" SelectionChanged="TypeFilterSelectionChanged">
                             <ComboBoxItem xml:space="preserve" IsSelected="True"> Mods</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> WiPs</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Sounds</ComboBoxItem>
                         </ComboBox>
-                        <ComboBox IsEnabled="False" Margin="0,0,10,0" Name="CatBox" Height="35" Width="150" SelectionChanged="MainFilterSelectionChanged">
+                    <ComboBox Margin="5,0,0,0" Grid.Column="3" IsEnabled="False" Name="CatBox" Height="35" HorizontalAlignment="Stretch" MinWidth="150" SelectionChanged="MainFilterSelectionChanged">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate >
                                     <StackPanel Orientation="Horizontal">
@@ -661,7 +666,7 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <ComboBox Margin="0,0,10,0" IsEnabled="False" Name="SubCatBox" Height="35" Width="200" SelectionChanged="SubFilterSelectionChanged">
+                    <ComboBox Margin="5,0,0,0" Grid.Column="4" IsEnabled="False" Name="SubCatBox" Height="35" HorizontalAlignment="Stretch" MinWidth="200" SelectionChanged="SubFilterSelectionChanged">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate >
                                     <StackPanel Orientation="Horizontal">
@@ -671,13 +676,18 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+                    <TextBox Margin="5,0,35,0" Grid.Column="5" KeyDown="SearchBar_KeyDown" Name="SearchBar" Height="35" MinWidth="200" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
+                        <Button Grid.Column="5" HorizontalAlignment="Right" Click="SearchButton_Click" Name="SearchButton" Height="35" Width="35">
+                            <fa5:ImageAwesome Icon="Solid_Search" Foreground="#f2f2f2" Margin="3"/>
+                        </Button>
+                    <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5,0,0,0" >
                         <CheckBox Name="NSFWCheckbox" Unchecked="NSFWCheckbox_Checked" Checked="NSFWCheckbox_Checked"  Margin="0,0,5,0" VerticalAlignment="Center" />
-                        <TextBlock Margin="0,0,10,0" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold">
+                        <TextBlock Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold">
                             Include<LineBreak/>
                             NSFW
                         </TextBlock>
-                        <Image Name="GB" VerticalAlignment="Center" HorizontalAlignment="Center" Height="45" Source="../Assets/GameBanana.png" Cursor="Hand" MouseLeftButtonDown="GameBanana_Click"/>
                     </StackPanel>
+                    <Image Grid.Column="7" Name="GB" VerticalAlignment="Center" HorizontalAlignment="Center" Height="35" Source="../Assets/GameBanana.png" Cursor="Hand" MouseLeftButtonDown="GameBanana_Click"/>
                     <Popup PlacementTarget="{Binding ElementName=GB}" IsOpen="{Binding IsMouseDirectlyOver, ElementName=GB, Mode=OneWay}" AllowsTransparency="True">
                         <Border CornerRadius="5" Panel.ZIndex="0" Margin="10">
                             <Border.BorderBrush>
@@ -689,13 +699,13 @@
                             <TextBlock Margin="10" Text="Go to gamebanana.com" Foreground="#f2f2f2" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" />
                         </Border>
                     </Popup>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="8" Grid.Row="2">
                         <Button IsEnabled="False" Name="PageLeft" Click="DecrementPage" Content="&lt;" HorizontalAlignment="Right" Margin="0,0,15,0" FontSize="18" FontWeight="Bold"  Height="35" Width="35" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2"/>
                         <TextBlock Name="Page" Text="Page 1" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" />
                         <Button IsEnabled="False" Name="PageRight" Click="IncrementPage" Content=">" HorizontalAlignment="Left" Margin="15,0,0,0" FontSize="18" FontWeight="Bold" Height="35" Width="35" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2"/>
                         <ComboBox IsEnabled="False" Margin="15,0,15,0" Name="PageBox" SelectionChanged="PageBox_SelectionChanged" Height="35" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <StackPanel Margin="5,5,10,5" Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="2">
+                    <StackPanel Margin="5,5,10,5" Grid.ColumnSpan="8" Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="2">
                         <TextBlock Margin="0,0,15,0" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold">
                             Per Page:
                         </TextBlock>
@@ -707,19 +717,8 @@
                             <ComboBoxItem>50</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
-                    <Image Panel.ZIndex="-3" Grid.RowSpan="3" x:Name="BrowserBackground" Stretch="UniformToFill">
-                        <Image.BitmapEffect>
-                            <BlurBitmapEffect Radius="15" />
-                        </Image.BitmapEffect>
-                        <Image.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
-                                <TranslateTransform X="-150"/>
-                            </TransformGroup>
-                        </Image.RenderTransform>
-                    </Image>
-                    <fa5:ImageAwesome Name="LoadingBar" Foreground="#006ac1" Panel.ZIndex="1" Grid.Row="1" Icon="Solid_Spinner" Height="110" VerticalAlignment="Center" HorizontalAlignment="Center" Spin="True" SpinDuration="2"/>
-                    <StackPanel Name="ErrorPanel" Grid.Row="1" Panel.ZIndex="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <fa5:ImageAwesome Name="LoadingBar" Grid.ColumnSpan="8" Foreground="#006ac1" Panel.ZIndex="1" Grid.Row="1" Icon="Solid_Spinner" Height="110" VerticalAlignment="Center" HorizontalAlignment="Center" Spin="True" SpinDuration="2"/>
+                    <StackPanel Name="ErrorPanel" Grid.ColumnSpan="8" Grid.Row="1" Panel.ZIndex="1" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Name="BrowserMessage" HorizontalAlignment="Center"  Opacity="1" Background="Transparent" Foreground="#f2f2f2" FontWeight="Bold" TextWrapping="Wrap" Width="800" TextAlignment="Center" FontSize="25"/>
                         <Button Margin="10" Click="BrowserRefresh" Name="BrowserRefreshButton" Content="Retry" HorizontalAlignment="center" FontSize="18" FontWeight="Bold"  Height="40" Width="140" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2">
                             <Button.Resources>
@@ -729,7 +728,7 @@
                             </Button.Resources>
                         </Button>
                     </StackPanel>
-                    <Border Grid.Row="1" CornerRadius="5" Margin="10,0,10,0">
+                    <Border Grid.ColumnSpan="8" Grid.Row="1" CornerRadius="5" Margin="10,0,10,0">
                         <Border.BorderBrush>
                             <SolidColorBrush Color="Black" Opacity="0.75"/>
                         </Border.BorderBrush>
