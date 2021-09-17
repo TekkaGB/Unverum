@@ -709,7 +709,7 @@
                         <TextBlock Margin="0,0,15,0" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold">
                             Per Page:
                         </TextBlock>
-                        <ComboBox IsEnabled="False" Name="PerPageBox" SelectionChanged="FilterSelectionChanged" Height="35" VerticalAlignment="Center">
+                        <ComboBox IsEnabled="False" Name="PerPageBox" SelectionChanged="PerPageSelectionChanged" Height="35" VerticalAlignment="Center">
                             <ComboBoxItem>10</ComboBoxItem>
                             <ComboBoxItem IsSelected="True">20</ComboBoxItem>
                             <ComboBoxItem>30</ComboBoxItem>

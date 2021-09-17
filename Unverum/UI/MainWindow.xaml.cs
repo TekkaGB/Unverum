@@ -1389,6 +1389,14 @@ namespace Unverum
                 RefreshFilter();
             }
         }
+        private void PerPageSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (IsLoaded && !filterSelect)
+            {
+                page = 1;
+                RefreshFilter();
+            }
+        }
         private void GameFilterSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (IsLoaded && !filterSelect)
