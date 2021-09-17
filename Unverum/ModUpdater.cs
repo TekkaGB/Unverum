@@ -35,11 +35,12 @@ namespace Unverum
                 return;
             }
             var cancellationToken = new CancellationTokenSource();
-            var requestUrls = new List<string>();
-            requestUrls.Add($"https://api.gamebanana.com/Core/Item/Data?");
+            var requestUrls = new Dictionary<string, List<string>>();
             var mods = Directory.GetDirectories(path).Where(x => File.Exists($"{x}/mod.json")).ToList();
-            var urlCount = 0;
             var modCount = 0;
+            var soundCount = 0;
+            var wipCount = 0;
+            var modList = new Dictionary<string, List<string>>();
             foreach (var mod in mods)
             {
                 if (!File.Exists($"{mod}{Global.s}mod.json"))
@@ -62,20 +63,59 @@ namespace Unverum
                 {
                     var MOD_TYPE = char.ToUpper(url.Segments[1][0]) + url.Segments[1].Substring(1, url.Segments[1].Length - 3);
                     var MOD_ID = url.Segments[2];
-                    requestUrls[urlCount] += $"itemtype[]={MOD_TYPE}&itemid[]={MOD_ID}&fields[]=Updates().bSubmissionHasUpdates()," +
-                        $"Updates().aGetLatestUpdates(),Files().aFiles(),Preview().sStructuredDataFullsizeUrl()&";
-                    if (++modCount > 49)
+                    int index = 0;
+                    switch (MOD_TYPE)
                     {
-                        requestUrls[urlCount] += "return_keys=1";
-                        ++urlCount;
-                        requestUrls.Add($"https://api.gamebanana.com/Core/Item/Data?");
-                        modCount = 0;
+                        case "Mod":
+                            index = modCount;
+                            break;
+                        case "Sound":
+                            index = soundCount;
+                            break;
+                        case "Wip":
+                            index = wipCount;
+                            break;
+                    }
+                    if (!modList.ContainsKey(MOD_TYPE))
+                        modList.Add(MOD_TYPE, new());
+                    modList[MOD_TYPE].Add(mod);
+                    if (!requestUrls.ContainsKey(MOD_TYPE))
+                        requestUrls.Add(MOD_TYPE, new string[] { $"https://gamebanana.com/apiv6/{MOD_TYPE}/Multi?_csvProperties=_sName,_bHasUpdates,_aLatestUpdates,_aFiles,_aPreviewMedia,_aAlternateFileSources&_csvRowIds=" }.ToList());
+                    else if (requestUrls[MOD_TYPE].Count == index)
+                        requestUrls[MOD_TYPE].Add($"https://gamebanana.com/apiv6/{MOD_TYPE}/Multi?_csvProperties=_sName,_bHasUpdates,_aLatestUpdates,_aFiles,_aPreviewMedia,_aAlternateFileSources&_csvRowIds=");
+                    requestUrls[MOD_TYPE][index] += $"{MOD_ID},";
+                    if (requestUrls[MOD_TYPE][modCount].Length > 1990)
+                    {
+                        switch (MOD_TYPE)
+                        {
+                            case "Mod":
+                                modCount++;
+                                break;
+                            case "Sound":
+                                soundCount++;
+                                break;
+                            case "Wip":
+                                wipCount++;
+                                break;
+                        }
+                        // Remove extra comma
+                        requestUrls[MOD_TYPE][modCount] = requestUrls[MOD_TYPE][modCount].Substring(0, requestUrls[MOD_TYPE][modCount].Length - 1);
                     }
                 }
             }
-            if (!requestUrls[urlCount].EndsWith("return_keys=1"))
-                requestUrls[urlCount] += "return_keys=1";
-            if (urlCount == 0 && requestUrls[urlCount] == $"https://api.gamebanana.com/Core/Item/Data?return_keys=1")
+            // Remove extra comma
+            foreach (var key in requestUrls.Keys)
+            {
+                var counter = 0;
+                foreach (var requestUrl in requestUrls[key].ToList())
+                {
+                    if (requestUrl.EndsWith(","))
+                        requestUrls[key][counter] = requestUrl.Substring(0, requestUrl.Length - 1);
+                    counter++;
+                }
+
+            }
+            if (requestUrls.Count == 0)
             {
                 Global.logger.WriteLine("No updates available.", LoggerType.Info);
                 main.GameBox.IsEnabled = true;
@@ -86,45 +126,50 @@ namespace Unverum
                 main.UpdateButton.IsEnabled = true;
                 return;
             }
-            else if (requestUrls[urlCount] == $"https://api.gamebanana.com/Core/Item/Data?return_keys=1")
-                requestUrls.RemoveAt(urlCount);
-            List<GameBananaItem> response = new List<GameBananaItem>();
+            List<GameBananaAPIV4> response = new List<GameBananaAPIV4>();
             using (var client = new HttpClient())
             {
-                foreach (var requestUrl in requestUrls)
+                foreach (var type in requestUrls)
                 {
-                    var responseString = await client.GetStringAsync(requestUrl);
-                    try
+                    foreach (var requestUrl in type.Value)
                     {
-                        var partialResponse = JsonSerializer.Deserialize<List<GameBananaItem>>(responseString);
-                        response = response.Concat(partialResponse).ToList();
-                    }
-                    catch (Exception e)
-                    {
-                        Global.logger.WriteLine($"{requestUrl} {e.Message}", LoggerType.Error);
-                        main.GameBox.IsEnabled = true;
-                        main.ModGrid.IsEnabled = true;
-                        main.ConfigButton.IsEnabled = true;
-                        main.LaunchButton.IsEnabled = true;
-                        main.OpenModsButton.IsEnabled = true;
-                        main.UpdateButton.IsEnabled = true;
-                        return;
+                        var responseString = await client.GetStringAsync(requestUrl);
+                        try
+                        {
+                            var partialResponse = JsonSerializer.Deserialize<List<GameBananaAPIV4>>(responseString);
+                            response = response.Concat(partialResponse).ToList();
+                        }
+                        catch (Exception e)
+                        {
+                            Global.logger.WriteLine($"{requestUrl} {e.Message}", LoggerType.Error);
+                            main.GameBox.IsEnabled = true;
+                            main.ModGrid.IsEnabled = true;
+                            main.ConfigButton.IsEnabled = true;
+                            main.LaunchButton.IsEnabled = true;
+                            main.OpenModsButton.IsEnabled = true;
+                            main.UpdateButton.IsEnabled = true;
+                            return;
+                        }
                     }
                 }
             }
-            for (int i = 0; i < mods.Count; i++)
+            var convertedModList = new List<string>();
+            foreach (var type in modList)
+                foreach (var mod in type.Value)
+                    convertedModList.Add(mod);
+            for (int i = 0; i < convertedModList.Count; i++)
             {
                 Metadata metadata;
                 try
                 {
-                    metadata = JsonSerializer.Deserialize<Metadata>(File.ReadAllText($"{mods[i]}{Global.s}mod.json"));
+                    metadata = JsonSerializer.Deserialize<Metadata>(File.ReadAllText($"{convertedModList[i]}{Global.s}mod.json"));
                 }
                 catch (Exception e)
                 {
-                    Global.logger.WriteLine($"Error occurred while getting metadata for {mods[i]} ({e.Message})", LoggerType.Error);
+                    Global.logger.WriteLine($"Error occurred while getting metadata for {convertedModList[i]} ({e.Message})", LoggerType.Error);
                     continue;
                 }
-                await ModUpdate(response[i], mods[i], metadata, new Progress<DownloadProgress>(ReportUpdateProgress), CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Token));
+                await ModUpdate(response[i], convertedModList[i], metadata, new Progress<DownloadProgress>(ReportUpdateProgress), CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Token));
             }
             if (updateCounter == 0)
                 Global.logger.WriteLine("No updates available.", LoggerType.Info);
@@ -151,7 +196,7 @@ namespace Unverum
             progressBox.progressText.Text = $"{Math.Round(progress.Percentage * 100, 2)}% " +
                 $"({StringConverters.FormatSize(progress.DownloadedBytes)} of {StringConverters.FormatSize(progress.TotalBytes)})";
         }
-        private static async Task ModUpdate(GameBananaItem item, string mod, Metadata metadata, Progress<DownloadProgress> progress, CancellationTokenSource cancellationToken)
+        private static async Task ModUpdate(GameBananaAPIV4 item, string mod, Metadata metadata, Progress<DownloadProgress> progress, CancellationTokenSource cancellationToken)
         {
             // If lastupdate doesn't exist, add one
             if (metadata.lastupdate == null)
@@ -173,7 +218,7 @@ namespace Unverum
                     ++updateCounter;
                     // Display the changelog and confirm they want to update
                     Global.logger.WriteLine($"An update is available for {Path.GetFileName(mod)}!", LoggerType.Info);
-                    ChangelogBox changelogBox = new ChangelogBox(update, Path.GetFileName(mod), $"A new update is available for {Path.GetFileName(mod)}", item.EmbedImage, true);
+                    ChangelogBox changelogBox = new ChangelogBox(update, Path.GetFileName(mod), $"A new update is available for {Path.GetFileName(mod)}", item.Image, true);
                     changelogBox.Activate();
                     changelogBox.ShowDialog();
                     if (changelogBox.Skip)
@@ -198,7 +243,7 @@ namespace Unverum
 
                     if (files.Count > 1)
                     {
-                        UpdateFileBox fileBox = new UpdateFileBox(files.Values.ToList(), Path.GetFileName(mod));
+                        UpdateFileBox fileBox = new UpdateFileBox(files.ToList(), Path.GetFileName(mod));
                         fileBox.Activate();
                         fileBox.ShowDialog();
                         downloadUrl = fileBox.chosenFileUrl;
@@ -206,30 +251,21 @@ namespace Unverum
                     }
                     else if (files.Count == 1)
                     {
-                        downloadUrl = files.ElementAt(0).Value.DownloadUrl;
-                        fileName = files.ElementAt(0).Value.FileName;
+                        downloadUrl = files.ElementAt(0).DownloadUrl;
+                        fileName = files.ElementAt(0).FileName;
                     }
                     else
                     {
                         Global.logger.WriteLine($"An update is available for {Path.GetFileName(mod)} but no downloadable files are available directly from GameBanana.", LoggerType.Info);
                     }
                     Uri uri = CreateUri(metadata.homepage.AbsoluteUri);
-                    string itemType = uri.Segments[1];
-                    itemType = char.ToUpper(itemType[0]) + itemType.Substring(1, itemType.Length - 3);
-                    string itemId = uri.Segments[2];
-                    // Parse the response
-                    using (var client = new HttpClient())
+                    if (item.AlternateFileSources != null)
                     {
-                        string responseString = await client.GetStringAsync($"https://gamebanana.com/apiv4/{itemType}/{itemId}");
-                        var response = JsonSerializer.Deserialize<GameBananaAPIV4>(responseString);
-                        if (response.AlternateFileSources != null)
+                        var choice = MessageBox.Show($"Alternate file sources were found for {Path.GetFileName(mod)}! Would you like to manually update?", "Unverum", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (choice == MessageBoxResult.Yes)
                         {
-                            var choice = MessageBox.Show($"Alternate file sources were found for {Path.GetFileName(mod)}! Would you like to manually update?", "Unverum", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                            if (choice == MessageBoxResult.Yes)
-                            {
-                                new AltLinkWindow(response.AlternateFileSources, Path.GetFileName(mod), Global.config.CurrentGame, metadata.homepage.AbsoluteUri, true).ShowDialog();
-                                return;
-                            }
+                            new AltLinkWindow(item.AlternateFileSources, Path.GetFileName(mod), Global.config.CurrentGame, metadata.homepage.AbsoluteUri, true).ShowDialog();
+                            return;
                         }
                     }
                     if (downloadUrl != null && fileName != null)
