@@ -31,13 +31,18 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock VerticalAlignment="Center" Panel.ZIndex="4" FontSize="40" FontWeight="Bold" HorizontalAlignment="Center" Text="SPOILER" Foreground="#f2f2f2">
+                    <TextBlock VerticalAlignment="Center" Panel.ZIndex="4" FontSize="40" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#f2f2f2">
                         <TextBlock.Style>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Path=IsSpoiler}" Value="True">
                                         <Setter Property="Visibility" Value="Visible" />
+                                        <Setter Property="Text" Value="SPOILER"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=IsNsfw}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Setter Property="Text" Value="NSFW"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -49,6 +54,9 @@
                                 <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Path=IsSpoiler}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=IsNsfw}" Value="True">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -65,6 +73,9 @@
                                 </Setter>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Path=IsSpoiler}" Value="False">
+                                        <Setter Property="Effect" Value="{x:Null}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=IsNsfw}" Value="True">
                                         <Setter Property="Effect" Value="{x:Null}"/>
                                     </DataTrigger>
                                 </Style.Triggers>

@@ -268,6 +268,8 @@ namespace Unverum
             // Trim extra whitespace at start and end
             return html.Trim();
         }
+        [JsonPropertyName("_bIsNsfw")]
+        public bool IsNsfw { get; set; }
     }
     public class GameBananaModList
     {
