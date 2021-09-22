@@ -1375,7 +1375,7 @@ namespace Unverum
         {
             if (IsLoaded && !filterSelect)
             {
-                if (!searched)
+                if (!searched || FilterBox.SelectedIndex != 3)
                 {
                     filterSelect = true;
                     var temp = FilterBox.SelectedIndex;

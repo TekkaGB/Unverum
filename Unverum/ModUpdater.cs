@@ -37,10 +37,8 @@ namespace Unverum
             var cancellationToken = new CancellationTokenSource();
             var requestUrls = new Dictionary<string, List<string>>();
             var mods = Directory.GetDirectories(path).Where(x => File.Exists($"{x}/mod.json")).ToList();
-            var modCount = 0;
-            var soundCount = 0;
-            var wipCount = 0;
             var modList = new Dictionary<string, List<string>>();
+            var urlCounts = new Dictionary<string, int>();
             foreach (var mod in mods)
             {
                 if (!File.Exists($"{mod}{Global.s}mod.json"))
@@ -63,19 +61,9 @@ namespace Unverum
                 {
                     var MOD_TYPE = char.ToUpper(url.Segments[1][0]) + url.Segments[1].Substring(1, url.Segments[1].Length - 3);
                     var MOD_ID = url.Segments[2];
-                    int index = 0;
-                    switch (MOD_TYPE)
-                    {
-                        case "Mod":
-                            index = modCount;
-                            break;
-                        case "Sound":
-                            index = soundCount;
-                            break;
-                        case "Wip":
-                            index = wipCount;
-                            break;
-                    }
+                    if (!urlCounts.ContainsKey(MOD_TYPE))
+                        urlCounts.Add(MOD_TYPE, 0);
+                    int index = urlCounts[MOD_TYPE];
                     if (!modList.ContainsKey(MOD_TYPE))
                         modList.Add(MOD_TYPE, new());
                     modList[MOD_TYPE].Add(mod);
@@ -84,23 +72,8 @@ namespace Unverum
                     else if (requestUrls[MOD_TYPE].Count == index)
                         requestUrls[MOD_TYPE].Add($"https://gamebanana.com/apiv6/{MOD_TYPE}/Multi?_csvProperties=_sName,_bHasUpdates,_aLatestUpdates,_aFiles,_aPreviewMedia,_aAlternateFileSources&_csvRowIds=");
                     requestUrls[MOD_TYPE][index] += $"{MOD_ID},";
-                    if (requestUrls[MOD_TYPE][modCount].Length > 1990)
-                    {
-                        switch (MOD_TYPE)
-                        {
-                            case "Mod":
-                                modCount++;
-                                break;
-                            case "Sound":
-                                soundCount++;
-                                break;
-                            case "Wip":
-                                wipCount++;
-                                break;
-                        }
-                        // Remove extra comma
-                        requestUrls[MOD_TYPE][modCount] = requestUrls[MOD_TYPE][modCount].Substring(0, requestUrls[MOD_TYPE][modCount].Length - 1);
-                    }
+                    if (requestUrls[MOD_TYPE][index].Length > 1990)
+                        urlCounts[MOD_TYPE]++;
                 }
             }
             // Remove extra comma
