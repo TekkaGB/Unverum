@@ -21,6 +21,7 @@ using System.Windows.Controls.Primitives;
 using System.Security.Cryptography;
 using Microsoft.Win32;
 using xdelta3.net;
+using System.Windows.Input;
 
 namespace Unverum
 {
@@ -505,24 +506,27 @@ namespace Unverum
 
         private void DeleteItem_Click(object sender, RoutedEventArgs e)
         {
-            Mod row = (Mod)ModGrid.SelectedItem;
-            if (row != null)
-            {
-                var dialogResult = MessageBox.Show($@"Are you sure you want to delete {row.name}?" + Environment.NewLine + "This cannot be undone.", $@"Deleting {row.name}: Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (dialogResult == MessageBoxResult.Yes)
+            var selectedMods = ModGrid.SelectedItems;
+            var temp = new Mod[selectedMods.Count];
+            selectedMods.CopyTo(temp, 0);
+            foreach (var row in temp)
+                if (row != null)
                 {
-                    try
+                    var dialogResult = MessageBox.Show($@"Are you sure you want to delete {row.name}?" + Environment.NewLine + "This cannot be undone.", $@"Deleting {row.name}: Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (dialogResult == MessageBoxResult.Yes)
                     {
-                        Directory.Delete($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{row.name}", true);
-                        Global.logger.WriteLine($@"Deleting {row.name}.", LoggerType.Info);
-                        ShowMetadata(null);
-                    }
-                    catch (Exception ex)
-                    {
-                        Global.logger.WriteLine($@"Couldn't delete {row.name} ({ex.Message})", LoggerType.Error);
+                        try
+                        {
+                            Directory.Delete($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{row.name}", true);
+                            Global.logger.WriteLine($@"Deleting {row.name}.", LoggerType.Info);
+                            ShowMetadata(null);
+                        }
+                        catch (Exception ex)
+                        {
+                            Global.logger.WriteLine($@"Couldn't delete {row.name} ({ex.Message})", LoggerType.Error);
+                        }
                     }
                 }
-            }
         }
 
         private async Task<bool> Build(string path)
@@ -583,43 +587,52 @@ namespace Unverum
 
         private void OpenItem_Click(object sender, RoutedEventArgs e)
         {
-            Mod row = (Mod)ModGrid.SelectedItem;
-            if (row != null)
-            {
-                var folderName = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{row.name}";
-                if (Directory.Exists(folderName))
+            var selectedMods = ModGrid.SelectedItems;
+            var temp = new Mod[selectedMods.Count];
+            selectedMods.CopyTo(temp, 0);
+            foreach (var row in temp)
+                if (row != null)
                 {
-                    try
+                    var folderName = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{row.name}";
+                    if (Directory.Exists(folderName))
                     {
-                        Process process = Process.Start("explorer.exe", folderName);
-                        Global.logger.WriteLine($@"Opened {folderName}.", LoggerType.Info);
-                    }
-                    catch (Exception ex)
-                    {
-                        Global.logger.WriteLine($@"Couldn't open {folderName}. ({ex.Message})", LoggerType.Error);
+                        try
+                        {
+                            Process process = Process.Start("explorer.exe", folderName);
+                            Global.logger.WriteLine($@"Opened {folderName}.", LoggerType.Info);
+                        }
+                        catch (Exception ex)
+                        {
+                            Global.logger.WriteLine($@"Couldn't open {folderName}. ({ex.Message})", LoggerType.Error);
+                        }
                     }
                 }
-            }
         }
         private void EditItem_Click(object sender, RoutedEventArgs e)
         {
-            Mod row = (Mod)ModGrid.SelectedItem;
-            if (row != null)
-            {
-                EditWindow ew = new EditWindow(row);
-                ew.ShowDialog();
-            }
+            var selectedMods = ModGrid.SelectedItems;
+            var temp = new Mod[selectedMods.Count];
+            selectedMods.CopyTo(temp, 0);
+            foreach (var row in temp)
+                if (row != null)
+                {
+                    EditWindow ew = new EditWindow(row);
+                    ew.ShowDialog();
+                }
         }
         private void FetchItem_Click(object sender, RoutedEventArgs e)
         {
-            Mod row = (Mod)ModGrid.SelectedItem;
-            if (row != null)
-            {
-                FetchWindow fw = new FetchWindow(row);
-                fw.ShowDialog();
-                if (fw.success)
-                    ShowMetadata(row.name);
-            }
+            var selectedMods = ModGrid.SelectedItems;
+            var temp = new Mod[selectedMods.Count];
+            selectedMods.CopyTo(temp, 0);
+            foreach (var row in temp)
+                if (row != null)
+                {
+                    FetchWindow fw = new FetchWindow(row);
+                    fw.ShowDialog();
+                    if (fw.success)
+                        ShowMetadata(row.name);
+                }
         }
         private void Add_Enter(object sender, DragEventArgs e)
         {
@@ -1682,9 +1695,9 @@ namespace Unverum
                 RefreshFilter();
             }
         }
-        private void SearchBar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void SearchBar_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Enter)
+            if (e.Key == Key.Enter)
                 Search();
         }
         private static readonly List<string> FilterBoxList = new string[] { " Featured", " Recent", " Popular" }.ToList();
@@ -1693,6 +1706,17 @@ namespace Unverum
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             Search();
+        }
+
+        private void ModGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space && ModGrid.CurrentColumn.Header.ToString() != "Enabled")
+                foreach (var item in ModGrid.SelectedItems)
+                {
+                    var checkbox = ModGrid.Columns[0].GetCellContent(item) as CheckBox;
+                    if (checkbox != null)
+                        checkbox.IsChecked = !checkbox.IsChecked;
+                }
         }
     }
 }
