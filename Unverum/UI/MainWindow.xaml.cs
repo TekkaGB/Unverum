@@ -545,6 +545,7 @@ namespace Unverum
                 else if (Directory.Exists($"{ContentFolder}{Global.s}Binaries{Global.s}Movie"))
                     MoviesFolder = $"{ContentFolder}{Global.s}Binaries{Global.s}Movie";
                 else if (Directory.Exists($"{ContentFolder}{Global.s}Movies"))
+                    MoviesFolder = $"{ContentFolder}{Global.s}Movie";
                 if (Directory.Exists($"{ContentFolder}{Global.s}Sound"))
                     SoundsFolder = $"{ContentFolder}{Global.s}Sound";
                 else if (Directory.Exists($"{ContentFolder}{Global.s}CriWareData"))
