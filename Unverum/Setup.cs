@@ -139,11 +139,6 @@ namespace Unverum
             }
             var parent = defaultPath.Replace($"{Global.s}HeroGame{Global.s}Binaries{Global.s}Win64{Global.s}MHOJ2.exe", String.Empty);
             var paks = $"{parent}{Global.s}HeroGame{Global.s}Content{Global.s}Paks";
-            // Rename paks for modding to work
-            foreach (var file in Directory.GetFiles(paks, "*", SearchOption.TopDirectoryOnly))
-                if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
-                    || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
-                    File.Move(file, file.Replace("-WindowsNoEditor_0_P", String.Empty, StringComparison.InvariantCultureIgnoreCase), true);
             var ModsFolder = $"{paks}{Global.s}~mods";
             Directory.CreateDirectory(ModsFolder);
             Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;

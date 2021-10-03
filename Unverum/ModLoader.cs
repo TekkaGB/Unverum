@@ -48,7 +48,7 @@ namespace Unverum
             {
                 if (Path.GetExtension(path).Equals(".pak", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var newPath = path.Replace(sourcePath, targetPath);
+                    var newPath = path.Replace(sourcePath, targetPath).Replace(".pak", "_9_P.pak");
                     Directory.CreateDirectory(Path.GetDirectoryName(newPath));
                     File.Copy(path, newPath, true);
                     if (defaultSig != null)
@@ -97,14 +97,14 @@ namespace Unverum
             startInfo.FileName = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}u4pak.exe";
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.WorkingDirectory = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak";
-            startInfo.Arguments = $"pack \"{output}{Global.s}Unverum.pak\" {path}";
+            startInfo.Arguments = $"pack \"{output}{Global.s}Unverum_9_P.pak\" {path}";
             using (Process process = new Process())
             {
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();
             }
-            var pak = $"{output}{Global.s}Unverum.pak";
+            var pak = $"{output}{Global.s}Unverum_9_P.pak";
             if (File.Exists(pak))
             {
                 if (sig != null)
@@ -164,7 +164,7 @@ namespace Unverum
                                     var dblistFile = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}My Hero One's Justice 2{Global.s}HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt";
                                     if (missing)
                                         continue;
-                                    if (db == null && TextPatcher.ExtractBaseFiles("HeroGame.pak", "*dblist.txt",
+                                    if (db == null && TextPatcher.ExtractBaseFiles("HeroGame-WindowsNoEditor_0_P.pak", "*dblist.txt",
                                         $"HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt"))
                                         db = File.ReadAllLines(dblistFile).ToHashSet();
                                     // Check if db is still null

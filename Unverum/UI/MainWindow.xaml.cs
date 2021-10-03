@@ -287,27 +287,6 @@ namespace Unverum
                 if (!String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                     || !String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
                 {
-                    if ((GameFilter)index == GameFilter.MHOJ2)
-                    {
-                        var resetResult = MessageBox.Show($@"{Global.config.CurrentGame} is already setup.{Environment.NewLine}Remove setup?", $@"Notification", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if (resetResult == MessageBoxResult.Yes)
-                        {
-                            foreach (var file in Directory.GetFiles(Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder), "*", SearchOption.TopDirectoryOnly))
-                                if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
-                                    || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
-                                    File.Move(file, file.Replace("HeroGame.", "HeroGame-WindowsNoEditor_0_P.", StringComparison.InvariantCultureIgnoreCase), true);
-                            Global.config.Configs[Global.config.CurrentGame].ModsFolder = null;
-                            Global.config.Configs[Global.config.CurrentGame].Launcher = null;
-                            Global.UpdateConfig();
-                            Dispatcher.Invoke(() =>
-                            {
-                                LaunchButton.IsEnabled = false;
-                                GameBox.IsEnabled = true;
-                            });
-                            Global.logger.WriteLine($"Removed setup for {Global.config.CurrentGame}", LoggerType.Info);
-                            return;
-                        }
-                    }
                     var dialogResult = MessageBox.Show($@"Setup again?", $@"Notification", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (dialogResult == MessageBoxResult.No)
                     {
@@ -558,6 +537,18 @@ namespace Unverum
                     return false;
                 List<string> mods = Global.config.Configs[Global.config.CurrentGame].ModList.Where(x => x.enabled).Select(y => $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{y.name}").ToList();
                 mods.Reverse();
+
+                // Rename HeroGame back since its no longer needed to be renamed
+                var index = 0;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    index = GameBox.SelectedIndex;
+                });
+                if ((GameFilter)index == GameFilter.MHOJ2)
+                    foreach (var file in Directory.GetFiles(Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder), "*", SearchOption.TopDirectoryOnly))
+                    if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                        || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
+                        File.Move(file, file.Replace("HeroGame.", "HeroGame-WindowsNoEditor_0_P.", StringComparison.InvariantCultureIgnoreCase), true);
 
                 ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder, SoundsFolder);
                 return true;
