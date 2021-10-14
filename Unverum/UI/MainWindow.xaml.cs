@@ -270,6 +270,10 @@ namespace Unverum
                     return Setup.Generic("ScarletNexus.exe", "ScarletNexus", @"C:\Program Files (x86)\Steam\steamapps\common\ScarletNexus\ScarletNexus.exe");
                 case GameFilter.ToA:
                     return Setup.ToA();
+                case GameFilter.DS:
+                    return Setup.Generic("APK.exe", "APK", @"C:\Program Files (x86)\Steam\steamapps\common\Demon Slayer\APK.exe");
+                case GameFilter.IM:
+                    return Setup.Generic("StarlitSeason.exe", "StarlitSeason", @"C:\Program Files (x86)\Steam\steamapps\common\StarlitSeason\StarlitSeason.exe");
             }
             return false;
         }
@@ -382,6 +386,12 @@ namespace Unverum
                             case GameFilter.ToA:
                                 id = "740130";
                                 break;
+                            case GameFilter.DS:
+                                id = "1490890";
+                                break;
+                            case GameFilter.IM:
+                                id = "1046480";
+                                break;
                         }
                         path = epic ? $"com.epicgames.launcher://apps/{id}?action=launch&silent=true" : $"steam://rungameid/{id}";
                     }
@@ -430,6 +440,12 @@ namespace Unverum
                     break;
                 case GameFilter.ToA:
                     id = "13821";
+                    break;
+                case GameFilter.DS:
+                    id = "14246";
+                    break;
+                case GameFilter.IM:
+                    id = "14247";
                     break;
             }
             try
@@ -1108,7 +1124,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)

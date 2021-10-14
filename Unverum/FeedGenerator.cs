@@ -20,7 +20,9 @@ namespace Unverum
         JF,
         KHIII,
         SN,
-        ToA
+        ToA,
+        DS,
+        IM
     }
     public enum FeedFilter
     {
@@ -135,6 +137,12 @@ namespace Unverum
                     case GameFilter.ToA:
                         url += "13821&";
                         break;
+                    case GameFilter.DS:
+                        url += "14246&";
+                        break;
+                    case GameFilter.IM:
+                        url += "14247&";
+                        break;
                 }
             }
             else if (category.ID != null)
@@ -167,6 +175,12 @@ namespace Unverum
                         break;
                     case GameFilter.ToA:
                         url += "13821&";
+                        break;
+                    case GameFilter.DS:
+                        url += "14246&";
+                        break;
+                    case GameFilter.IM:
+                        url += "14247&";
                         break;
                 }
             }
