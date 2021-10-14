@@ -420,6 +420,7 @@
                             <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Tales of Arise</ComboBoxItem>
+                            <ComboBoxItem xml:space="preserve"> Demon Slayer</ComboBoxItem>
                         </ComboBox>
                         <Button FontSize="18" FontWeight="Bold" Name="ConfigButton" Margin="10,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" Content="Setup" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Setup_Click" />
                         <Button FontSize="18" FontWeight="Bold" Name="LaunchButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Content="Launch" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Launch_Click"/>
@@ -660,7 +661,8 @@
                             <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Tales of Arise</ComboBoxItem>
-                        </ComboBox>
+                            <ComboBoxItem xml:space="preserve"> Demon Slayer</ComboBoxItem>
+                    </ComboBox>
                     <ComboBox Margin="5,0,0,0" Grid.Column="1" IsEnabled="False" Name="FilterBox" Height="35" MinWidth="130" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" SelectionChanged="FilterSelectionChanged"/>
                     <ComboBox Margin="5,0,0,0" Grid.Column="2" IsEnabled="False" FontWeight="Bold" FontSize="18" Name="TypeBox" Height="35" HorizontalAlignment="Stretch" MinWidth="100" SelectionChanged="TypeFilterSelectionChanged">
                             <ComboBoxItem xml:space="preserve" IsSelected="True"> Mods</ComboBoxItem>

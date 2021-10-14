@@ -474,6 +474,21 @@
     <None Update="Dependencies\u4pak\u4pak.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Dependencies\UML\ModLoaderInfo.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UML\Profiles\GGST-Win64-Shipping.profile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UML\Profiles\KINGDOM HEARTS III.profile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UML\UnrealEngineModLauncher.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UML\UnrealEngineModLoader.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mods\Dragon Ball FighterZ\FighterZ Material Recreation\LeanMaterials\LeanMaterials.pak">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

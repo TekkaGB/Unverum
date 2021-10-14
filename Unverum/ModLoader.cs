@@ -17,6 +17,10 @@ namespace Unverum
             {
                 // Delete everything in mods folder
                 Directory.Delete(path, true);
+                // Delete everything in LogicMods folder
+                var LogicMods = path.Replace("~mods", "LogicMods");
+                if (Directory.Exists(LogicMods))
+                    Directory.Delete(LogicMods, true);
                 Directory.CreateDirectory(path);
                 // Reset movies and splash folder
                 if (!String.IsNullOrEmpty(movies) && Directory.Exists(movies))
@@ -49,6 +53,8 @@ namespace Unverum
                 if (Path.GetExtension(path).Equals(".pak", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var newPath = path.Replace(sourcePath, targetPath).Replace(".pak", "_9_P.pak");
+                    if (Path.GetDirectoryName(path).EndsWith("LogicMods"))
+                        newPath = path.Replace(sourcePath, Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder));
                     Directory.CreateDirectory(Path.GetDirectoryName(newPath));
                     File.Copy(path, newPath, true);
                     if (defaultSig != null)
