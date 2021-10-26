@@ -26,6 +26,7 @@ namespace Unverum
     public class Config
     {
         public string CurrentGame { get; set; }
+        public bool KeepDownloads { get; set; }
         public Dictionary<string, GameConfig> Configs { get; set; }
         public double? LeftGridWidth { get; set; }
         public double? RightGridWidth { get; set; }

@@ -217,7 +217,8 @@ namespace Unverum
                 else
                 {
                     // Only delete if successfully extracted
-                    File.Delete(_ArchiveSource);
+                    if (!Global.config.KeepDownloads)
+                        File.Delete(_ArchiveSource);
                 }
             });
 
@@ -310,7 +311,8 @@ namespace Unverum
                 else
                 {
                     // Only delete if successfully extracted
-                    File.Delete(_ArchiveSource);
+                    if (!Global.config.KeepDownloads)
+                        File.Delete(_ArchiveSource);
                 }
             });
 
