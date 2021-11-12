@@ -343,28 +343,33 @@ namespace Unverum
                 Global.config.Configs[Global.config.CurrentGame].GamePath = dialog.FileName;
             }
 
-            // Select mod folder
             var openFolder = new CommonOpenFileDialog();
             openFolder.AllowNonFileSystemItems = true;
             openFolder.IsFolderPicker = true;
             openFolder.EnsurePathExists = true;
             openFolder.EnsureValidNames = true;
             openFolder.Multiselect = false;
-            openFolder.Title = "Select Mod Folder (010063b012dc6000)";
+            openFolder.Title = "Select Mod Folder (NA: 010063b012dc6000, EU: 0100B870126CE000, JP: 01006BD0095F4000, HK/TW: 010038D0133C2000, KR: 0100FB70133C0000)";
             var selected = true;
             Application.Current.Dispatcher.Invoke(() =>
             {
                 if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
                 {
-                    if (Path.GetFileName(openFolder.FileName).Equals("010063b012dc6000", StringComparison.InvariantCultureIgnoreCase))
+                    var hash = Path.GetFileName(openFolder.FileName).ToLowerInvariant();
+                    switch (hash)
                     {
-                        Global.config.Configs[Global.config.CurrentGame].ModsFolder = $"{openFolder.FileName}{Global.s}Unverum Mods{Global.s}romfs{Global.s}Project{Global.s}Content{Global.s}Paks{Global.s}~mods";
-                        Global.config.Configs[Global.config.CurrentGame].PatchesFolder = $"{openFolder.FileName}{Global.s}Unverum Mods{Global.s}exefs";
-                    }
-                    else
-                    {
-                        Global.logger.WriteLine($"Invalid output path chosen", LoggerType.Error);
-                        selected = false;
+                        case "010063b012dc6000":
+                        case "0100B870126CE000":
+                        case "01006BD0095F4000":
+                        case "010038D0133C2000":
+                        case "0100FB70133C0000":
+                            Global.config.Configs[Global.config.CurrentGame].ModsFolder = $"{openFolder.FileName}{Global.s}Unverum Mods{Global.s}romfs{Global.s}Project{Global.s}Content{Global.s}Paks{Global.s}~mods";
+                            Global.config.Configs[Global.config.CurrentGame].PatchesFolder = $"{openFolder.FileName}{Global.s}Unverum Mods{Global.s}exefs";
+                            break;
+                        default:
+                            Global.logger.WriteLine($"Invalid output path chosen", LoggerType.Error);
+                            selected = false;
+                            break;
                     }
                 }
                 else
