@@ -18,6 +18,13 @@ namespace Unverum
                 // Delete everything in mods folder
                 Directory.Delete(path, true);
                 Directory.CreateDirectory(path);
+                // Delete everything in patches folder for Switch games
+                if (!String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].PatchesFolder))
+                {
+                    if (Directory.Exists(Global.config.Configs[Global.config.CurrentGame].PatchesFolder))
+                        Directory.Delete(Global.config.Configs[Global.config.CurrentGame].PatchesFolder, true);
+                    Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].PatchesFolder);
+                }
                 // Reset movies and splash folder
                 if (!String.IsNullOrEmpty(movies) && Directory.Exists(movies))
                     RestoreDirectory(movies);
@@ -151,81 +158,85 @@ namespace Unverum
                     }
                 }
                 // Copy over mp4s and bmps to the appropriate folders while storing backups
-                if (!String.IsNullOrEmpty(movies) || !String.IsNullOrEmpty(splash) || !String.IsNullOrEmpty(sound))
                 foreach (var file in Directory.GetFiles(mod, "*", SearchOption.AllDirectories))
                 {
                     var ext = Path.GetExtension(file).ToLowerInvariant();
                     switch (ext)
                     {
                         case ".txt":
-                                if (Path.GetFileName(file).Equals("dblist.txt", StringComparison.InvariantCultureIgnoreCase) &&
-                                    Global.config.CurrentGame.Equals("My Hero One's Justice 2", StringComparison.InvariantCultureIgnoreCase))
+                            if (Path.GetFileName(file).Equals("dblist.txt", StringComparison.InvariantCultureIgnoreCase) &&
+                                Global.config.CurrentGame.Equals("My Hero One's Justice 2", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                var dblistFile = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}My Hero One's Justice 2{Global.s}HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt";
+                                if (missing)
+                                    continue;
+                                if (db == null && TextPatcher.ExtractBaseFiles("HeroGame-WindowsNoEditor_0_P.pak", "*dblist.txt",
+                                    $"HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt"))
+                                    db = File.ReadAllLines(dblistFile).ToHashSet();
+                                // Check if db is still null
+                                if (db == null)
                                 {
-                                    var dblistFile = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}My Hero One's Justice 2{Global.s}HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt";
+                                    missing = true;
+                                    continue;
+                                }
+                                Global.logger.WriteLine($"Appending dblist.txt from {mod}...", LoggerType.Info);
+                                db.UnionWith(File.ReadAllLines(file));
+                            }
+                            break;
+                        case ".usm":
+                        case ".uasset":
+                        case ".mp4":
+                            if (!String.IsNullOrEmpty(movies) && Directory.Exists(movies))
+                                ReplaceAsset(file, movies);
+                            break;
+                        case ".bmp":
+                            if (!String.IsNullOrEmpty(splash) && Directory.Exists(splash))
+                                ReplaceAsset(file, splash);
+                            break;
+                        case ".awb":
+                            if (!String.IsNullOrEmpty(sound) && Directory.Exists(sound))
+                                ReplaceAsset(file, sound);
+                            break;
+                        case ".pchtxt":
+                        case ".ips":
+                            if (!String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].PatchesFolder) && Directory.Exists(Global.config.Configs[Global.config.CurrentGame].PatchesFolder))
+                                File.Copy(file, $"{Global.config.Configs[Global.config.CurrentGame].PatchesFolder}{Global.s}{Path.GetFileName(file)}", true);
+                            break;
+                        case ".json":
+                            if (Path.GetFileName(file).Equals("text.json", StringComparison.InvariantCultureIgnoreCase) &&
+                                    (Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase)
+                                    || Global.config.CurrentGame.Equals("Guilty Gear -Strive-", StringComparison.InvariantCultureIgnoreCase)
+                                    || Global.config.CurrentGame.Equals("Granblue Fantasy Versus", StringComparison.InvariantCultureIgnoreCase)))
+                            {
                                     if (missing)
                                         continue;
-                                    if (db == null && TextPatcher.ExtractBaseFiles("HeroGame-WindowsNoEditor_0_P.pak", "*dblist.txt",
-                                        $"HeroGame{Global.s}Content{Global.s}DB{Global.s}dblist.txt"))
-                                        db = File.ReadAllLines(dblistFile).ToHashSet();
-                                    // Check if db is still null
-                                    if (db == null)
+                                    if (entries == null && TextPatcher.ExtractBaseFiles("pakchunk0-WindowsNoEditor.pak", "*INT/REDGame.*", 
+                                            $"RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
+                                            entries = TextPatcher.GetEntries();
+                                    // Check if entries are still null
+                                    if (entries == null)
                                     {
                                         missing = true;
                                         continue;
                                     }
-                                    Global.logger.WriteLine($"Appending dblist.txt from {mod}...", LoggerType.Info);
-                                    db.UnionWith(File.ReadAllLines(file));
-                                }
-                                break;
-                        case ".usm":
-                        case ".uasset":
-                        case ".mp4":
-                                if (!String.IsNullOrEmpty(movies) && Directory.Exists(movies))
-                                    ReplaceAsset(file, movies);
-                                break;
-                        case ".bmp":
-                                if (!String.IsNullOrEmpty(splash) && Directory.Exists(splash))
-                                    ReplaceAsset(file, splash);
-                                break;
-                        case ".awb":
-                                if (!String.IsNullOrEmpty(sound) && Directory.Exists(sound))
-                                    ReplaceAsset(file, sound);
-                                break;
-                        case ".json":
-                                if (Path.GetFileName(file).Equals("text.json", StringComparison.InvariantCultureIgnoreCase) &&
-                                        (Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase)
-                                        || Global.config.CurrentGame.Equals("Guilty Gear -Strive-", StringComparison.InvariantCultureIgnoreCase)
-                                        || Global.config.CurrentGame.Equals("Granblue Fantasy Versus", StringComparison.InvariantCultureIgnoreCase)))
-                                {
-                                        if (missing)
-                                            continue;
-                                        if (entries == null && TextPatcher.ExtractBaseFiles("pakchunk0-WindowsNoEditor.pak", "*INT/REDGame.*", 
-                                                $"RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
-                                                entries = TextPatcher.GetEntries();
-                                        // Check if entries are still null
-                                        if (entries == null)
-                                        {
-                                            missing = true;
-                                            continue;
-                                        }
                                     
-                                        var text = File.ReadAllText(file);
-                                        TextEntries replacements;
-                                        try
-                                        {
-                                            replacements = JsonSerializer.Deserialize<TextEntries>(text);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            Global.logger.WriteLine(e.Message, LoggerType.Error);
-                                            continue;
-                                        }
-                                        foreach (var replacement in replacements.Entries)
-                                        {
-                                            entries = TextPatcher.ReplaceEntry(replacement, entries);
-                                        }
-                                }
-                                break;
+                                    var text = File.ReadAllText(file);
+                                    TextEntries replacements;
+                                    try
+                                    {
+                                        replacements = JsonSerializer.Deserialize<TextEntries>(text);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Global.logger.WriteLine(e.Message, LoggerType.Error);
+                                        continue;
+                                    }
+                                    foreach (var replacement in replacements.Entries)
+                                    {
+                                        entries = TextPatcher.ReplaceEntry(replacement, entries);
+                                    }
+                            }
+                            break;
                     }
                 }
             }

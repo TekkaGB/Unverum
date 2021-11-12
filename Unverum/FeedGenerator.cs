@@ -22,7 +22,8 @@ namespace Unverum
         SN,
         ToA,
         DS,
-        IM
+        IM,
+        SMTV
     }
     public enum FeedFilter
     {
@@ -143,6 +144,9 @@ namespace Unverum
                     case GameFilter.IM:
                         url += "14247&";
                         break;
+                    case GameFilter.SMTV:
+                        url += "14768&";
+                        break;
                 }
             }
             else if (category.ID != null)
@@ -181,6 +185,9 @@ namespace Unverum
                         break;
                     case GameFilter.IM:
                         url += "14247&";
+                        break;
+                    case GameFilter.SMTV:
+                        url += "14768&";
                         break;
                 }
             }

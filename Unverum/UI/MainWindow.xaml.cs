@@ -110,7 +110,12 @@ namespace Unverum
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
             }
 
-            if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
+            if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
+            {
+                LauncherOptions[0] = " Emulator";
+                LauncherOptions[1] = " Hardware";
+            }
+            else if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
                 LauncherOptions[1] = " Epic Games";
 
             Directory.CreateDirectory($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}");
@@ -247,9 +252,11 @@ namespace Unverum
         private bool SetupGame()
         {
             var index = 0;
+            bool emu = true;
             Application.Current.Dispatcher.Invoke(() =>
             {
                 index = GameBox.SelectedIndex;
+                emu = LauncherOptionsBox.SelectedIndex == 0;
             });
             var game = (GameFilter)index;
             switch (game)
@@ -274,6 +281,8 @@ namespace Unverum
                     return Setup.Generic("APK.exe", "APK", @"C:\Program Files (x86)\Steam\steamapps\common\Demon Slayer\APK.exe");
                 case GameFilter.IM:
                     return Setup.Generic("StarlitSeason.exe", "StarlitSeason", @"C:\Program Files (x86)\Steam\steamapps\common\StarlitSeason\StarlitSeason.exe");
+                case GameFilter.SMTV:
+                    return Setup.SMTV(emu);
             }
             return false;
         }
@@ -347,7 +356,32 @@ namespace Unverum
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
                 return;
             }
-            if (Global.config.Configs[Global.config.CurrentGame].Launcher != null && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
+            if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (LauncherOptionsBox.SelectedIndex == 1)
+                    return;
+                else
+                {
+                    try
+                    {
+                        Global.logger.WriteLine($"Launching {Global.config.Configs[Global.config.CurrentGame].GamePath} with {Global.config.Configs[Global.config.CurrentGame].Launcher}", LoggerType.Info);
+                        var ps = new ProcessStartInfo(Global.config.Configs[Global.config.CurrentGame].Launcher)
+                        {
+                            WorkingDirectory = Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher),
+                            UseShellExecute = true,
+                            Verb = "open",
+                            Arguments = $"\"{Global.config.Configs[Global.config.CurrentGame].GamePath}\""
+                        };
+                        Process.Start(ps);
+                    }
+                    catch (Exception ex)
+                    {
+                        Global.logger.WriteLine($"Couldn't launch {Global.config.Configs[Global.config.CurrentGame].GamePath} with {Global.config.Configs[Global.config.CurrentGame].Launcher} ({ex.Message})", LoggerType.Error);
+                    }
+
+                }
+            }
+            else if (Global.config.Configs[Global.config.CurrentGame].Launcher != null && File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
             {
                 var path = Global.config.Configs[Global.config.CurrentGame].Launcher;
                 try
@@ -446,6 +480,9 @@ namespace Unverum
                     break;
                 case GameFilter.IM:
                     id = "14247";
+                    break;
+                case GameFilter.SMTV:
+                    id = "14768";
                     break;
             }
             try
@@ -1124,7 +1161,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)
@@ -1561,9 +1598,14 @@ namespace Unverum
         {
             if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase) && !Global.config.Configs[Global.config.CurrentGame].FirstOpen)
             {
+                ChoiceWindow choice;
                 var store = Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase) ? "Epic Games" : "Steam";
-                var choice = new ChoiceWindow("Launch through Executable", "Launches the executable directly",
-                    $"Launch through {store}", $"Uses the {store} shortcut to launch", $"Launcher Options for {Global.config.CurrentGame}");
+                if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
+                    choice = new ChoiceWindow("Launch through Emulator", "Launches the game through Yuzu or Ryujinx emulator",
+                    "Build for Hardware", "Builds mod output without launching the game", $"Launcher Options for {Global.config.CurrentGame}");
+                else
+                    choice = new ChoiceWindow("Launch through Executable", "Launches the executable directly",
+                        $"Launch through {store}", $"Uses the {store} shortcut to launch", $"Launcher Options for {Global.config.CurrentGame}");
                 choice.ShowDialog();
                 if (choice.choice != null && (bool)choice.choice)
                 {
@@ -1575,11 +1617,17 @@ namespace Unverum
                     Global.config.Configs[Global.config.CurrentGame].LauncherOption = true;
                     LauncherOptionsBox.SelectedIndex = 1;
                 }
-                else
+                else if (!Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Global.logger.WriteLine($"No launch option chosen, defaulting to {store} shortcut", LoggerType.Warning);
                     Global.config.Configs[Global.config.CurrentGame].LauncherOption = true;
                     LauncherOptionsBox.SelectedIndex = 1;
+                }
+                else
+                {
+                    Global.logger.WriteLine($"No launch option chosen, defaulting to emulator setup", LoggerType.Warning);
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = false;
+                    LauncherOptionsBox.SelectedIndex = 0;
                 }
                 Global.config.Configs[Global.config.CurrentGame].FirstOpen = true;
                 Global.UpdateConfig();
@@ -1594,7 +1642,19 @@ namespace Unverum
             handle = true;
             
         }
-
+        private void LauncherOptionsBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LauncherOptionsBox.SelectedIndex == 1
+                && Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
+                LaunchButton.Content = "Build";
+            else
+                LaunchButton.Content = "Launch";
+            if (!handle)
+            {
+                Global.config.Configs[Global.config.CurrentGame].LauncherOption = LauncherOptionsBox.SelectedIndex == 1;
+                Global.UpdateConfig();
+            }
+        }
         private void GameBox_DropDownClosed(object sender, EventArgs e)
         {
             if (handle)
@@ -1627,10 +1687,21 @@ namespace Unverum
                 {
                     LaunchButton.IsEnabled = true;
                 }
-                if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
+                if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    LauncherOptions[0] = " Emulator";
+                    LauncherOptions[1] = " Hardware";
+                }
+                else if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    LauncherOptions[0] = " Executable";
                     LauncherOptions[1] = " Epic Games";
+                }
                 else
+                {
+                    LauncherOptions[0] = " Executable";
                     LauncherOptions[1] = " Steam";
+                }
 
                 OnFirstOpen();
 
