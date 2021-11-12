@@ -82,13 +82,13 @@ namespace Unverum
             Global.games = new List<string>();
             foreach (var item in GameBox.Items)
             {
-                var game = (item as ComboBoxItem).Content.ToString().Trim().Replace(":", String.Empty);
+                var game = (((item as ComboBoxItem).Content as StackPanel).Children[1] as TextBlock).Text.Trim().Replace(":", String.Empty);
                 Global.games.Add(game);
             }
 
             if (Global.config.Configs == null)
             {
-                Global.config.CurrentGame = (GameBox.SelectedValue as ComboBoxItem).Content.ToString().Trim().Replace(":", String.Empty);
+                Global.config.CurrentGame = (((GameBox.SelectedValue as ComboBoxItem).Content as StackPanel).Children[1] as TextBlock).Text.Trim().Replace(":", String.Empty);
                 Global.config.Configs = new();
                 Global.config.Configs.Add(Global.config.CurrentGame, new());
             }
@@ -983,8 +983,8 @@ namespace Unverum
         {
             Button button = sender as Button;
             var item = button.DataContext as GameBananaRecord;
-            new AltLinkWindow(item.AlternateFileSources, item.Title, 
-                (GameFilterBox.SelectedValue as ComboBoxItem).Content.ToString().Trim().Replace(":", String.Empty),
+            new AltLinkWindow(item.AlternateFileSources, item.Title,
+                (((GameFilterBox.SelectedValue as ComboBoxItem).Content as StackPanel).Children[1] as TextBlock).Text.Trim().Replace(":", String.Empty),
                 item.Link.AbsoluteUri).ShowDialog();
         }
         private void Homepage_Click(object sender, RoutedEventArgs e)
@@ -1686,7 +1686,7 @@ namespace Unverum
                     DiscordButton.Visibility = Visibility.Collapsed;
                 else
                     DiscordButton.Visibility = Visibility.Visible;
-                Global.config.CurrentGame = (GameBox.SelectedValue as ComboBoxItem).Content.ToString().Trim().Replace(":", String.Empty);
+                Global.config.CurrentGame = (((GameBox.SelectedValue as ComboBoxItem).Content as StackPanel).Children[1] as TextBlock).Text.Trim().Replace(":", String.Empty);
                 if (!Global.config.Configs.ContainsKey(Global.config.CurrentGame))
                 {
                     Global.ModList = new();

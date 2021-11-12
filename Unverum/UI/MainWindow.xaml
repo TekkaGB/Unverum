@@ -31,7 +31,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock VerticalAlignment="Center" Panel.ZIndex="4" FontSize="40" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#f2f2f2">
+                    <TextBlock VerticalAlignment="Center" Panel.ZIndex="4" FontSize="40" FontWeight="Medium" HorizontalAlignment="Center" Foreground="#f2f2f2">
                         <TextBlock.Style>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Visibility" Value="Collapsed" />
@@ -87,7 +87,7 @@
                             <ImageBrush ImageSource="{Binding Path=Image,Mode=OneWay,IsAsync=True}"/>
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <TextBlock x:Name="Title" Margin="5" Grid.Row="1" FontWeight="Bold" TextTrimming="WordEllipsis" Background="Transparent" VerticalAlignment="Center"  Foreground="#f2f2f2" Text="{Binding Path=Title}"/>
+                    <TextBlock x:Name="Title" Margin="5" Grid.Row="1" FontWeight="Medium" TextTrimming="WordEllipsis" Background="Transparent" VerticalAlignment="Center"  Foreground="#f2f2f2" Text="{Binding Path=Title}"/>
                     <Popup PlacementTarget="{Binding ElementName=Title}" IsOpen="{Binding IsMouseDirectlyOver, ElementName=Title, Mode=OneWay}" AllowsTransparency="True">
                         <Border CornerRadius="5" Panel.ZIndex="0" Margin="10">
                             <Border.BorderBrush>
@@ -96,7 +96,7 @@
                             <Border.Background>
                                 <SolidColorBrush Color="#101010" Opacity="0.9"/>
                             </Border.Background>
-                            <TextBlock Margin="10" Text="{Binding Path=Title}" Foreground="#f2f2f2" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" />
+                            <TextBlock Margin="10" Text="{Binding Path=Title}" Foreground="#f2f2f2" FontWeight="Medium" FontSize="18" VerticalAlignment="Center" />
                         </Border>
                     </Popup>
                     <fa5:ImageAwesome Name="LoadingBar" Foreground="#006ac1" Grid.Row="0" Icon="Solid_Spinner" Height="50" VerticalAlignment="Center" HorizontalAlignment="Center" Spin="True" SpinDuration="2"/>
@@ -258,7 +258,7 @@
                             <Border.Background>
                                 <SolidColorBrush Color="#101010" Opacity="0.9"/>
                             </Border.Background>
-                            <TextBlock Margin="10" Foreground="#f2f2f2" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" Text="{Binding Path=DateAdded,StringFormat={}Added {0}}"/>
+                            <TextBlock Margin="10" Foreground="#f2f2f2" FontWeight="Medium" FontSize="18" VerticalAlignment="Center" Text="{Binding Path=DateAdded,StringFormat={}Added {0}}"/>
                         </Border>
                     </Popup>
                     <Popup PlacementTarget="{Binding ElementName=DateUpdatedPanel}" HorizontalAlignment="Center" AllowsTransparency="True">
@@ -284,7 +284,7 @@
                             <Border.Background>
                                 <SolidColorBrush Color="#101010" Opacity="0.9"/>
                             </Border.Background>
-                            <TextBlock Margin="10" Foreground="#f2f2f2" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" Text="{Binding Path=DateUpdated,StringFormat={}Updated {0}}"/>
+                            <TextBlock Margin="10" Foreground="#f2f2f2" FontWeight="Medium" FontSize="18" VerticalAlignment="Center" Text="{Binding Path=DateUpdated,StringFormat={}Updated {0}}"/>
                         </Border>
                     </Popup>
                     <StackPanel Name="StatPanel" Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4">
@@ -322,7 +322,7 @@
                             <Border.Background>
                                 <SolidColorBrush Color="#101010" Opacity="0.9"/>
                             </Border.Background>
-                            <TextBlock Margin="10" Foreground="#f2f2f2" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" >
+                            <TextBlock Margin="10" Foreground="#f2f2f2" FontWeight="Medium" FontSize="18" VerticalAlignment="Center" >
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0:N0} Downloads • {1:N0} Likes • {2:N0} Views">
                                         <Binding Path="Downloads"/>
@@ -338,8 +338,8 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Foreground="#f2f2f2" FontWeight="Bold" Height="30" Width="95" Background="#303030" BorderBrush="#353535" VerticalAlignment="Bottom" Content="More Info" Click="MoreInfo_Click"/>
-                        <Button Grid.Column="1" Foreground="#f2f2f2" FontWeight="Bold" Height="30" Width="95" Background="#303030" BorderBrush="#353535" VerticalAlignment="Top" Content="Download" IsEnabled="{Binding Path=Compatible}" Click="Download_Click"/>
+                        <Button Grid.Column="0" Foreground="#f2f2f2" FontWeight="Medium" Height="30" Width="95" Background="#303030" BorderBrush="#353535" VerticalAlignment="Bottom" Content="More Info" Click="MoreInfo_Click"/>
+                        <Button Grid.Column="1" Foreground="#f2f2f2" FontWeight="Medium" Height="30" Width="95" Background="#303030" BorderBrush="#353535" VerticalAlignment="Top" Content="Download" IsEnabled="{Binding Path=Compatible}" Click="Download_Click"/>
                     </Grid>
                 </Grid>
             </Border>
@@ -350,9 +350,9 @@
         <StackPanel Panel.ZIndex="3" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.ColumnSpan="5">
             <StackPanel Background="Transparent" Margin="0,0,5,0" Orientation="Horizontal" Name="DiscordButton" PreviewMouseLeftButtonDown="Discord_Click" Cursor="Hand">
                 <fa5:ImageAwesome Icon="Brands_Discord" Height="27" Foreground="#f2f2f2"/>
-                <TextBlock Text="Join the Discord!" FontSize="18" Margin="5" Background="Transparent" Foreground="#f2f2f2" FontWeight="Bold"/>
+                <TextBlock Text="Join the Discord!" FontSize="18" Margin="5" Background="Transparent" Foreground="#f2f2f2" FontWeight="Medium"/>
             </StackPanel>
-            <TextBox BorderThickness="0" FontSize="18" Margin="5" Background="Transparent" BorderBrush="Transparent" IsReadOnly="True" Foreground="#f2f2f2" FontWeight="Bold" Name="Stats" />
+            <TextBox BorderThickness="0" FontSize="18" Margin="5" Background="Transparent" BorderBrush="Transparent" IsReadOnly="True" Foreground="#f2f2f2" FontWeight="Medium" Name="Stats" />
         </StackPanel>
         <TabControl Grid.ColumnSpan="5" Background="#202020" BorderBrush="#353535">
             <TabControl.Resources>
@@ -372,7 +372,7 @@
                                         <ContentPresenter x:Name="ContentSite"
                                                           Width="Auto" Height="Auto"
                                                           Margin="8,3,8,3" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                          ContentSource="Header" TextElement.FontFamily="Arial" TextElement.FontWeight="Bold" TextElement.FontSize="15pt" TextElement.Foreground="#f2f2f2"/>
+                                                          ContentSource="Header" TextElement.FontFamily="Arial" TextElement.FontWeight="Medium" TextElement.FontSize="15pt" TextElement.Foreground="#f2f2f2"/>
                                     </Border>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -404,32 +404,88 @@
                             <RowDefinition MinHeight="100"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1.75*"/>
+                            <ColumnDefinition Width="1.5*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <ComboBox Margin="10,0,0,0" Name="GameBox" Height="35" MinWidth="250" FontSize="18" FontWeight="Bold" SelectionChanged="GameBox_SelectionChanged" DropDownClosed="GameBox_DropDownClosed">
-                            <ComboBoxItem xml:space="preserve" IsSelected="True"> Dragon Ball FighterZ</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> My Hero One's Justice 2</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Granblue Fantasy: Versus</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Guilty Gear -Strive-</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Jump Force</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Tales of Arise</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Demon Slayer</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> IDOLM@STER</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Shin Megami Tensei V</ComboBoxItem>
+                        <ComboBox Margin="10,0,0,0" Name="GameBox" Height="35" FontSize="18" FontWeight="Medium" SelectionChanged="GameBox_SelectionChanged" DropDownClosed="GameBox_DropDownClosed"
+                                  VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <ComboBoxItem IsSelected="True">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/dbfz.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Dragon Ball FighterZ" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/mhoj2.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="My Hero One's Justice 2" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/gbvs.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Granblue Fantasy: Versus" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/ggs.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Guilty Gear -Strive-" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/jf.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Jump Force" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/kh3.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Kingdom Hearts III" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/sn.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Scarlet Nexus" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/toa.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Tales of Arise" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/ds.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Demon Slayer" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/im.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="IDOLM@STER" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/smtv.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Shin Megami Tensei V" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
                         </ComboBox>
-                        <Button FontSize="18" FontWeight="Bold" Name="ConfigButton" Margin="10,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" Content="Setup" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Setup_Click" />
-                        <Button FontSize="18" FontWeight="Bold" Name="LaunchButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Content="Launch" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Launch_Click"/>
-                        <Button FontSize="18" FontWeight="Bold" Name="OpenModsButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="4" Content="Add Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="ModsFolder_Click"/>
-                        <Button FontSize="18" FontWeight="Bold" Name="UpdateButton" Margin="0,0,10,0"  Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="5" Content="Update Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Update_Click"/>
+                        <Button FontSize="18" FontWeight="Medium" Name="ConfigButton" Margin="10,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" Content="Setup" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Setup_Click" />
+                        <Button FontSize="18" FontWeight="Medium" Name="LaunchButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Content="Launch" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Launch_Click"/>
+                        <Button FontSize="18" FontWeight="Medium" Name="OpenModsButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="4" Content="Add Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="ModsFolder_Click"/>
+                        <Button FontSize="18" FontWeight="Medium" Name="UpdateButton" Margin="0,0,10,0"  Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="5" Content="Update Mods" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Update_Click"/>
 
-                        <ComboBox Grid.Column="3" Margin="0,0,10,0" Height="35" FontSize="18" FontWeight="Bold" Name="LauncherOptionsBox" SelectionChanged="LauncherOptionsBox_SelectionChanged"/>
+                        <ComboBox Grid.Column="3" Margin="0,0,10,0" Height="35" FontSize="18" FontWeight="Medium" Name="LauncherOptionsBox" SelectionChanged="LauncherOptionsBox_SelectionChanged"/>
 
                         <Grid Name="MiddleGrid" Grid.Row="1" Grid.ColumnSpan="7">
                             <Grid.ColumnDefinitions>
@@ -512,7 +568,7 @@
                                 <fa5:ImageAwesome Foreground="#006ac1" Grid.Row="0" Icon="Solid_Spinner" Height="50" VerticalAlignment="Center" HorizontalAlignment="Center" Spin="True" SpinDuration="2"/>
                                 <RichTextBox FontSize="12" Padding="10" Grid.Row="1" Margin="3,5,10,3" Name="DescriptionWindow" Foreground="#F2F2F2" Background="#202020" BorderBrush="#424242" ClipToBounds="False"
                      VerticalContentAlignment="Center" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Grid.ColumnSpan="5" IsDocumentEnabled="True"
-                             FontWeight="Bold"/>
+                             FontWeight="Medium"/>
                             </Grid>
                         </Grid>
                         <GridSplitter Grid.Row="2" Grid.ColumnSpan="6" HorizontalAlignment="Stretch" Height="10" Background="Transparent" />
@@ -535,7 +591,7 @@
                         <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2.2*"/>
+                        <ColumnDefinition Width="0.55*"/>
                         <ColumnDefinition Width="1.2*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="1.5*"/>
@@ -654,21 +710,76 @@
                             </Button>
                         </StackPanel>
                     </Grid>
-                    <ComboBox Margin="10,0,0,0" IsEnabled="False" Name="GameFilterBox" Height="35" MinWidth="240" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" SelectionChanged="GameFilterSelectionChanged">
-                            <ComboBoxItem xml:space="preserve"> Dragon Ball FighterZ</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> My Hero One's Justice 2</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Granblue Fantasy: Versus</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Guilty Gear -Strive-</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Jump Force</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Kingdom Hearts III</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Scarlet Nexus</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Tales of Arise</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Demon Slayer</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> IDOLM@STER</ComboBoxItem>
-                            <ComboBoxItem xml:space="preserve"> Shin Megami Tensei V</ComboBoxItem>
+                    <ComboBox Margin="10,0,0,0" IsEnabled="False" Name="GameFilterBox" Height="35" Width="60" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Medium" SelectionChanged="GameFilterSelectionChanged">
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/dbfz.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Dragon Ball FighterZ" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/mhoj2.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="My Hero One's Justice 2" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/gbvs.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Granblue Fantasy: Versus" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/ggs.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Guilty Gear -Strive-" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/jf.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Jump Force" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/kh3.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Kingdom Hearts III" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/sn.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Scarlet Nexus" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/toa.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Tales of Arise" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/ds.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Demon Slayer" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/im.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="IDOLM@STER" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/smtv.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Shin Megami Tensei V" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
                     </ComboBox>
-                    <ComboBox Margin="5,0,0,0" Grid.Column="1" IsEnabled="False" Name="FilterBox" Height="35" MinWidth="130" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" SelectionChanged="FilterSelectionChanged"/>
-                    <ComboBox Margin="5,0,0,0" Grid.Column="2" IsEnabled="False" FontWeight="Bold" FontSize="18" Name="TypeBox" Height="35" HorizontalAlignment="Stretch" MinWidth="100" SelectionChanged="TypeFilterSelectionChanged">
+                    <ComboBox Margin="5,0,0,0" Grid.Column="1" IsEnabled="False" Name="FilterBox" Height="35" MinWidth="130" HorizontalAlignment="Stretch" FontSize="18"  FontWeight="Medium" SelectionChanged="FilterSelectionChanged"/>
+                    <ComboBox Margin="5,0,0,0" Grid.Column="2" IsEnabled="False" FontWeight="Medium" FontSize="18" Name="TypeBox" Height="35" HorizontalAlignment="Stretch" MinWidth="100" SelectionChanged="TypeFilterSelectionChanged">
                             <ComboBoxItem xml:space="preserve" IsSelected="True"> Mods</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> WiPs</ComboBoxItem>
                             <ComboBoxItem xml:space="preserve"> Sounds</ComboBoxItem>
@@ -678,7 +789,7 @@
                                 <DataTemplate >
                                     <StackPanel Orientation="Horizontal">
                                         <Image Margin="0,0,5,0" VerticalAlignment="Center" Height="25" Source="{Binding Path=Icon}"/>
-                                        <TextBlock VerticalAlignment="Center" FontSize="15" FontWeight="Bold" Text="{Binding Path=Name}"/>
+                                    <TextBlock VerticalAlignment="Center" FontSize="15" FontWeight="Medium" Text="{Binding Path=Name}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -688,7 +799,7 @@
                                 <DataTemplate >
                                     <StackPanel Orientation="Horizontal">
                                         <Image Margin="0,0,5,0" VerticalAlignment="Center" Height="25" Source="{Binding Path=Icon}"/>
-                                        <TextBlock VerticalAlignment="Center" FontSize="15" FontWeight="Bold" Text="{Binding Path=Name}"/>
+                                    <TextBlock VerticalAlignment="Center" FontSize="15" FontWeight="Medium" Text="{Binding Path=Name}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -710,7 +821,7 @@
                         </Button>
                     <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5,0,0,0" >
                         <CheckBox Name="NSFWCheckbox" IsEnabled="False" Unchecked="NSFWCheckbox_Checked" Checked="NSFWCheckbox_Checked"  Margin="0,0,5,0" VerticalAlignment="Center" />
-                        <TextBlock Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold">
+                        <TextBlock Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" FontWeight="Medium">
                             Include<LineBreak/>
                             NSFW
                         </TextBlock>
@@ -724,17 +835,17 @@
                             <Border.Background>
                                 <SolidColorBrush Color="#101010" Opacity="0.9"/>
                             </Border.Background>
-                            <TextBlock Margin="10" Text="Go to gamebanana.com" Foreground="#f2f2f2" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" />
+                            <TextBlock Margin="10" Text="Go to gamebanana.com" Foreground="#f2f2f2" FontWeight="Medium" FontSize="18" VerticalAlignment="Center" />
                         </Border>
                     </Popup>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="8" Grid.Row="2">
-                        <Button IsEnabled="False" Name="PageLeft" Click="DecrementPage" Content="&lt;" HorizontalAlignment="Right" Margin="0,0,15,0" FontSize="18" FontWeight="Bold"  Height="35" Width="35" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2"/>
-                        <TextBlock Name="Page" Text="Page 1" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" />
-                        <Button IsEnabled="False" Name="PageRight" Click="IncrementPage" Content=">" HorizontalAlignment="Left" Margin="15,0,0,0" FontSize="18" FontWeight="Bold" Height="35" Width="35" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2"/>
+                        <Button IsEnabled="False" Name="PageLeft" Click="DecrementPage" Content="&lt;" HorizontalAlignment="Right" Margin="0,0,15,0" FontSize="18" FontWeight="Medium"  Height="35" Width="35" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2"/>
+                        <TextBlock Name="Page" Text="Page 1" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Medium" />
+                        <Button IsEnabled="False" Name="PageRight" Click="IncrementPage" Content=">" HorizontalAlignment="Left" Margin="15,0,0,0" FontSize="18" FontWeight="Medium" Height="35" Width="35" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2"/>
                         <ComboBox IsEnabled="False" Margin="15,0,15,0" Name="PageBox" SelectionChanged="PageBox_SelectionChanged" Height="35" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Margin="5,5,10,5" Grid.ColumnSpan="8" Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="2">
-                        <TextBlock Margin="0,0,15,0" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold">
+                        <TextBlock Margin="0,0,15,0" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Medium">
                             Per Page:
                         </TextBlock>
                         <ComboBox IsEnabled="False" Name="PerPageBox" SelectionChanged="PerPageSelectionChanged" Height="35" VerticalAlignment="Center">
@@ -747,8 +858,8 @@
                     </StackPanel>
                     <fa5:ImageAwesome Name="LoadingBar" Grid.ColumnSpan="8" Foreground="#006ac1" Panel.ZIndex="1" Grid.Row="1" Icon="Solid_Spinner" Height="110" VerticalAlignment="Center" HorizontalAlignment="Center" Spin="True" SpinDuration="2"/>
                     <StackPanel Name="ErrorPanel" Grid.ColumnSpan="8" Grid.Row="1" Panel.ZIndex="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Name="BrowserMessage" HorizontalAlignment="Center"  Opacity="1" Background="Transparent" Foreground="#f2f2f2" FontWeight="Bold" TextWrapping="Wrap" Width="800" TextAlignment="Center" FontSize="25"/>
-                        <Button Margin="10" Click="BrowserRefresh" Name="BrowserRefreshButton" Content="Retry" HorizontalAlignment="center" FontSize="18" FontWeight="Bold"  Height="40" Width="140" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2">
+                        <TextBlock Name="BrowserMessage" HorizontalAlignment="Center"  Opacity="1" Background="Transparent" Foreground="#f2f2f2" FontWeight="Medium" TextWrapping="Wrap" Width="800" TextAlignment="Center" FontSize="25"/>
+                        <Button Margin="10" Click="BrowserRefresh" Name="BrowserRefreshButton" Content="Retry" HorizontalAlignment="center" FontSize="18" FontWeight="Medium"  Height="40" Width="140" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="5"/>
