@@ -103,8 +103,14 @@ namespace Unverum
 
             Global.ModList = Global.config.Configs[Global.config.CurrentGame].ModList;
 
-            if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
-                || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))
+            if ((String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
+                && Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase)
+                && Global.config.Configs[Global.config.CurrentGame].LauncherOption) ||
+                (!Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase)
+                && !Global.config.Configs[Global.config.CurrentGame].LauncherOption &&
+                (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
+                || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) 
+                || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))))
             {
                 LaunchButton.IsEnabled = false;
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
@@ -136,6 +142,17 @@ namespace Unverum
             Preview.Source = bitmap;
             PreviewBG.Source = null;
 
+            Global.logger.WriteLine("Checking for updates...", LoggerType.Info);
+            GameBox.IsEnabled = false;
+            ModGrid.IsEnabled = false;
+            ConfigButton.IsEnabled = false;
+            LaunchButton.IsEnabled = false;
+            OpenModsButton.IsEnabled = false;
+            UpdateButton.IsEnabled = false;
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
+            });
         }
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
@@ -360,6 +377,12 @@ namespace Unverum
             {
                 if (LauncherOptionsBox.SelectedIndex == 1)
                     return;
+                else if (Global.config.Configs[Global.config.CurrentGame].Launcher == null || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher)
+                    && Global.config.Configs[Global.config.CurrentGame].GamePath == null || !File.Exists(Global.config.Configs[Global.config.CurrentGame].GamePath))
+                {
+                    Global.logger.WriteLine($"Please click Setup to configure launching from emulator!", LoggerType.Warning);
+                    return;
+                }
                 else
                 {
                     try
@@ -1715,7 +1738,19 @@ namespace Unverum
                 DescriptionWindow.Document = defaultFlow;
                 var bitmap = new BitmapImage(new Uri("pack://application:,,,/Unverum;component/Assets/unverumpreview.png"));
                 Preview.Source = bitmap;
-                PreviewBG.Source = null;
+                PreviewBG.Source = null; 
+                
+                Global.logger.WriteLine("Checking for updates...", LoggerType.Info);
+                GameBox.IsEnabled = false;
+                ModGrid.IsEnabled = false;
+                ConfigButton.IsEnabled = false;
+                LaunchButton.IsEnabled = false;
+                OpenModsButton.IsEnabled = false;
+                UpdateButton.IsEnabled = false;
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
+                });
                 handle = false;
             }
         }
