@@ -7,10 +7,21 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
     <AssemblyName>Unverum</AssemblyName>
-    <AssemblyVersion>1.4.1.0</AssemblyVersion>
+    <AssemblyVersion>1.5.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Icons\dbfz.png" />
+    <None Remove="Assets\Icons\ds.png" />
+    <None Remove="Assets\Icons\gbvs.png" />
+    <None Remove="Assets\Icons\ggs.png" />
+    <None Remove="Assets\Icons\im.png" />
+    <None Remove="Assets\Icons\jf.png" />
+    <None Remove="Assets\Icons\kh3.png" />
+    <None Remove="Assets\Icons\mhoj2.png" />
+    <None Remove="Assets\Icons\smtv.png" />
+    <None Remove="Assets\Icons\sn.png" />
+    <None Remove="Assets\Icons\toa.png" />
     <None Remove="Assets\RobotoMono-Regular.ttf" />
     <None Remove="Assets\unverumpreview.png" />
     <None Remove="GameBanana.png" />
@@ -38,11 +49,24 @@
     <PackageReference Include="gong-wpf-dragdrop" Version="2.3.2" />
     <PackageReference Include="Onova" Version="2.6.2" />
     <PackageReference Include="SharpCompress" Version="0.28.1" />
+    <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
     <PackageReference Include="xdelta3.net" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\GameBanana.png" />
+    <Resource Include="Assets\Icons\dbfz.png" />
+    <Resource Include="Assets\Icons\ds.png" />
+    <Resource Include="Assets\Icons\gbvs.png" />
+    <Resource Include="Assets\Icons\ggs.png" />
+    <Resource Include="Assets\Icons\im.png" />
+    <Resource Include="Assets\Icons\jf.png" />
+    <Resource Include="Assets\Icons\kh3.png" />
+    <Resource Include="Assets\Icons\mhoj2.png" />
+    <Resource Include="Assets\Icons\smtv.png" />
+    <Resource Include="Assets\Icons\sn.png" />
+    <Resource Include="Assets\Icons\toa.png" />
     <Resource Include="Assets\RobotoMono-Regular.ttf" />
     <Resource Include="Assets\unverumpreview.png" />
   </ItemGroup>

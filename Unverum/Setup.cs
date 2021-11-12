@@ -8,6 +8,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using xdelta3.net;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Windows;
 
 namespace Unverum
 {
@@ -301,6 +303,82 @@ namespace Unverum
             Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
             return true;
 
+        }
+
+        // TODO: disable Launch/Build if current launcher option setup isnt complete
+        public static bool SMTV(bool emu)
+        {
+            if (emu)
+            {
+                // Select emulator path
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.DefaultExt = ".exe";
+                dialog.Filter = "Emulator Exe|yuzu.exe; Ryujinx.exe";
+                dialog.Title = "Select Exectuable for Emulator (yuzu.exe or Ryujinx.exe)";
+                dialog.Multiselect = false;
+                dialog.InitialDirectory = Global.assemblyLocation;
+                dialog.ShowDialog();
+                if (!String.IsNullOrEmpty(dialog.FileName)
+                        && (Path.GetFileName(dialog.FileName).Equals("yuzu.exe", StringComparison.InvariantCultureIgnoreCase)
+                        || Path.GetFileName(dialog.FileName).Equals("Ryujinx.exe", StringComparison.InvariantCultureIgnoreCase)))
+                    Global.config.Configs[Global.config.CurrentGame].Launcher = dialog.FileName;
+                else if (!String.IsNullOrEmpty(dialog.FileName))
+                {
+                    Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
+                    return false;
+                }
+                else
+                    return false;
+
+                // Select game path
+                dialog.FileName = String.Empty;
+                dialog.DefaultExt = ".xci;.nsp";
+                dialog.Filter = "Switch Game|*.xci;*.nsp";
+                dialog.Title = "Select Switch Game for Emulator to Launch";
+                dialog.Multiselect = false;
+                dialog.InitialDirectory = Global.assemblyLocation;
+                dialog.ShowDialog();
+                if (String.IsNullOrEmpty(dialog.FileName))
+                    return false;
+                Global.config.Configs[Global.config.CurrentGame].GamePath = dialog.FileName;
+            }
+
+            var openFolder = new CommonOpenFileDialog();
+            openFolder.AllowNonFileSystemItems = true;
+            openFolder.IsFolderPicker = true;
+            openFolder.EnsurePathExists = true;
+            openFolder.EnsureValidNames = true;
+            openFolder.Multiselect = false;
+            openFolder.Title = "Select Mod Folder (NA: 010063b012dc6000, EU: 0100B870126CE000, JP: 01006BD0095F4000, HK/TW: 010038D0133C2000, KR: 0100FB70133C0000)";
+            var selected = true;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    var hash = Path.GetFileName(openFolder.FileName).ToLowerInvariant();
+                    switch (hash)
+                    {
+                        case "010063b012dc6000":
+                        case "0100B870126CE000":
+                        case "01006BD0095F4000":
+                        case "010038D0133C2000":
+                        case "0100FB70133C0000":
+                            Global.config.Configs[Global.config.CurrentGame].ModsFolder = $"{openFolder.FileName}{Global.s}Unverum Mods{Global.s}romfs{Global.s}Project{Global.s}Content{Global.s}Paks{Global.s}~mods";
+                            Global.config.Configs[Global.config.CurrentGame].PatchesFolder = $"{openFolder.FileName}{Global.s}Unverum Mods{Global.s}exefs";
+                            break;
+                        default:
+                            Global.logger.WriteLine($"Invalid output path chosen", LoggerType.Error);
+                            selected = false;
+                            break;
+                    }
+                }
+                else
+                    selected = false;
+            });
+            Global.UpdateConfig();
+            if (selected)
+                Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
+            return selected;
         }
     }
 }
