@@ -31,6 +31,7 @@ namespace Unverum
                 main.LaunchButton.IsEnabled = false;
                 main.OpenModsButton.IsEnabled = false;
                 main.UpdateButton.IsEnabled = false;
+                main.LauncherOptionsBox.IsEnabled = false;
                 main.Activate();
                 return;
             }
@@ -97,6 +98,7 @@ namespace Unverum
                 main.LaunchButton.IsEnabled = true;
                 main.OpenModsButton.IsEnabled = true;
                 main.UpdateButton.IsEnabled = true;
+                main.LauncherOptionsBox.IsEnabled = true;
                 return;
             }
             List<GameBananaAPIV4> response = new List<GameBananaAPIV4>();
@@ -121,6 +123,7 @@ namespace Unverum
                             main.LaunchButton.IsEnabled = true;
                             main.OpenModsButton.IsEnabled = true;
                             main.UpdateButton.IsEnabled = true;
+                            main.LauncherOptionsBox.IsEnabled = true;
                             return;
                         }
                     }
@@ -155,6 +158,7 @@ namespace Unverum
             main.LaunchButton.IsEnabled = true;
             main.OpenModsButton.IsEnabled = true;
             main.UpdateButton.IsEnabled = true;
+            main.LauncherOptionsBox.IsEnabled = true;
             main.Activate();
         }
         private static void ReportUpdateProgress(DownloadProgress progress)

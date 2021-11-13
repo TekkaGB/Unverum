@@ -24,6 +24,10 @@ namespace Unverum
                     if (Directory.Exists(Global.config.Configs[Global.config.CurrentGame].PatchesFolder))
                         Directory.Delete(Global.config.Configs[Global.config.CurrentGame].PatchesFolder, true);
                     Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].PatchesFolder);
+                    // Delete sound folder in romfs if it exists
+                    var SwitchSound = Global.config.Configs[Global.config.CurrentGame].PatchesFolder.Replace("exefs", $"romfs{Global.s}Project{Global.s}Content{Global.s}Sound");
+                    if (Directory.Exists(SwitchSound))
+                        Directory.Delete(SwitchSound, true);
                 }
                 // Reset movies and splash folder
                 if (!String.IsNullOrEmpty(movies) && Directory.Exists(movies))
@@ -51,7 +55,7 @@ namespace Unverum
         {
             var counter = 0;
             //Copy all the files & Replaces any files with the same name
-            foreach (string path in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+            foreach (var path in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
             {
                 if (Path.GetExtension(path).Equals(".pak", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -75,6 +79,24 @@ namespace Unverum
                         }
                     }
                     counter++;
+                }
+            }
+
+            // Copy over Sound folder to proper location for SMTV if it exists
+            if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
+            foreach (var path in Directory.GetDirectories(sourcePath, "*.*", SearchOption.AllDirectories))
+            {
+                var SoundFolder = Global.config.Configs[Global.config.CurrentGame].PatchesFolder.Replace("exefs", $"romfs{Global.s}Project{Global.s}Content{Global.s}Sound");
+                if (Path.GetFileName(path).Equals("Sound", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    foreach(var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+                    {
+                        var newPath = file.Replace(path, SoundFolder);
+                        Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+                        Global.logger.WriteLine($"Copying over {file} to {newPath}", LoggerType.Info);
+                        File.Copy(file, newPath, true);
+                    }
+                    break;
                 }
             }
             return counter;

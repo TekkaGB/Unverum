@@ -149,6 +149,7 @@ namespace Unverum
             LaunchButton.IsEnabled = false;
             OpenModsButton.IsEnabled = false;
             UpdateButton.IsEnabled = false;
+            LauncherOptionsBox.IsEnabled = false;
             App.Current.Dispatcher.Invoke(() =>
             {
                 ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
@@ -347,6 +348,7 @@ namespace Unverum
                 LaunchButton.IsEnabled = false;
                 OpenModsButton.IsEnabled = false;
                 UpdateButton.IsEnabled = false;
+                LauncherOptionsBox.IsEnabled = false;
                 Refresh();
                 Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
                 Global.logger.WriteLine($"Building loadout for {Global.config.CurrentGame}", LoggerType.Info);
@@ -359,6 +361,7 @@ namespace Unverum
                     OpenModsButton.IsEnabled = true;
                     UpdateButton.IsEnabled = true;
                     GameBox.IsEnabled = true;
+                    LauncherOptionsBox.IsEnabled = true;
                     return;
                 }
                 ModGrid.IsEnabled = true;
@@ -367,6 +370,7 @@ namespace Unverum
                 OpenModsButton.IsEnabled = true;
                 UpdateButton.IsEnabled = true;
                 GameBox.IsEnabled = true;
+                LauncherOptionsBox.IsEnabled = true;
             }
             else
             {
@@ -601,7 +605,7 @@ namespace Unverum
                     MoviesFolder = $"{ContentFolder}{Global.s}Binaries{Global.s}Movie";
                 else if (Directory.Exists($"{ContentFolder}{Global.s}Movies"))
                     MoviesFolder = $"{ContentFolder}{Global.s}Movie";
-                if (Directory.Exists($"{ContentFolder}{Global.s}Sound"))
+                if (Directory.Exists($"{ContentFolder}{Global.s}Sound") && !Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
                     SoundsFolder = $"{ContentFolder}{Global.s}Sound";
                 else if (Directory.Exists($"{ContentFolder}{Global.s}CriWareData"))
                     SoundsFolder = $"{ContentFolder}{Global.s}CriWareData";
@@ -841,6 +845,7 @@ namespace Unverum
             LaunchButton.IsEnabled = false;
             OpenModsButton.IsEnabled = false;
             UpdateButton.IsEnabled = false;
+            LauncherOptionsBox.IsEnabled = false;
             App.Current.Dispatcher.Invoke(() =>
             {
                 ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
@@ -1747,6 +1752,7 @@ namespace Unverum
                 LaunchButton.IsEnabled = false;
                 OpenModsButton.IsEnabled = false;
                 UpdateButton.IsEnabled = false;
+                LauncherOptionsBox.IsEnabled = false;
                 App.Current.Dispatcher.Invoke(() =>
                 {
                     ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);

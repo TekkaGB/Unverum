@@ -193,7 +193,7 @@ namespace Unverum
             }
             // Consistent args
             url += $"_csvProperties=_sName,_sModelName,_sProfileUrl,_aSubmitter,_tsDateUpdated,_tsDateAdded,_aPreviewMedia,_sText,_sDescription,_aCategory,_aRootCategory,_aGame,_nViewCount," +
-                $"_nLikeCount,_nDownloadCount,_aFiles,_aModManagerIntegrations,_bIsNsfw&_nPerpage={perPage}";
+                $"_nLikeCount,_nDownloadCount,_aFiles,_aModManagerIntegrations,_bIsNsfw,_aAlternateFileSources&_nPerpage={perPage}";
             if (!nsfw)
                 url += "&_aArgs[]=_sbIsNsfw = false";
             // Sorting filter
