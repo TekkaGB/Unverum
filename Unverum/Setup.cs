@@ -359,10 +359,10 @@ namespace Unverum
                     switch (hash)
                     {
                         case "010063b012dc6000":
-                        case "0100B870126CE000":
-                        case "01006BD0095F4000":
-                        case "010038D0133C2000":
-                        case "0100FB70133C0000":
+                        case "0100b870126ce000":
+                        case "01006bd0095f4000":
+                        case "010038d0133c2000":
+                        case "0100fb70133c0000":
                             Global.config.Configs[Global.config.CurrentGame].ModsFolder = $"{openFolder.FileName}{Global.s}Unverum Mods{Global.s}romfs{Global.s}Project{Global.s}Content{Global.s}Paks{Global.s}~mods";
                             Global.config.Configs[Global.config.CurrentGame].PatchesFolder = $"{openFolder.FileName}{Global.s}Unverum Mods{Global.s}exefs";
                             break;
