@@ -13,6 +13,7 @@
   <ItemGroup>
     <None Remove="Assets\Icons\dbfz.png" />
     <None Remove="Assets\Icons\ds.png" />
+    <None Remove="Assets\Icons\fnafsb.png" />
     <None Remove="Assets\Icons\gbvs.png" />
     <None Remove="Assets\Icons\ggs.png" />
     <None Remove="Assets\Icons\im.png" />
@@ -58,6 +59,9 @@
     <Resource Include="Assets\GameBanana.png" />
     <Resource Include="Assets\Icons\dbfz.png" />
     <Resource Include="Assets\Icons\ds.png" />
+    <Resource Include="Assets\Icons\fnafsb.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\gbvs.png" />
     <Resource Include="Assets\Icons\ggs.png" />
     <Resource Include="Assets\Icons\im.png" />

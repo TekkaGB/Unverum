@@ -479,6 +479,12 @@
                                     <TextBlock Text="Shin Megami Tensei V" VerticalAlignment="Center" FontWeight="Medium"/>
                                 </StackPanel>
                             </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/fnafsb.png" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Five Nights at Freddy's: Security Breach" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
                         </ComboBox>
                         <Button FontSize="18" FontWeight="Medium" Name="ConfigButton" Margin="10,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" Content="Setup" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Setup_Click" />
                         <Button FontSize="18" FontWeight="Medium" Name="LaunchButton" Margin="0,0,10,0" Height="35" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Content="Launch" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Launch_Click"/>
@@ -775,6 +781,12 @@
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="../Assets/Icons/smtv.png" Width="27" Margin="4,0,10,0"/>
                                 <TextBlock Text="Shin Megami Tensei V" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/fnafsb.png" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Five Nights at Freddy's: Security Breach" VerticalAlignment="Center" FontWeight="Medium"/>
                             </StackPanel>
                         </ComboBoxItem>
                     </ComboBox>
