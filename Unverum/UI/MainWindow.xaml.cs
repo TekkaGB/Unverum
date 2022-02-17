@@ -301,6 +301,8 @@ namespace Unverum
                     return Setup.Generic("StarlitSeason.exe", "StarlitSeason", @"C:\Program Files (x86)\Steam\steamapps\common\StarlitSeason\StarlitSeason.exe");
                 case GameFilter.SMTV:
                     return Setup.SMTV(emu);
+                case GameFilter.KOFXV:
+                    return Setup.Generic("KOFXV.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe");
             }
             return false;
         }
@@ -361,7 +363,8 @@ namespace Unverum
                     OpenModsButton.IsEnabled = true;
                     UpdateButton.IsEnabled = true;
                     GameBox.IsEnabled = true;
-                    LauncherOptionsBox.IsEnabled = true;
+                    if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
+                        LauncherOptionsBox.IsEnabled = true;
                     return;
                 }
                 ModGrid.IsEnabled = true;
@@ -370,7 +373,8 @@ namespace Unverum
                 OpenModsButton.IsEnabled = true;
                 UpdateButton.IsEnabled = true;
                 GameBox.IsEnabled = true;
-                LauncherOptionsBox.IsEnabled = true;
+                if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
+                    LauncherOptionsBox.IsEnabled = true;
             }
             else
             {
@@ -453,6 +457,9 @@ namespace Unverum
                             case GameFilter.IM:
                                 id = "1046480";
                                 break;
+                            case GameFilter.KOFXV:
+                                id = "1498570";
+                                break;
                         }
                         path = epic ? $"com.epicgames.launcher://apps/{id}?action=launch&silent=true" : $"steam://rungameid/{id}";
                     }
@@ -510,6 +517,9 @@ namespace Unverum
                     break;
                 case GameFilter.SMTV:
                     id = "14768";
+                    break;
+                case GameFilter.KOFXV:
+                    id = "15769";
                     break;
             }
             try
@@ -1189,7 +1199,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)

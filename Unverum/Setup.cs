@@ -349,7 +349,7 @@ namespace Unverum
             openFolder.EnsurePathExists = true;
             openFolder.EnsureValidNames = true;
             openFolder.Multiselect = false;
-            openFolder.Title = "Select Mod Folder (NA: 010063b012dc6000, EU: 0100B870126CE000, JP: 01006BD0095F4000, HK/TW: 010038D0133C2000, KR: 0100FB70133C0000)";
+            openFolder.Title = "Select Mod Folder (NA: 010063B012DC6000, EU: 0100B870126CE000, JP: 01006BD0095F4000, HK/TW: 010038D0133C2000, KR: 0100FB70133C0000)";
             var selected = true;
             Application.Current.Dispatcher.Invoke(() =>
             {
