@@ -302,7 +302,7 @@ namespace Unverum
                 case GameFilter.SMTV:
                     return Setup.SMTV(emu);
                 case GameFilter.KOFXV:
-                    return Setup.Generic("KOFXV.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe");
+                    return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe");
             }
             return false;
         }
