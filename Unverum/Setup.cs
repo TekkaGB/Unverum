@@ -85,19 +85,22 @@ namespace Unverum
                     return false;
             }
         }
-        public static bool Generic(string exe, string projectName, string defaultPath)
+        public static bool Generic(string exe, string projectName, string defaultPath, string otherExe = null)
         {
             if (!File.Exists(defaultPath))
             {
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
-                dialog.Filter = $"Executable Files ({exe})|{exe}";
-                dialog.Title = $"Select {exe} from your Steam Install folder";
+                dialog.Filter = otherExe == null ? $"Executable Files ({exe})|{exe}" 
+                    : $"Executable Files ({exe};{otherExe})|{exe};{otherExe}";
+                dialog.Title = otherExe == null ? $"Select {exe} from your Steam Install folder"
+                    : $"Select {exe} from your Steam Install folder or {otherExe} from your Epic Games install folder";
                 dialog.Multiselect = false;
                 dialog.InitialDirectory = Global.assemblyLocation;
                 dialog.ShowDialog();
                 if (!String.IsNullOrEmpty(dialog.FileName)
-                    && Path.GetFileName(dialog.FileName).Equals(exe, StringComparison.InvariantCultureIgnoreCase))
+                    && (Path.GetFileName(dialog.FileName).Equals(exe, StringComparison.InvariantCultureIgnoreCase)
+                    || (otherExe != null && Path.GetFileName(dialog.FileName).Equals(otherExe, StringComparison.InvariantCultureIgnoreCase))))
                     defaultPath = dialog.FileName;
                 else if (!String.IsNullOrEmpty(dialog.FileName))
                 {

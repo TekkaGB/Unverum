@@ -56,6 +56,15 @@ namespace Unverum
                 {
                     var configString = File.ReadAllText($@"{Global.assemblyLocation}{Global.s}Config.json");
                     Global.config = JsonSerializer.Deserialize<Config>(configString);
+                    foreach (var game in Global.config.Configs.Keys)
+                    {
+                        if (Global.config.Configs[game].FirstOpen && !Global.config.Configs[game].LauncherOptionConverted)
+                        {
+                            Global.config.Configs[game].LauncherOptionIndex = Convert.ToInt32(Global.config.Configs[game].LauncherOption);
+                            Global.config.Configs[game].LauncherOptionConverted = true;
+                            Global.UpdateConfig();
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -105,9 +114,9 @@ namespace Unverum
 
             if ((String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                 && Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase)
-                && Global.config.Configs[Global.config.CurrentGame].LauncherOption) ||
+                && Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex == 1) ||
                 (!Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase)
-                && !Global.config.Configs[Global.config.CurrentGame].LauncherOption &&
+                && Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex == 0 &&
                 (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                 || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) 
                 || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))))
@@ -123,6 +132,8 @@ namespace Unverum
             }
             else if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
                 LauncherOptions[1] = " Epic Games";
+            else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
+                LauncherOptions.Add(" Epic Games");
 
             Directory.CreateDirectory($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}");
 
@@ -165,7 +176,7 @@ namespace Unverum
                 LauncherOptionsBox.IsEnabled = true;
 
             LauncherOptionsBox.ItemsSource = LauncherOptions;
-            LauncherOptionsBox.SelectedIndex = Convert.ToInt32(Global.config.Configs[Global.config.CurrentGame].LauncherOption);
+            LauncherOptionsBox.SelectedIndex = Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex;
         }
         private void OnModified(object sender, FileSystemEventArgs e)
         {
@@ -302,7 +313,7 @@ namespace Unverum
                 case GameFilter.SMTV:
                     return Setup.SMTV(emu);
                 case GameFilter.KOFXV:
-                    return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe");
+                    return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe", "KOFXV.exe");
             }
             return false;
         }
@@ -417,9 +428,9 @@ namespace Unverum
                 var path = Global.config.Configs[Global.config.CurrentGame].Launcher;
                 try
                 {
-                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = Convert.ToBoolean(LauncherOptionsBox.SelectedIndex);
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex = LauncherOptionsBox.SelectedIndex;
                     Global.UpdateConfig();
-                    if (Global.config.Configs[Global.config.CurrentGame].LauncherOption)
+                    if (Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex > 0)
                     {
                         var id = "";
                         var epic = false;
@@ -458,7 +469,13 @@ namespace Unverum
                                 id = "1046480";
                                 break;
                             case GameFilter.KOFXV:
-                                id = "1498570";
+                                if (Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex == 1)
+                                    id = "1498570";
+                                else
+                                {
+                                    id = "f5b2914039804366b7e696b46040ce25";
+                                    epic = true;
+                                }
                                 break;
                         }
                         path = epic ? $"com.epicgames.launcher://apps/{id}?action=launch&silent=true" : $"steam://rungameid/{id}";
@@ -800,10 +817,22 @@ namespace Unverum
         }
         private void ModsFolder_Click(object sender, RoutedEventArgs e)
         {
-            var choice = new ChoiceWindow("Create New Mod", "Name a mod and choose the .pak file for it to use",
-                "Open Mods Folder", "Drag or extract mod folders into this directory");
+            var choices = new List<Choice>();
+            choices.Add(new Choice()
+            {
+                OptionText = "Create New Mod",
+                OptionSubText = "Name a mod and choose the .pak file for it to use",
+                Index = 0
+            });
+            choices.Add(new Choice()
+            {
+                OptionText = "Open Mods Folder",
+                OptionSubText = "Drag or extract mod folders into this directory",
+                Index = 1
+            });
+            var choice = new ChoiceWindow(choices);
             choice.ShowDialog();
-            if (choice.choice != null && (bool)choice.choice)
+            if (choice.choice != null && (int)choice.choice == 0)
             {
                 var nameWindow = new EditWindow(null);
                 nameWindow.ShowDialog();
@@ -829,7 +858,7 @@ namespace Unverum
                     }
                 }
             }
-            else if (choice.choice != null && !(bool)choice.choice) 
+            else if (choice.choice != null && (int)choice.choice == 1) 
             { 
                 var folderName = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
                 if (Directory.Exists(folderName))
@@ -1638,33 +1667,63 @@ namespace Unverum
             {
                 ChoiceWindow choice;
                 var store = Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase) ? "Epic Games" : "Steam";
+                var choices = new List<Choice>();
                 if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
-                    choice = new ChoiceWindow("Launch through Emulator", "Launches the game through Yuzu or Ryujinx emulator",
-                    "Build for Hardware", "Builds mod output without launching the game", $"Launcher Options for {Global.config.CurrentGame}");
-                else
-                    choice = new ChoiceWindow("Launch through Executable", "Launches the executable directly",
-                        $"Launch through {store}", $"Uses the {store} shortcut to launch", $"Launcher Options for {Global.config.CurrentGame}");
-                choice.ShowDialog();
-                if (choice.choice != null && (bool)choice.choice)
                 {
-                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = false;
-                    LauncherOptionsBox.SelectedIndex = 0;
+                    choices.Add(new Choice()
+                    {
+                        OptionText = "Launch through Emulator",
+                        OptionSubText = "Launches the game through Yuzu or Ryujinx emulator",
+                        Index = 0
+                    });
+                    choices.Add(new Choice()
+                    {
+                        OptionText = "Build for Hardware",
+                        OptionSubText = "Builds mod output without launching the game",
+                        Index = 1
+                    });
                 }
-                else if (choice.choice != null && !(bool)choice.choice)
+                else
                 {
-                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = true;
-                    LauncherOptionsBox.SelectedIndex = 1;
+                    choices.Add(new Choice()
+                    {
+                        OptionText = "Launch through Executable",
+                        OptionSubText = "Launches the executable directly",
+                        Index = 0
+                    });
+                    choices.Add(new Choice()
+                    {
+                        OptionText = $"Launch through {store}",
+                        OptionSubText = $"Uses the {store} shortcut to launch",
+                        Index = 1
+                    });
+                }
+                if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    choices.Add(new Choice()
+                    {
+                        OptionText = $"Launch through Epic Games",
+                        OptionSubText = $"Uses the Epic Games shortcut to launch",
+                        Index = 2
+                    });
+                }
+                choice = new ChoiceWindow(choices, $"Launcher Options for {Global.config.CurrentGame}");
+                choice.ShowDialog();
+                if (choice.choice != null)
+                {
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex = (int)choice.choice;
+                    LauncherOptionsBox.SelectedIndex = (int)choice.choice;
                 }
                 else if (!Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Global.logger.WriteLine($"No launch option chosen, defaulting to {store} shortcut", LoggerType.Warning);
-                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = true;
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex = 1;
                     LauncherOptionsBox.SelectedIndex = 1;
                 }
                 else
                 {
                     Global.logger.WriteLine($"No launch option chosen, defaulting to emulator setup", LoggerType.Warning);
-                    Global.config.Configs[Global.config.CurrentGame].LauncherOption = false;
+                    Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex = 0;
                     LauncherOptionsBox.SelectedIndex = 0;
                 }
                 Global.config.Configs[Global.config.CurrentGame].FirstOpen = true;
@@ -1689,7 +1748,7 @@ namespace Unverum
                 LaunchButton.Content = "Launch";
             if (!handle)
             {
-                Global.config.Configs[Global.config.CurrentGame].LauncherOption = LauncherOptionsBox.SelectedIndex == 1;
+                Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex = LauncherOptionsBox.SelectedIndex;
                 Global.UpdateConfig();
             }
         }
@@ -1729,16 +1788,28 @@ namespace Unverum
                 {
                     LauncherOptions[0] = " Emulator";
                     LauncherOptions[1] = " Hardware";
+                    if (LauncherOptions.Count > 2)
+                        LauncherOptions.RemoveAt(2);
                 }
                 else if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
                 {
                     LauncherOptions[0] = " Executable";
                     LauncherOptions[1] = " Epic Games";
+                    if (LauncherOptions.Count > 2)
+                        LauncherOptions.RemoveAt(2);
+                }
+                else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    LauncherOptions[0] = " Executable";
+                    LauncherOptions[1] = " Steam";
+                    LauncherOptions.Add(" Epic Games");
                 }
                 else
                 {
                     LauncherOptions[0] = " Executable";
                     LauncherOptions[1] = " Steam";
+                    if (LauncherOptions.Count > 2)
+                        LauncherOptions.RemoveAt(2);
                 }
 
                 OnFirstOpen();
@@ -1748,7 +1819,7 @@ namespace Unverum
                 else
                     LauncherOptionsBox.IsEnabled = true;
                 LauncherOptionsBox.ItemsSource = LauncherOptions;
-                LauncherOptionsBox.SelectedIndex = Convert.ToInt32(Global.config.Configs[Global.config.CurrentGame].LauncherOption);
+                LauncherOptionsBox.SelectedIndex = Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex;
 
                 DescriptionWindow.Document = defaultFlow;
                 var bitmap = new BitmapImage(new Uri("pack://application:,,,/Unverum;component/Assets/unverumpreview.png"));

@@ -40,10 +40,18 @@ namespace Unverum
         public string Launcher { get; set; }
         public string GamePath { get; set; }
         public bool LauncherOption { get; set; }
+        public int LauncherOptionIndex { get; set; }
+        public bool LauncherOptionConverted { get; set; }
         public bool FirstOpen { get; set; }
         public string ModsFolder { get; set; }
         public string PatchesFolder { get; set; }
         public long? PakLength { get; set; }
         public ObservableCollection<Mod> ModList { get; set; }
+    }
+    public class Choice
+    {
+        public string OptionText { get; set; }
+        public string OptionSubText { get; set; }
+        public int Index { get; set; }
     }
 }

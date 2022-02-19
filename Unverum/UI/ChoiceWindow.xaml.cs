@@ -22,26 +22,19 @@ namespace Unverum.UI
     /// </summary>
     public partial class ChoiceWindow : Window
     {
-        public bool? choice = null;
-        public ChoiceWindow(string _FirstOptionText, string _FirstOptionSubText, string _SecondOptionText, string _SecondOptionSubText, string title = null)
+        public int? choice = null;
+        public ChoiceWindow(List<Choice> choices, string title = null)
         {
             InitializeComponent();
-            FirstOptionText.Text = _FirstOptionText;
-            FirstOptionSubText.Text = _FirstOptionSubText;
-            SecondOptionText.Text = _SecondOptionText;
-            SecondOptionSubText.Text = _SecondOptionSubText;
+            ChoiceList.ItemsSource = choices;
             if (title != null)
                 Title = title;
         }
-
-        private void CreateMods_Click(object sender, RoutedEventArgs e)
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
-            choice = true;
-            Close();
-        }
-        private void OpenMods_Click(object sender, RoutedEventArgs e)
-        {
-            choice = false;
+            Button button = sender as Button;
+            var item = button.DataContext as Choice;
+            choice = item.Index;
             Close();
         }
 
