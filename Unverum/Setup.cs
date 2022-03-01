@@ -80,8 +80,19 @@ namespace Unverum
                     else
                         Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
                     return true;
+                // Unpatched 1.30 exe
+                case "5762fbde79ae9d1682b725442e121f1c":
+                    // Patched 1.30 exe
+                    if (!checksum.Equals("d21dbaa08aba836a799254b4125967a9", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        File.Copy(originalExe, exe, true);
+                        PatchExe(exe, "v1.30_Patch");
+                    }
+                    else
+                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
+                    return true;
                 default:
-                    Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27/v1.28/v1.29", LoggerType.Warning);
+                    Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27/v1.28/v1.29/v1.30", LoggerType.Warning);
                     return false;
             }
         }

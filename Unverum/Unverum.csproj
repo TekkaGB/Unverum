@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
     <AssemblyName>Unverum</AssemblyName>
-    <AssemblyVersion>1.6.2.0</AssemblyVersion>
+    <AssemblyVersion>1.6.3.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,6 +34,7 @@
     <None Remove="Resources\REDGame.uexp" />
     <None Remove="Resources\v1.28_Patch.xdelta" />
     <None Remove="Resources\v1.29_Patch.xdelta" />
+    <None Remove="Resources\v1.30_Patch.xdelta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,7 @@
     <EmbeddedResource Include="Resources\JUMP_FORCE.exe" />
     <EmbeddedResource Include="Resources\v1.28_Patch.xdelta" />
     <EmbeddedResource Include="Resources\v1.29_Patch.xdelta" />
+    <EmbeddedResource Include="Resources\v1.30_Patch.xdelta" />
   </ItemGroup>
 
   <ItemGroup>
