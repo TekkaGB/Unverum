@@ -536,6 +536,7 @@
                                     <ContextMenu>
                                         <MenuItem Header="Fetch Metadata" IsCheckable="False" Click="FetchItem_Click"/>
                                         <MenuItem Header="Rename Mod" IsCheckable="False" Click="EditItem_Click"/>
+                                        <MenuItem Header="Configure Paks" IsCheckable="False" Click="ConfigurePaksItem_Click"/>
                                         <MenuItem Header="Open Mod Folder" IsCheckable="False" Click="OpenItem_Click"/>
                                         <MenuItem Header="Delete Mod" IsCheckable="False" Click="DeleteItem_Click"/>
                                     </ContextMenu>

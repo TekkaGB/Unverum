@@ -217,6 +217,22 @@ namespace Unverum
                         Global.ModList.Remove(mod);
                     });
                     Global.logger.WriteLine($"Deleted {mod.name}", LoggerType.Info);
+                    continue;
+                }
+                // Update all paks found
+                if (mod.paks == null)
+                    mod.paks = new();
+                foreach (var file in Directory.GetFiles($"{currentModDirectory}{Global.s}{mod.name}", "*.*", SearchOption.AllDirectories))
+                {
+                    if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                        && !mod.paks.ContainsKey(file))
+                        mod.paks.Add(file, true); // Enable all paks when first added
+                }
+                // Remove all paks that no longer exist
+                foreach (var pak in mod.paks.Keys)
+                {
+                    if (!File.Exists(pak))
+                        mod.paks.Remove(pak);
                 }
             }
 
@@ -642,7 +658,7 @@ namespace Unverum
                     CostumePatched = Setup.CheckCostumePatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
                 if (!ModLoader.Restart(path, MoviesFolder, SplashFolder, SoundsFolder))
                     return false;
-                List<string> mods = Global.config.Configs[Global.config.CurrentGame].ModList.Where(x => x.enabled).Select(y => $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{y.name}").ToList();
+                var mods = Global.config.Configs[Global.config.CurrentGame].ModList.Where(x => x.enabled).ToList();
                 mods.Reverse();
 
                 // Rename HeroGame back since its no longer needed to be renamed
@@ -717,6 +733,22 @@ namespace Unverum
                 {
                     EditWindow ew = new EditWindow(row);
                     ew.ShowDialog();
+                }
+        }
+        private void ConfigurePaksItem_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedMods = ModGrid.SelectedItems;
+            var temp = new Mod[selectedMods.Count];
+            selectedMods.CopyTo(temp, 0);
+            bool edited = false;
+            foreach (var row in temp)
+                if (row != null)
+                {
+                    ConfigurePaksWindow cpw = new ConfigurePaksWindow(row);
+                    cpw.ShowDialog();
+                    var index = Global.ModList.IndexOf(row);
+                    Global.ModList[index] = cpw._mod;
+                    Global.UpdateConfig();
                 }
         }
         private void FetchItem_Click(object sender, RoutedEventArgs e)
@@ -1866,7 +1898,7 @@ namespace Unverum
                         ModGrid.ItemsSource = Global.ModList;
                     });
                 });
-                Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
+                Global.UpdateConfig();
             }
             e.Handled = true;
         }

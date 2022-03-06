@@ -51,13 +51,14 @@ namespace Unverum
                 if (File.Exists($"{file}.bak"))
                     File.Move($"{file}.bak", file, true);
         }
-        private static int CopyFolder(string sourcePath, string targetPath, string defaultSig)
+        private static int CopyFolder(Dictionary<string, bool> paks, string sourcePath, string targetPath, string defaultSig)
         {
             var counter = 0;
             //Copy all the files & Replaces any files with the same name
             foreach (var path in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
             {
-                if (Path.GetExtension(path).Equals(".pak", StringComparison.InvariantCultureIgnoreCase))
+                if (Path.GetExtension(path).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                    && paks.ContainsKey(path) && paks[path])
                 {
                     var newPath = path.Replace(sourcePath, targetPath).Replace(".pak", "_9_P.pak");
                     Directory.CreateDirectory(Path.GetDirectoryName(newPath));
@@ -150,7 +151,7 @@ namespace Unverum
                 Global.logger.WriteLine($"Failed to create pak!", LoggerType.Error);
         }
         // Copy over mod files in order of ModList
-        public static void Build(string path, List<string> mods, bool? patched, string movies, string splash, string sound)
+        public static void Build(string path, List<Mod> mods, bool? patched, string movies, string splash, string sound)
         {
             var missing = false;
             Dictionary<string, Entry> entries = null;
@@ -167,9 +168,10 @@ namespace Unverum
                 foreach (var tilde in Enumerable.Range(0, tildes))
                     priorityName += "~";
                 priorityName += folderLetter;
-                var folder = $"{path}{Global.s}{priorityName}{Global.s}{Path.GetFileName(mod)}";
+                var folder = $"{path}{Global.s}{priorityName}{Global.s}{mod.name}";
+                var modPath = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{mod.name}";
                 // Copy over .paks and .sigs to ~mods folder in order
-                if (CopyFolder(mod, folder, sig) > 0)
+                if (CopyFolder(mod.paks, modPath, folder, sig) > 0)
                 {
                     Global.logger.WriteLine($"Copied paks and sigs from {mod} over to {folder}", LoggerType.Info);
                     folderLetter++;
@@ -180,7 +182,7 @@ namespace Unverum
                     }
                 }
                 // Copy over mp4s and bmps to the appropriate folders while storing backups
-                foreach (var file in Directory.GetFiles(mod, "*", SearchOption.AllDirectories))
+                foreach (var file in Directory.GetFiles(modPath, "*", SearchOption.AllDirectories))
                 {
                     var ext = Path.GetExtension(file).ToLowerInvariant();
                     switch (ext)

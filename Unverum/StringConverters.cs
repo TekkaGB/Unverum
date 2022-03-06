@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,10 @@ namespace Unverum
 {
     public static class StringConverters
     {
+        public static string FormatFileName(string filename)
+        {
+            return Path.GetFileName(filename);
+        }
         // Load all suffixes in an array  
         static readonly string[] suffixes =
         { " Bytes", " KB", " MB", " GB", " TB", " PB" };

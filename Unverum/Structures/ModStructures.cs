@@ -9,6 +9,7 @@ namespace Unverum
     {
         public string name { get; set; }
         public bool enabled { get; set; }
+        public Dictionary<string, bool> paks { get; set; }
     }
     public class Metadata
     {
