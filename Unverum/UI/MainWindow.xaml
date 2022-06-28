@@ -489,7 +489,7 @@
                             </ComboBoxItem>
                             <ComboBoxItem>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="../Assets/Icons/dnf.jpg" Width="27" Margin="4,0,10,0"/>
+                                    <Image Source="../Assets/Icons/dnf.png" Width="27" Margin="4,0,10,0"/>
                                     <TextBlock Text="DNF Duel" VerticalAlignment="Center" FontWeight="Medium"/>
                                 </StackPanel>
                             </ComboBoxItem>
@@ -802,7 +802,7 @@
                         </ComboBoxItem>
                         <ComboBoxItem>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="../Assets/Icons/dnf.jpg" Width="27" Margin="4,0,10,0"/>
+                                <Image Source="../Assets/Icons/dnf.png" Width="27" Margin="4,0,10,0"/>
                                 <TextBlock Text="DNF Duel" VerticalAlignment="Center" FontWeight="Medium"/>
                             </StackPanel>
                         </ComboBoxItem>
