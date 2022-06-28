@@ -355,7 +355,7 @@ namespace Unverum
                 case GameFilter.KOFXV:
                     return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe", "KOFXV.exe", "1498570");
                 case GameFilter.DNF:
-                    return Setup.Generic("DNF.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\DNF Duel\DNF.exe", steamId: "1216060");
+                    return Setup.Generic("DNFDuel.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\DNFDuel\DNFDuel.exe", steamId: "1216060");
             }
             return false;
         }
