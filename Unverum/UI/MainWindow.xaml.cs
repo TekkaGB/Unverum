@@ -311,25 +311,27 @@ namespace Unverum
                 case GameFilter.MHOJ2:
                     return Setup.MHOJ2();
                 case GameFilter.GBVS:
-                    return Setup.Generic("GBVS.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\Granblue Fantasy Versus\GBVS.exe");
+                    return Setup.Generic("GBVS.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\Granblue Fantasy Versus\GBVS.exe", steamId: "1090630");
                 case GameFilter.GGS:
-                    return Setup.Generic("GGST.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\GUILTY GEAR -STRIVE-\GGST.exe");
+                    return Setup.Generic("GGST.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\GUILTY GEAR -STRIVE-\GGST.exe", steamId: "1384160");
                 case GameFilter.JF:
                     return Setup.JF();
                 case GameFilter.KHIII:
                     return Setup.KHIII();
                 case GameFilter.SN:
-                    return Setup.Generic("ScarletNexus.exe", "ScarletNexus", @"C:\Program Files (x86)\Steam\steamapps\common\ScarletNexus\ScarletNexus.exe");
+                    return Setup.Generic("ScarletNexus.exe", "ScarletNexus", @"C:\Program Files (x86)\Steam\steamapps\common\ScarletNexus\ScarletNexus.exe", steamId: "775500");
                 case GameFilter.ToA:
                     return Setup.ToA();
                 case GameFilter.DS:
-                    return Setup.Generic("APK.exe", "APK", @"C:\Program Files (x86)\Steam\steamapps\common\Demon Slayer\APK.exe");
+                    return Setup.Generic("APK.exe", "APK", @"C:\Program Files (x86)\Steam\steamapps\common\Demon Slayer\APK.exe", steamId: "1490890");
                 case GameFilter.IM:
-                    return Setup.Generic("StarlitSeason.exe", "StarlitSeason", @"C:\Program Files (x86)\Steam\steamapps\common\StarlitSeason\StarlitSeason.exe");
+                    return Setup.Generic("StarlitSeason.exe", "StarlitSeason", @"C:\Program Files (x86)\Steam\steamapps\common\StarlitSeason\StarlitSeason.exe", steamId: "1046480");
                 case GameFilter.SMTV:
                     return Setup.SMTV(emu);
                 case GameFilter.KOFXV:
-                    return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe", "KOFXV.exe");
+                    return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe", "KOFXV.exe", "1498570");
+                case GameFilter.DNF:
+                    return Setup.Generic("DNF.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\DNF Duel\DNF.exe", steamId: "1216060");
             }
             return false;
         }
@@ -369,6 +371,7 @@ namespace Unverum
         }
         private async void Launch_Click(object sender, RoutedEventArgs e)
         {
+            // Build Mod Loadout
             if (Global.config.Configs[Global.config.CurrentGame].ModsFolder != null)
             {
                 GameBox.IsEnabled = false;
@@ -408,6 +411,7 @@ namespace Unverum
                 Global.logger.WriteLine("Please click Setup before starting!", LoggerType.Warning);
                 return;
             }
+            // Launch game
             if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (LauncherOptionsBox.SelectedIndex == 1)
@@ -1260,7 +1264,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)

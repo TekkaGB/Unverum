@@ -96,8 +96,22 @@ namespace Unverum
                     return false;
             }
         }
-        public static bool Generic(string exe, string projectName, string defaultPath, string otherExe = null)
+        public static bool Generic(string exe, string projectName, string defaultPath, string otherExe = null, string steamId = null)
         {
+            // Get install path from registry
+            if (steamId != null)
+            {
+                try
+                {
+                    var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {steamId}");
+                    if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
+                        defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}{exe}";
+                }
+                catch (Exception e)
+                {
+                    Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
+                }
+            }
             if (!File.Exists(defaultPath))
             {
                 OpenFileDialog dialog = new OpenFileDialog();
@@ -133,6 +147,16 @@ namespace Unverum
         public static bool MHOJ2()
         {
             var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\My Hero Ones Justice 2\HeroGame\Binaries\Win64\MHOJ2.exe";
+            try
+            {
+                var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 1058450");
+                if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
+                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}MHOJ2.exe";
+            }
+            catch (Exception e)
+            {
+                Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
+            }
             if (!File.Exists(defaultPath))
             {
                 OpenFileDialog dialog = new OpenFileDialog();
@@ -166,6 +190,16 @@ namespace Unverum
         public static bool ToA()
         {
             var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\Tales of Arise\Arise\Binaries\Win64\Tales of Arise.exe";
+            try
+            {
+                var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 740130");
+                if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
+                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}Tales of Arise.exe";
+            }
+            catch (Exception e)
+            {
+                Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
+            }
             if (!File.Exists(defaultPath))
             {
                 OpenFileDialog dialog = new OpenFileDialog();
@@ -241,6 +275,16 @@ namespace Unverum
         public static bool JF()
         {
             var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\JUMP FORCE\JUMP_FORCE.exe";
+            try
+            {
+                var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 816020");
+                if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
+                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}JUMP_FORCE.exe";
+            }
+            catch (Exception e)
+            {
+                Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
+            }
             if (!File.Exists(defaultPath))
             {
                 OpenFileDialog dialog = new OpenFileDialog();
@@ -276,6 +320,16 @@ namespace Unverum
         public static bool DBFZ()
         {
             var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\DRAGON BALL FighterZ\DBFighterZ.exe";
+            try
+            {
+                var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 678950");
+                if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
+                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}DBFighterZ.exe";
+            }
+            catch (Exception e)
+            {
+                Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
+            }
             if (!File.Exists(defaultPath))
             {
                 OpenFileDialog dialog = new OpenFileDialog();

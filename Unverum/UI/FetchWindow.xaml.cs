@@ -60,7 +60,8 @@ namespace Unverum
                     var MOD_TYPE = char.ToUpper(url.Segments[1][0]) + url.Segments[1].Substring(1, url.Segments[1].Length - 3);
                     var MOD_ID = url.Segments[2];
                     var client = new HttpClient();
-                    var requestUrl = $"https://gamebanana.com/apiv4/{MOD_TYPE}/{MOD_ID}";
+                    var requestUrl = $"https://gamebanana.com/apiv6/{MOD_TYPE}/{MOD_ID}?_csvProperties=_aSubmitter,_sDescription,_aPreviewMedia,_sProfileUrl," +
+                        $"_aSuperCategory,_aCategory,_tsDateUpdated";
                     string responseString = await client.GetStringAsync(requestUrl);
                     var record = JsonSerializer.Deserialize<GameBananaAPIV4>(responseString);
                     var metadata = new Metadata();

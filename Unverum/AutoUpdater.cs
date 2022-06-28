@@ -75,9 +75,9 @@ namespace Unverum
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Global.logger.WriteLine($"Unable to check for update... ({e.Message})", LoggerType.Error);
             }
             return false;
         }

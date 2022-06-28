@@ -24,7 +24,8 @@ namespace Unverum
         DS,
         IM,
         SMTV,
-        KOFXV
+        KOFXV,
+        DNF
     }
     public enum FeedFilter
     {
@@ -151,6 +152,9 @@ namespace Unverum
                     case GameFilter.KOFXV:
                         url += "15769&";
                         break;
+                    case GameFilter.DNF:
+                        url += "16693&";
+                        break;
                 }
             }
             else if (category.ID != null)
@@ -195,6 +199,9 @@ namespace Unverum
                         break;
                     case GameFilter.KOFXV:
                         url += "15769&";
+                        break;
+                    case GameFilter.DNF:
+                        url += "16693&";
                         break;
                 }
             }

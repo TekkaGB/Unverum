@@ -156,6 +156,7 @@ namespace Unverum
             var missing = false;
             Dictionary<string, Entry> entries = null;
             HashSet<string> db = null;
+            string prmFilePaths = String.Empty;
             string sig = null;
             var sigs = Directory.GetFiles(Path.GetDirectoryName(path), "*.sig", SearchOption.TopDirectoryOnly);
             if (sigs.Length > 0)
@@ -181,7 +182,6 @@ namespace Unverum
                         tildes++;
                     }
                 }
-                // Copy over mp4s and bmps to the appropriate folders while storing backups
                 foreach (var file in Directory.GetFiles(modPath, "*", SearchOption.AllDirectories))
                 {
                     var ext = Path.GetExtension(file).ToLowerInvariant();
@@ -263,6 +263,10 @@ namespace Unverum
                             break;
                     }
                 }
+                // Check for prm_files folder for JUMP FORCE slots
+                if (Global.config.CurrentGame.Equals("Jump Force", StringComparison.InvariantCultureIgnoreCase))
+                    foreach (var prm in Directory.GetDirectories(modPath, "*prm_files", SearchOption.AllDirectories))
+                        prmFilePaths += $@"""{prm}"" ";
             }
             // Create pak if text was patched
             if (entries != null)
@@ -314,6 +318,32 @@ namespace Unverum
                     }
                 }
                 Global.logger.WriteLine($"Copied over base costume patch files", LoggerType.Info);
+            }
+            if (!String.IsNullOrEmpty(prmFilePaths))
+            {
+                Global.logger.WriteLine($"Adding slots...", LoggerType.Info);
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.CreateNoWindow = true;
+                startInfo.UseShellExecute = false;
+                startInfo.FileName = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}jfaddslots{Global.s}JFAddSlots.exe";
+                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                startInfo.WorkingDirectory = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}jfaddslots";
+                startInfo.Arguments = $@"""{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak"" {prmFilePaths}";
+                using (Process process = new Process())
+                {
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    process.WaitForExit();
+                }
+                var priorityName = String.Empty;
+                foreach (var tilde in Enumerable.Range(0, tildes))
+                    priorityName += "~";
+                priorityName += folderLetter;
+                var folder = $"{path}{Global.s}{priorityName}";
+                Directory.CreateDirectory(folder);
+                PakFiles("JUMP_FORCE", folder, sig);
+                Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}JUMP_FORCE", true);
+                Global.logger.WriteLine($"Slots added!", LoggerType.Info);
             }
             Global.logger.WriteLine("Finished building!", LoggerType.Info);
         }
