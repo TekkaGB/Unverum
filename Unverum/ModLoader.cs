@@ -235,7 +235,8 @@ namespace Unverum
                             {
                                     if (missing)
                                         continue;
-                                    if (entries == null && TextPatcher.ExtractBaseFiles("pakchunk0-WindowsNoEditor.pak", "*INT/REDGame.*", 
+                                var pakName = Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase) ? "RED-WindowsNoEditor.pak" : "pakchunk0-WindowsNoEditor.pak";
+                                    if (entries == null && TextPatcher.ExtractBaseFiles(pakName, "*INT/REDGame.*", 
                                             $"RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
                                             entries = TextPatcher.GetEntries();
                                     // Check if entries are still null
