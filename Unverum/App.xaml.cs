@@ -71,6 +71,10 @@ namespace Unverum
                 ((MainWindow)Current.MainWindow).OpenModsButton.IsEnabled = true;
                 ((MainWindow)Current.MainWindow).UpdateButton.IsEnabled = true;
                 ((MainWindow)Current.MainWindow).GameBox.IsEnabled = true;
+                ((MainWindow)Current.MainWindow).EditLoadoutsButton.IsEnabled = true;
+                ((MainWindow)Current.MainWindow).LoadoutsBox.IsEnabled = true;
+                if (Global.config != null && Global.config.CurrentGame != "Dragon Ball FighterZ")
+                    ((MainWindow)Current.MainWindow).LauncherOptionsBox.IsEnabled = true;
             });
         }
     }

@@ -17,6 +17,7 @@ namespace Unverum
         public static char s = Path.DirectorySeparatorChar;
         public static string assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         public static List<string> games;
+        public static ObservableCollection<String> LoadoutItems;
         public static ObservableCollection<Mod> ModList;
         public static void UpdateConfig()
         {

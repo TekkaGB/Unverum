@@ -15,19 +15,26 @@ namespace Unverum.UI
     /// </summary>
     public partial class EditWindow : Window
     {
-        public Mod _mod;
+        public string _name;
+        public bool _folder;
         public string directory = null;
-        public EditWindow(Mod mod)
+        public string newName;
+        public string loadout = null;
+        public EditWindow(string name, bool folder)
         {
             InitializeComponent();
-            if (mod != null)
+            _folder = folder;
+            if (!String.IsNullOrEmpty(name))
             {
-                _mod = mod;
-                NameBox.Text = _mod.name;
-                Title = $"Edit {_mod.name}";
+                _name = name;
+                NameBox.Text = name;
+                Title = $"Edit {name}";
             }
             else
-                Title = $"Create Name of New Mod for {Global.config.CurrentGame}";
+                if (_folder)
+                    Title = "Create New Mod";
+                else
+                    Title = "Create New Loadout";
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -37,10 +44,14 @@ namespace Unverum.UI
 
         private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_mod != null)
-                EditName();
+            if (_folder)
+                if (_name != null)
+                    EditFolderName();
+                else
+                    CreateName();
             else
-                CreateName();
+                CreateLoadoutName();
+
         }
         private void CreateName()
         {
@@ -53,17 +64,40 @@ namespace Unverum.UI
             else
                 Global.logger.WriteLine($"{newDirectory} already exists", LoggerType.Error);
         }
-        private void EditName()
+        private void CreateLoadoutName()
         {
-            if (!NameBox.Text.Equals(_mod.name, StringComparison.InvariantCultureIgnoreCase))
+            if (String.IsNullOrWhiteSpace(NameBox.Text))
             {
-                var oldDirectory = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{_mod.name}";
+                Global.logger.WriteLine($"Invalid loadout name", LoggerType.Error);
+                return;
+            }
+            if (!Global.config.Configs[Global.config.CurrentGame].Loadouts.ContainsKey(NameBox.Text))
+            {
+                loadout = NameBox.Text;
+                Close();
+            }
+            else
+                Global.logger.WriteLine($"{NameBox.Text} already exists", LoggerType.Error);
+        }
+        private void EditFolderName()
+        {
+            if (!NameBox.Text.Equals(_name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var oldDirectory = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{_name}";
                 var newDirectory = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{NameBox.Text}";
                 if (!Directory.Exists(newDirectory))
                 {
                     try
                     {
                         Directory.Move(oldDirectory, newDirectory);
+                        // Rename in every single loadout
+                        foreach (var key in Global.config.Configs[Global.config.CurrentGame].Loadouts.Keys)
+                        {
+                            var index = Global.config.Configs[Global.config.CurrentGame].Loadouts[key].ToList().FindIndex(x => x.name == _name);
+                            Global.config.Configs[Global.config.CurrentGame].Loadouts[key][index].name = NameBox.Text;
+                        }
+                        Global.ModList = Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout];
+                        Close();
                     }
                     catch (Exception ex)
                     {
@@ -73,17 +107,19 @@ namespace Unverum.UI
                 else
                     Global.logger.WriteLine($"{newDirectory} already exists", LoggerType.Error);
             }
-            Close();
         }
 
         private void NameBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Return)
             {
-                if (_mod != null)
-                    EditName();
+                if (_folder)
+                    if (_name != null)
+                        EditFolderName();
+                    else
+                        CreateName();
                 else
-                    CreateName();
+                    CreateLoadoutName();
             }
         }
     }

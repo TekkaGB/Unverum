@@ -107,10 +107,32 @@ namespace Unverum
             if (GameBox.SelectedIndex == 5)
                 DiscordButton.Visibility = Visibility.Collapsed;
 
-            if (Global.config.Configs[Global.config.CurrentGame].ModList == null)
-                Global.config.Configs[Global.config.CurrentGame].ModList = new();
+            if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout))
+                Global.config.Configs[Global.config.CurrentGame].CurrentLoadout = "Default";
+            if (Global.config.Configs[Global.config.CurrentGame].Loadouts == null)
+                Global.config.Configs[Global.config.CurrentGame].Loadouts = new();
+            if (!Global.config.Configs[Global.config.CurrentGame].Loadouts.ContainsKey(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout))
+                if (Global.config.Configs[Global.config.CurrentGame].ModList != null && Global.config.Configs[Global.config.CurrentGame].CurrentLoadout == "Default")
+                {
+                    Global.config.Configs[Global.config.CurrentGame].Loadouts.Add(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout, Global.config.Configs[Global.config.CurrentGame].ModList);
+                    Global.config.Configs[Global.config.CurrentGame].ModList = null;
+                }
+                else
+                    Global.config.Configs[Global.config.CurrentGame].Loadouts.Add(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout, new());
+            else if (Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] == null)
+                if (Global.config.Configs[Global.config.CurrentGame].ModList != null && Global.config.Configs[Global.config.CurrentGame].CurrentLoadout == "Default")
+                {
+                    Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] = Global.config.Configs[Global.config.CurrentGame].ModList;
+                    Global.config.Configs[Global.config.CurrentGame].ModList = null;
+                }
+                else
+                    Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] = new();
+            Global.ModList = Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout];
 
-            Global.ModList = Global.config.Configs[Global.config.CurrentGame].ModList;
+            Global.LoadoutItems = new ObservableCollection<String>(Global.config.Configs[Global.config.CurrentGame].Loadouts.Keys);
+
+            LoadoutsBox.ItemsSource = Global.LoadoutItems;
+            LoadoutsBox.SelectedItem = Global.config.Configs[Global.config.CurrentGame].CurrentLoadout;
 
             if ((String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
                 && Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase)
@@ -127,13 +149,13 @@ namespace Unverum
 
             if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
             {
-                LauncherOptions[0] = " Emulator";
-                LauncherOptions[1] = " Hardware";
+                LauncherOptions[0] = "Emulator";
+                LauncherOptions[1] = "Hardware";
             }
             else if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
-                LauncherOptions[1] = " Epic Games";
+                LauncherOptions[1] = "Epic Games";
             else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
-                LauncherOptions.Add(" Epic Games");
+                LauncherOptions.Add("Epic Games");
 
             Directory.CreateDirectory($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}");
 
@@ -160,6 +182,8 @@ namespace Unverum
             LaunchButton.IsEnabled = false;
             OpenModsButton.IsEnabled = false;
             UpdateButton.IsEnabled = false;
+            EditLoadoutsButton.IsEnabled = false;
+            LoadoutsBox.IsEnabled = false;
             LauncherOptionsBox.IsEnabled = false;
             App.Current.Dispatcher.Invoke(() =>
             {
@@ -380,6 +404,8 @@ namespace Unverum
                 LaunchButton.IsEnabled = false;
                 OpenModsButton.IsEnabled = false;
                 UpdateButton.IsEnabled = false;
+                EditLoadoutsButton.IsEnabled = false;
+                LoadoutsBox.IsEnabled = false;
                 LauncherOptionsBox.IsEnabled = false;
                 Refresh();
                 Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
@@ -393,6 +419,8 @@ namespace Unverum
                     OpenModsButton.IsEnabled = true;
                     UpdateButton.IsEnabled = true;
                     GameBox.IsEnabled = true;
+                    EditLoadoutsButton.IsEnabled = true;
+                    LoadoutsBox.IsEnabled = true;
                     if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                         LauncherOptionsBox.IsEnabled = true;
                     return;
@@ -403,6 +431,8 @@ namespace Unverum
                 OpenModsButton.IsEnabled = true;
                 UpdateButton.IsEnabled = true;
                 GameBox.IsEnabled = true;
+                EditLoadoutsButton.IsEnabled = true;
+                LoadoutsBox.IsEnabled = true;
                 if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                     LauncherOptionsBox.IsEnabled = true;
             }
@@ -558,6 +588,9 @@ namespace Unverum
                 case GameFilter.KOFXV:
                     id = "15769";
                     break;
+                case GameFilter.DNF:
+                    id = "16693";
+                    break;
             }
             try
             {
@@ -610,7 +643,7 @@ namespace Unverum
                 element.ContextMenu.Visibility = Visibility.Visible;
         }
 
-        private void DeleteItem_Click(object sender, RoutedEventArgs e)
+        private async void DeleteItem_Click(object sender, RoutedEventArgs e)
         {
             var selectedMods = ModGrid.SelectedItems;
             var temp = new Mod[selectedMods.Count];
@@ -623,7 +656,7 @@ namespace Unverum
                     {
                         try
                         {
-                            Directory.Delete($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{row.name}", true);
+                            await Task.Run(() => Directory.Delete($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{row.name}", true));
                             Global.logger.WriteLine($@"Deleting {row.name}.", LoggerType.Info);
                             ShowMetadata(null);
                         }
@@ -732,12 +765,18 @@ namespace Unverum
             var selectedMods = ModGrid.SelectedItems;
             var temp = new Mod[selectedMods.Count];
             selectedMods.CopyTo(temp, 0);
+
+            // Stop refreshing while renaming folders
+            ModsWatcher.EnableRaisingEvents = false;
             foreach (var row in temp)
                 if (row != null)
                 {
-                    EditWindow ew = new EditWindow(row);
+                    EditWindow ew = new EditWindow(row.name, true);
                     ew.ShowDialog();
                 }
+            ModsWatcher.EnableRaisingEvents = true;
+            Global.UpdateConfig();
+            ModGrid.Items.Refresh();
         }
         private void ConfigurePaksItem_Click(object sender, RoutedEventArgs e)
         {
@@ -795,7 +834,7 @@ namespace Unverum
         }
         private void CreateMod(string[] files)
         {
-            var nameWindow = new EditWindow(null);
+            var nameWindow = new EditWindow(null, true);
             nameWindow.ShowDialog();
             if (nameWindow.directory != null)
             {
@@ -870,7 +909,7 @@ namespace Unverum
             choice.ShowDialog();
             if (choice.choice != null && (int)choice.choice == 0)
             {
-                var nameWindow = new EditWindow(null);
+                var nameWindow = new EditWindow(null, true);
                 nameWindow.ShowDialog();
                 if (nameWindow.directory != null)
                 {
@@ -920,6 +959,8 @@ namespace Unverum
             LaunchButton.IsEnabled = false;
             OpenModsButton.IsEnabled = false;
             UpdateButton.IsEnabled = false;
+            EditLoadoutsButton.IsEnabled = false;
+            LoadoutsBox.IsEnabled = false;
             LauncherOptionsBox.IsEnabled = false;
             App.Current.Dispatcher.Invoke(() =>
             {
@@ -1788,6 +1829,103 @@ namespace Unverum
                 Global.UpdateConfig();
             }
         }
+        private void LoadoutsBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+            // Change the loadout
+            else if (LoadoutsBox.SelectedItem != null)
+            {
+                Global.config.Configs[Global.config.CurrentGame].CurrentLoadout = LoadoutsBox.SelectedItem.ToString();
+
+                // Create loadout if it doesn't exist
+                if (!Global.config.Configs[Global.config.CurrentGame].Loadouts.ContainsKey(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout))
+                    Global.config.Configs[Global.config.CurrentGame].Loadouts.Add(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout, new());
+                else if (Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] == null)
+                    Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] = new();
+
+                Global.ModList = Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout];
+                Refresh();
+                Global.logger.WriteLine($"Loadout changed to {LoadoutsBox.SelectedItem}", LoggerType.Info);
+            }
+        }
+        private void EditLoadouts_Click(object sender, RoutedEventArgs e)
+        {
+            var choices = new List<Choice>();
+            choices.Add(new Choice()
+            {
+                OptionText = "Add New Loadout",
+                OptionSubText = "Adds a new loadout starting with all mods enabled in alphanumeric order",
+                Index = 0
+            });
+            choices.Add(new Choice()
+            {
+                OptionText = $"Rename Current Loadout",
+                OptionSubText = $"Changes the name of the current loadout",
+                Index = 1
+            });
+            choices.Add(new Choice()
+            {
+                OptionText = $"Delete Current Loadout",
+                OptionSubText = $"Deletes current loadout and switches to first available one",
+                Index = 2
+            });
+            Dispatcher.Invoke(() =>
+            {
+                var choice = new ChoiceWindow(choices, $"Loadout Options for {Global.config.CurrentGame}");
+                choice.ShowDialog();
+                if (choice.choice != null)
+                {
+                    switch ((int)choice.choice)
+                    {
+                        // Add new loadout
+                        case 0:
+                            var newLoadoutWindow = new EditWindow(null, false);
+                            newLoadoutWindow.ShowDialog();
+                            if (!String.IsNullOrEmpty(newLoadoutWindow.loadout))
+                            {
+                                Global.LoadoutItems.Add(newLoadoutWindow.loadout);
+                                LoadoutsBox.SelectedItem = newLoadoutWindow.loadout;
+                            }
+                            ShowMetadata(null);
+                            break;
+                        // Rename current loadout
+                        case 1:
+                            var renameLoadoutWindow = new EditWindow(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout, false);
+                            renameLoadoutWindow.ShowDialog();
+                            if (!String.IsNullOrEmpty(renameLoadoutWindow.loadout))
+                            {
+                                // Insert new name at index of original loadout
+                                Global.LoadoutItems.Insert(Global.LoadoutItems.IndexOf(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout), renameLoadoutWindow.loadout);
+                                // Copy over current loadout
+                                Global.config.Configs[Global.config.CurrentGame].Loadouts.Add(renameLoadoutWindow.loadout, Global.ModList);
+                                // Delete current loadout
+                                Global.LoadoutItems.Remove(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout);
+                                Global.config.Configs[Global.config.CurrentGame].Loadouts.Remove(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout);
+                                // Trigger selection changed event
+                                LoadoutsBox.SelectedItem = renameLoadoutWindow.loadout;
+                            }
+                            break;
+                        // Delete current loadout
+                        case 2:
+                            if (Global.config.Configs[Global.config.CurrentGame].Loadouts.Count == 1)
+                            {
+                                Global.logger.WriteLine("Unable to delete current loadout since there is only one", LoggerType.Error);
+                                return;
+                            }
+                            else
+                            {
+                                Global.LoadoutItems.Remove(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout);
+                                Global.config.Configs[Global.config.CurrentGame].Loadouts.Remove(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout);
+                                // Triggers selection changed event
+                                LoadoutsBox.SelectedIndex = 0;
+                            }
+                            ShowMetadata(null);
+                            break;
+                    }
+                }
+            });
+        }
         private void GameBox_DropDownClosed(object sender, EventArgs e)
         {
             if (handle)
@@ -1801,9 +1939,34 @@ namespace Unverum
                 {
                     Global.ModList = new();
                     Global.config.Configs.Add(Global.config.CurrentGame, new());
+                    Global.config.Configs[Global.config.CurrentGame].CurrentLoadout = "Default";
+                    Global.config.Configs[Global.config.CurrentGame].Loadouts = new();
+                    Global.config.Configs[Global.config.CurrentGame].Loadouts.Add(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout, new());
                 }
                 else
-                    Global.ModList = Global.config.Configs[Global.config.CurrentGame].ModList;
+                {
+                    if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout))
+                        Global.config.Configs[Global.config.CurrentGame].CurrentLoadout = "Default";
+                    if (Global.config.Configs[Global.config.CurrentGame].Loadouts == null)
+                        Global.config.Configs[Global.config.CurrentGame].Loadouts = new();
+                    if (!Global.config.Configs[Global.config.CurrentGame].Loadouts.ContainsKey(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout))
+                        if (Global.config.Configs[Global.config.CurrentGame].ModList != null && Global.config.Configs[Global.config.CurrentGame].CurrentLoadout == "Default")
+                        {
+                            Global.config.Configs[Global.config.CurrentGame].Loadouts.Add(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout, Global.config.Configs[Global.config.CurrentGame].ModList);
+                            Global.config.Configs[Global.config.CurrentGame].ModList = null;
+                        }
+                        else
+                            Global.config.Configs[Global.config.CurrentGame].Loadouts.Add(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout, new());
+                    else if (Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] == null)
+                        if (Global.config.Configs[Global.config.CurrentGame].ModList != null && Global.config.Configs[Global.config.CurrentGame].CurrentLoadout == "Default")
+                        {
+                            Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] = Global.config.Configs[Global.config.CurrentGame].ModList;
+                            Global.config.Configs[Global.config.CurrentGame].ModList = null;
+                        }
+                        else
+                            Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] = new();
+                    Global.ModList = Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout];
+                }
                 var currentModDirectory = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
                 Directory.CreateDirectory(currentModDirectory);
                 ModsWatcher.Path = currentModDirectory;
@@ -1822,28 +1985,28 @@ namespace Unverum
                 }
                 if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    LauncherOptions[0] = " Emulator";
-                    LauncherOptions[1] = " Hardware";
+                    LauncherOptions[0] = "Emulator";
+                    LauncherOptions[1] = "Hardware";
                     if (LauncherOptions.Count > 2)
                         LauncherOptions.RemoveAt(2);
                 }
                 else if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    LauncherOptions[0] = " Executable";
-                    LauncherOptions[1] = " Epic Games";
+                    LauncherOptions[0] = "Executable";
+                    LauncherOptions[1] = "Epic Games";
                     if (LauncherOptions.Count > 2)
                         LauncherOptions.RemoveAt(2);
                 }
                 else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    LauncherOptions[0] = " Executable";
-                    LauncherOptions[1] = " Steam";
-                    LauncherOptions.Add(" Epic Games");
+                    LauncherOptions[0] = "Executable";
+                    LauncherOptions[1] = "Steam";
+                    LauncherOptions.Add("Epic Games");
                 }
                 else
                 {
-                    LauncherOptions[0] = " Executable";
-                    LauncherOptions[1] = " Steam";
+                    LauncherOptions[0] = "Executable";
+                    LauncherOptions[1] = "Steam";
                     if (LauncherOptions.Count > 2)
                         LauncherOptions.RemoveAt(2);
                 }
@@ -1869,6 +2032,8 @@ namespace Unverum
                 LaunchButton.IsEnabled = false;
                 OpenModsButton.IsEnabled = false;
                 UpdateButton.IsEnabled = false;
+                EditLoadoutsButton.IsEnabled = false;
+                LoadoutsBox.IsEnabled = false;
                 LauncherOptionsBox.IsEnabled = false;
                 App.Current.Dispatcher.Invoke(() =>
                 {

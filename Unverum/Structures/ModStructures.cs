@@ -48,6 +48,8 @@ namespace Unverum
         public string PatchesFolder { get; set; }
         public long? PakLength { get; set; }
         public ObservableCollection<Mod> ModList { get; set; }
+        public string CurrentLoadout { get; set; }
+        public Dictionary<string, ObservableCollection<Mod>> Loadouts { get; set; }
     }
     public class Choice
     {

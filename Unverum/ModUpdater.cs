@@ -31,6 +31,8 @@ namespace Unverum
                 main.LaunchButton.IsEnabled = false;
                 main.OpenModsButton.IsEnabled = false;
                 main.UpdateButton.IsEnabled = false;
+                main.EditLoadoutsButton.IsEnabled = false;
+                main.LoadoutsBox.IsEnabled = false;
                 main.LauncherOptionsBox.IsEnabled = false;
                 main.Activate();
                 return;
@@ -97,6 +99,8 @@ namespace Unverum
                 main.ConfigButton.IsEnabled = true;
                 main.LaunchButton.IsEnabled = true;
                 main.OpenModsButton.IsEnabled = true;
+                main.EditLoadoutsButton.IsEnabled = true;
+                main.LoadoutsBox.IsEnabled = true;
                 main.UpdateButton.IsEnabled = true;
                 if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                     main.LauncherOptionsBox.IsEnabled = true;
@@ -123,6 +127,8 @@ namespace Unverum
                             main.ConfigButton.IsEnabled = true;
                             main.LaunchButton.IsEnabled = true;
                             main.OpenModsButton.IsEnabled = true;
+                            main.EditLoadoutsButton.IsEnabled = true;
+                            main.LoadoutsBox.IsEnabled = true;
                             main.UpdateButton.IsEnabled = true;
                             if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                                 main.LauncherOptionsBox.IsEnabled = true;
@@ -160,6 +166,8 @@ namespace Unverum
             main.LaunchButton.IsEnabled = true;
             main.OpenModsButton.IsEnabled = true;
             main.UpdateButton.IsEnabled = true;
+            main.EditLoadoutsButton.IsEnabled = true;
+            main.LoadoutsBox.IsEnabled = true;
             if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                 main.LauncherOptionsBox.IsEnabled = true;
             main.Activate();
