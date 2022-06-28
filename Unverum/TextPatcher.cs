@@ -84,6 +84,9 @@ namespace Unverum
                 case "My Hero One's Justice 2":
                     args = "-a 3";
                     break;
+                case "DNF Duel":
+                    args = "-a 4";
+                    break;
             }
             startInfo.Arguments = $@"-Y {args} -f ""{filter}"" unreal_tournament_4.bms ""{pak}"" ""{outputFolder}""";
             startInfo.RedirectStandardOutput = true;
