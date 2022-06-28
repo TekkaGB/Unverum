@@ -1073,7 +1073,7 @@ namespace Unverum
                     image.Width = 20;
                     para.Inlines.Add(image);
                 }
-                para.Inlines.Add($" {metadata.cat} {metadata.section}");
+                para.Inlines.Add($" {metadata.cat}");
                 descFlow.Blocks.Add(para);
                 var text = "";
                 if (metadata.description != null && metadata.description.Length > 0)

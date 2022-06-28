@@ -71,9 +71,9 @@ namespace Unverum
                         modList.Add(MOD_TYPE, new());
                     modList[MOD_TYPE].Add(mod);
                     if (!requestUrls.ContainsKey(MOD_TYPE))
-                        requestUrls.Add(MOD_TYPE, new string[] { $"https://gamebanana.com/apiv6/{MOD_TYPE}/Multi?_csvProperties=_sName,_bHasUpdates,_aLatestUpdates,_aFiles,_aPreviewMedia,_aAlternateFileSources&_csvRowIds=" }.ToList());
+                        requestUrls.Add(MOD_TYPE, new string[] { $"https://gamebanana.com/apiv6/{MOD_TYPE}/Multi?_csvProperties=_sName,_aSubmitter,_aCategory,_aSuperCategory,_sProfileUrl,_sDescription,_bHasUpdates,_aLatestUpdates,_aFiles,_aPreviewMedia,_aAlternateFileSources,_tsDateUpdated&_csvRowIds=" }.ToList());
                     else if (requestUrls[MOD_TYPE].Count == index)
-                        requestUrls[MOD_TYPE].Add($"https://gamebanana.com/apiv6/{MOD_TYPE}/Multi?_csvProperties=_sName,_bHasUpdates,_aLatestUpdates,_aFiles,_aPreviewMedia,_aAlternateFileSources&_csvRowIds=");
+                        requestUrls[MOD_TYPE].Add($"https://gamebanana.com/apiv6/{MOD_TYPE}/Multi?_csvProperties=_sName,_aSubmitter,_aCategory,_aSuperCategory,_sProfileUrl,_sDescription,_bHasUpdates,_aLatestUpdates,_aFiles,_aPreviewMedia,_aAlternateFileSources,_tsDateUpdated&_csvRowIds=");
                     requestUrls[MOD_TYPE][index] += $"{MOD_ID},";
                     if (requestUrls[MOD_TYPE][index].Length > 1990)
                         urlCounts[MOD_TYPE]++;
@@ -258,7 +258,7 @@ namespace Unverum
                     }
                     if (downloadUrl != null && fileName != null)
                     {
-                        await DownloadFile(downloadUrl, fileName, mod, update.DateAdded, progress, cancellationToken);
+                        await DownloadFile(downloadUrl, fileName, mod, item, progress, cancellationToken);
                     }
                     else
                     {
@@ -267,7 +267,7 @@ namespace Unverum
                 }
             }
         }
-        private static async Task DownloadFile(string uri, string fileName, string mod, DateTime updateTime, Progress<DownloadProgress> progress, CancellationTokenSource cancellationToken)
+        private static async Task DownloadFile(string uri, string fileName, string mod, GameBananaAPIV4 item, Progress<DownloadProgress> progress, CancellationTokenSource cancellationToken)
         {
             try
             {
@@ -302,7 +302,7 @@ namespace Unverum
                 }
                 progressBox.Close();
                 ClearDirectory(mod);
-                await ExtractFile(fileName, mod, updateTime);
+                await ExtractFile(fileName, mod, item);
             }
             catch (OperationCanceledException)
             {
@@ -342,7 +342,7 @@ namespace Unverum
                 di.Delete();
             }
         }
-        private static async Task ExtractFile(string fileName, string output, DateTime updateTime)
+        private static async Task ExtractFile(string fileName, string output, GameBananaAPIV4 item)
         {
             await Task.Run(() =>
             {
@@ -356,13 +356,15 @@ namespace Unverum
                         {
                             using (var archive = SevenZipArchive.Open(_ArchiveSource))
                             {
-                                foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                                var reader = archive.ExtractAllEntries();
+                                while (reader.MoveToNextEntry())
                                 {
-                                    entry.WriteToDirectory(ArchiveDestination, new ExtractionOptions()
-                                    {
-                                        ExtractFullPath = true,
-                                        Overwrite = true
-                                    });
+                                    if (!reader.Entry.IsDirectory)
+                                        reader.WriteEntryToDirectory(ArchiveDestination, new ExtractionOptions()
+                                        {
+                                            ExtractFullPath = true,
+                                            Overwrite = true
+                                        });
                                 }
                             }
                         }
@@ -375,7 +377,6 @@ namespace Unverum
                                 {
                                     if (!reader.Entry.IsDirectory)
                                     {
-                                        Console.WriteLine(reader.Entry.Key);
                                         reader.WriteEntryToDirectory(ArchiveDestination, new ExtractionOptions()
                                         {
                                             ExtractFullPath = true,
@@ -385,12 +386,20 @@ namespace Unverum
                                 }
                             }
                         }
-                        if (File.Exists($@"{ArchiveDestination}{Global.s}mod.json"))
+                        if (File.Exists($@"{output}{Global.s}mod.json"))
                         {
-                            var metadata = JsonSerializer.Deserialize<Metadata>(File.ReadAllText($@"{ArchiveDestination}{Global.s}mod.json"));
-                            metadata.lastupdate = updateTime;
+                            var metadata = JsonSerializer.Deserialize<Metadata>(File.ReadAllText($@"{output}{Global.s}mod.json"));
+                            metadata.submitter = item.Owner.Name;
+                            metadata.description = item.Description;
+                            metadata.preview = item.Image;
+                            metadata.homepage = item.Link;
+                            metadata.avi = item.Owner.Avatar;
+                            metadata.upic = item.Owner.Upic;
+                            metadata.cat = item.CategoryName;
+                            metadata.caticon = item.Category.Icon;
+                            metadata.lastupdate = item.DateUpdated;
                             string metadataString = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
-                            File.WriteAllText($@"{ArchiveDestination}{Global.s}mod.json", metadataString);
+                            File.WriteAllText($@"{output}{Global.s}mod.json", metadataString);
                         }
                     }
                     catch (Exception e)

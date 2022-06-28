@@ -160,13 +160,15 @@ namespace Unverum
                         {
                             using (var archive = SevenZipArchive.Open(_ArchiveSource))
                             {
-                                foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                                var reader = archive.ExtractAllEntries();
+                                while (reader.MoveToNextEntry())
                                 {
-                                    entry.WriteToDirectory(ArchiveDestination, new ExtractionOptions()
-                                    {
-                                        ExtractFullPath = true,
-                                        Overwrite = true
-                                    });
+                                    if (!reader.Entry.IsDirectory)
+                                        reader.WriteEntryToDirectory(ArchiveDestination, new ExtractionOptions()
+                                        {
+                                            ExtractFullPath = true,
+                                            Overwrite = true
+                                        });
                                 }
                             }
                         }
@@ -253,13 +255,15 @@ namespace Unverum
                         {
                             using (var archive = SevenZipArchive.Open(_ArchiveSource))
                             {
-                                foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                                var reader = archive.ExtractAllEntries();
+                                while (reader.MoveToNextEntry())
                                 {
-                                    entry.WriteToDirectory(ArchiveDestination, new ExtractionOptions()
-                                    {
-                                        ExtractFullPath = true,
-                                        Overwrite = true
-                                    });
+                                    if (!reader.Entry.IsDirectory)
+                                        reader.WriteEntryToDirectory(ArchiveDestination, new ExtractionOptions()
+                                        {
+                                            ExtractFullPath = true,
+                                            Overwrite = true
+                                        });
                                 }
                             }
                         }
