@@ -70,7 +70,7 @@ Note that mods will go under a subfolder called Unverum Mods so that any other m
 .pak files will automatically be put in the correct directory under romfs and .pchtxt and .ips files will automatically be put in the correct directory under exefs. Any Sound folder found in a mod folder will be copied and pasted as is over `.../Unverum Mods/romfs/Project/Content/Sound`
 
 ## Text Patching
-As of v1.2.0, Unverum now supports modularly patching specific parts of REDAsset.uexp/uasset which contains all the text for Dragon Ball FighterZ, Guilty Gear -STRIVE-, and Granblue Fantasy: Versus.  Unverum looks for a text.json in each mod folder. 
+As of v1.2.0, Unverum now supports modularly patching specific parts of REDAsset.uexp/uasset which contains all the text for Dragon Ball FighterZ, Guilty Gear -STRIVE-, Granblue Fantasy: Versus, and DNF Duel.  Unverum looks for a text.json in each mod folder. 
 
 An example of how it's setup would be:
 ```
