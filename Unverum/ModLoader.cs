@@ -174,7 +174,7 @@ namespace Unverum
                 // Copy over .paks and .sigs to ~mods folder in order
                 if (CopyFolder(mod.paks, modPath, folder, sig) > 0)
                 {
-                    Global.logger.WriteLine($"Copied paks and sigs from {mod} over to {folder}", LoggerType.Info);
+                    Global.logger.WriteLine($"Copied paks and sigs from {mod.name} over to {folder}", LoggerType.Info);
                     folderLetter++;
                     if (folderLetter == '{')
                     {

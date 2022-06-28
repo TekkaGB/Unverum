@@ -109,11 +109,11 @@ namespace Unverum
                 }
                 catch (Exception e)
                 {
-                    Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
                 }
             }
             if (!File.Exists(defaultPath))
             {
+                Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
                 dialog.Filter = otherExe == null ? $"Executable Files ({exe})|{exe}" 
@@ -155,10 +155,10 @@ namespace Unverum
             }
             catch (Exception e)
             {
-                Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
             }
             if (!File.Exists(defaultPath))
             {
+                Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
                 dialog.Filter = $"Executable Files (MHOJ2.exe)|MHOJ2.exe";
@@ -198,10 +198,10 @@ namespace Unverum
             }
             catch (Exception e)
             {
-                Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
             }
             if (!File.Exists(defaultPath))
             {
+                Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
                 dialog.Filter = $"Executable Files (Tales of Arise.exe)|Tales of Arise.exe";
@@ -283,10 +283,10 @@ namespace Unverum
             }
             catch (Exception e)
             {
-                Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
             }
             if (!File.Exists(defaultPath))
             {
+                Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
                 dialog.Filter = "Executable Files (JUMP_FORCE.exe)|JUMP_FORCE.exe";
@@ -328,10 +328,10 @@ namespace Unverum
             }
             catch (Exception e)
             {
-                Global.logger.WriteLine($"Couldn't find install path in registry ({e.Message})", LoggerType.Error);
             }
             if (!File.Exists(defaultPath))
             {
+                Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
                 dialog.Filter = "Executable Files (DBFighterZ.exe)|DBFighterZ.exe";
