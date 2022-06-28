@@ -20,44 +20,37 @@ namespace Unverum
         {
             try
             {
-                if (Path.GetExtension(sourceFilePath).Equals(".7z", StringComparison.InvariantCultureIgnoreCase))
+                using (var archive = SevenZipArchive.Open(sourceFilePath))
                 {
-                    using (var archive = SevenZipArchive.Open(sourceFilePath))
+                    var reader = archive.ExtractAllEntries();
+                    while (reader.MoveToNextEntry())
                     {
-                        var reader = archive.ExtractAllEntries();
-                        while (reader.MoveToNextEntry())
-                        {
-                            if (!reader.Entry.IsDirectory)
-                                reader.WriteEntryToDirectory(destDirPath, new ExtractionOptions()
-                                {
-                                    ExtractFullPath = true,
-                                    Overwrite = true
-                                });
-                        }
-                    }
-                }
-                else
-                {
-                    using (Stream stream = File.OpenRead(sourceFilePath))
-                    using (var reader = ReaderFactory.Open(stream))
-                    {
-                        while (reader.MoveToNextEntry())
-                        {
-                            if (!reader.Entry.IsDirectory)
+                        if (!reader.Entry.IsDirectory)
+                            reader.WriteEntryToDirectory(destDirPath, new ExtractionOptions()
                             {
-                                reader.WriteEntryToDirectory(destDirPath, new ExtractionOptions()
-                                {
-                                    ExtractFullPath = true,
-                                    Overwrite = true
-                                });
-                            }
-                        }
+                                ExtractFullPath = true,
+                                Overwrite = true
+                            });
                     }
                 }
             }
             catch
             {
-                Global.logger.WriteLine("Failed to extract update", LoggerType.Error);
+                using (Stream stream = File.OpenRead(sourceFilePath))
+                using (var reader = ReaderFactory.Open(stream))
+                {
+                    while (reader.MoveToNextEntry())
+                    {
+                        if (!reader.Entry.IsDirectory)
+                        {
+                            reader.WriteEntryToDirectory(destDirPath, new ExtractionOptions()
+                            {
+                                ExtractFullPath = true,
+                                Overwrite = true
+                            });
+                        }
+                    }
+                }
             }
             File.Delete(@$"{sourceFilePath}");
             // Move the folders to the right place
