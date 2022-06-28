@@ -1503,6 +1503,7 @@ namespace Unverum
             PageRight.IsEnabled = false;
             PageBox.IsEnabled = false;
             PerPageBox.IsEnabled = false;
+            ClearCacheButton.IsEnabled = false;
             ErrorPanel.Visibility = Visibility.Collapsed;
             filterSelect = true;
             PageBox.SelectedValue = page;
@@ -1571,6 +1572,7 @@ namespace Unverum
             SearchBar.IsEnabled = true;
             SearchButton.IsEnabled = true;
             NSFWCheckbox.IsEnabled = true;
+            ClearCacheButton.IsEnabled = true;
         }
 
         private void FilterSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1736,6 +1738,11 @@ namespace Unverum
                 page = 1;
                 RefreshFilter();
             }
+        }
+        private void ClearCache(object sender, RoutedEventArgs e)
+        {
+            FeedGenerator.ClearCache();
+            RefreshFilter();
         }
 
         private void OnFirstOpen()

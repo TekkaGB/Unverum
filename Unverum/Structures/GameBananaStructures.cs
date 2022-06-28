@@ -276,7 +276,7 @@ namespace Unverum
         public ObservableCollection<GameBananaRecord> Records { get; set; }
         public double TotalPages { get; set; }
         public DateTime TimeFetched = DateTime.UtcNow;
-        public bool IsValid => (DateTime.UtcNow - TimeFetched).TotalMinutes < 30;
+        public bool IsValid => (DateTime.UtcNow - TimeFetched).TotalMinutes < 15;
     }
     public class GameBananaAlternateFileSource
     {
