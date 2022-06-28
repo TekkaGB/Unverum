@@ -152,6 +152,8 @@ namespace Unverum
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1);
         [JsonPropertyName("_sTitle")]
         public string Title { get; set; }
+        [JsonPropertyName("_sVersion")]
+        public string Version { get; set; }
 
         [JsonPropertyName("_aChangeLog")]
         public GameBananaItemUpdateChange[] Changes { get; set; }

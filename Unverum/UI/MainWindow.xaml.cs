@@ -527,6 +527,9 @@ namespace Unverum
                                     epic = true;
                                 }
                                 break;
+                            case GameFilter.DNF:
+                                id = "1216060";
+                                break;
                         }
                         path = epic ? $"com.epicgames.launcher://apps/{id}?action=launch&silent=true" : $"steam://rungameid/{id}";
                     }

@@ -38,7 +38,7 @@ namespace Unverum.UI
             }
             ChangesGrid.ItemsSource = update.Changes;
             Title = $"{packageName} Changelog";
-            VersionLabel.Content = $"Update: {update.Title}";
+            VersionLabel.Content = $"Update: {update.Title} {update.Version}";
             Text.Text = text;
             // Format/Remove html tags
             update.Text = update.Text.Replace("<br>", "\n").Replace("&nbsp;", " ");
