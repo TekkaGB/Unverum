@@ -109,10 +109,7 @@ namespace Unverum
                     await client.DownloadAsync(uri, fs, fileName, progress, cancellationToken.Token);
                 }
                 // Rename the file
-                if (!File.Exists($@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}UnverumUpdate{Global.s}{version}.7z"))
-                {
-                    File.Move($@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}UnverumUpdate{Global.s}{fileName}", $@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}UnverumUpdate{Global.s}{version}.7z");
-                }
+                File.Move($@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}UnverumUpdate{Global.s}{fileName}", $@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}UnverumUpdate{Global.s}{version}.7z", true);
                 progressBox.Close();
             }
             catch (OperationCanceledException)
