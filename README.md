@@ -21,7 +21,7 @@ If your game already contains mods, it would be best practice to move them into 
 
 ## Getting Started
 ### Prerequisites
-When you first open the exe, you'll get a message saying to install .NET 5 Runtime if you don't already have it installed. Please do so if that's the case.
+When you first open the exe, you'll get a message saying to install .NET 6.0 Runtime if you don't already have it installed. Please do so if that's the case.
 
 ### Setup
 Next thing you want to do is choose the game that you wish to mod from the dropdown menu, then click the Setup button.  From there you would just have to select the specific game exe that it's asking for.  Once you do that, Unverum will handle the rest and let you know when setup is completed.
