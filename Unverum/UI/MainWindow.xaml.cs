@@ -1945,6 +1945,7 @@ namespace Unverum
                 else
                     DiscordButton.Visibility = Visibility.Visible;
                 Global.config.CurrentGame = (((GameBox.SelectedValue as ComboBoxItem).Content as StackPanel).Children[1] as TextBlock).Text.Trim().Replace(":", String.Empty);
+
                 if (!Global.config.Configs.ContainsKey(Global.config.CurrentGame))
                 {
                     Global.ModList = new();
@@ -1977,6 +1978,9 @@ namespace Unverum
                             Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout] = new();
                     Global.ModList = Global.config.Configs[Global.config.CurrentGame].Loadouts[Global.config.Configs[Global.config.CurrentGame].CurrentLoadout];
                 }
+                Global.LoadoutItems = new ObservableCollection<String>(Global.config.Configs[Global.config.CurrentGame].Loadouts.Keys);
+                LoadoutsBox.ItemsSource = Global.LoadoutItems;
+                LoadoutsBox.SelectedItem = Global.config.Configs[Global.config.CurrentGame].CurrentLoadout;
                 var currentModDirectory = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
                 Directory.CreateDirectory(currentModDirectory);
                 ModsWatcher.Path = currentModDirectory;
