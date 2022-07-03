@@ -36,6 +36,16 @@ namespace Unverum
                     RestoreDirectory(splash);
                 if (!String.IsNullOrEmpty(sound) && Directory.Exists(sound))
                     RestoreDirectory(sound);
+                // UnrealModLoader paths
+                var LogicModsFolder = $"{Path.GetDirectoryName(path)}{Global.s}LogicMods";
+                var CoreModsFolder = $"{Path.GetDirectoryName(Path.GetDirectoryName(path))}{Global.s}CoreMods";
+                var AutoInjectorDll = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Binaries{Global.s}Win64{Global.s}xinput1_3.dll";
+                if (Directory.Exists(LogicModsFolder))
+                    Directory.Delete(LogicModsFolder, true);
+                if (Directory.Exists(CoreModsFolder))
+                    Directory.Delete(CoreModsFolder, true);
+                if (File.Exists(AutoInjectorDll))
+                    File.Delete(AutoInjectorDll);
                 Global.logger.WriteLine("Restored folders", LoggerType.Info);
             }
             catch (Exception e)
@@ -163,6 +173,11 @@ namespace Unverum
                 sig = sigs[0];
             var folderLetter = 'a';
             var tildes = 0;
+            // UnrealModLoader paths
+            var LogicModsFolder = $"{Path.GetDirectoryName(path)}{Global.s}LogicMods";
+            var CoreModsFolder = $"{Path.GetDirectoryName(Path.GetDirectoryName(path))}{Global.s}CoreMods";
+            var Win64Folder = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Binaries{Global.s}Win64";
+            var UML = false;
             foreach (var mod in mods)
             {
                 var priorityName = String.Empty;
@@ -182,6 +197,24 @@ namespace Unverum
                         tildes++;
                     }
                 }
+                foreach (var coreModDirectory in Directory.GetDirectories(modPath, "*CoreMods", SearchOption.AllDirectories))
+                    foreach (var coreMod in Directory.GetFiles(coreModDirectory, "*", SearchOption.AllDirectories))
+                    {
+                        Directory.CreateDirectory(CoreModsFolder);
+                        var newPath = coreMod.Replace(Path.GetDirectoryName(coreMod), CoreModsFolder);
+                        File.Copy(coreMod, newPath, true);
+                        Global.logger.WriteLine($"Copying over {coreMod} to {newPath}", LoggerType.Info);
+                        UML = true;
+                    }
+                foreach (var logicModDirectory in Directory.GetDirectories(modPath, "*LogicMods", SearchOption.AllDirectories))
+                    foreach (var logicMod in Directory.GetFiles(logicModDirectory, "*", SearchOption.AllDirectories))
+                    {
+                        Directory.CreateDirectory(LogicModsFolder);
+                        var newPath = logicMod.Replace(Path.GetDirectoryName(logicMod), LogicModsFolder);
+                        File.Copy(logicMod, newPath, true);
+                        Global.logger.WriteLine($"Copying over {logicMod} to {newPath}", LoggerType.Info);
+                        UML = true;
+                    }
                 foreach (var file in Directory.GetFiles(modPath, "*", SearchOption.AllDirectories))
                 {
                     var ext = Path.GetExtension(file).ToLowerInvariant();
@@ -269,6 +302,26 @@ namespace Unverum
                 if (Global.config.CurrentGame.Equals("Jump Force", StringComparison.InvariantCultureIgnoreCase))
                     foreach (var prm in Directory.GetDirectories(modPath, "*prm_files", SearchOption.AllDirectories))
                         prmFilePaths += $@"""{prm}"" ";
+            }
+            // Check if UML is installed if UML mod is used
+            if (UML)
+            {
+                var dllPath = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}UnrealModLoader{Global.s}UnrealEngineModLoader.dll";
+                if (!File.Exists(dllPath))
+                    Global.logger.WriteLine($"Unable to use UnrealModLoader mods {dllPath} does not exist", LoggerType.Warning);
+                else
+                {
+                    var AutoInjectorDll = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}UnrealModLoader{Global.s}Tools{Global.s}AutoInjector{Global.s}xinput1_3.dll";
+                    if (!File.Exists(AutoInjectorDll))
+                        Global.logger.WriteLine($"Unable to use UnrealModLoader mods {AutoInjectorDll} does not exist", LoggerType.Warning);
+                    else
+                    {
+                        if (!File.Exists($"{Win64Folder}{Global.s}xinput1_3.dll"))
+                            File.Copy(AutoInjectorDll, $"{Win64Folder}{Global.s}xinput1_3.dll", true);
+                        var iniText = $"[INFO]\nLoaderPath={dllPath}";
+                        File.WriteAllText($"{Win64Folder}{Global.s}ModLoaderInfo.ini", iniText);
+                    }
+                }
             }
             // Create pak if text was patched
             if (entries != null)

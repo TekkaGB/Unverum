@@ -36,6 +36,7 @@
     <None Remove="Resources\v1.28_Patch.xdelta" />
     <None Remove="Resources\v1.29_Patch.xdelta" />
     <None Remove="Resources\v1.30_Patch.xdelta" />
+    <None Remove="Resources\v1.31_Patch.xdelta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,7 @@
     <EmbeddedResource Include="Resources\v1.28_Patch.xdelta" />
     <EmbeddedResource Include="Resources\v1.29_Patch.xdelta" />
     <EmbeddedResource Include="Resources\v1.30_Patch.xdelta" />
+    <EmbeddedResource Include="Resources\v1.31_Patch.xdelta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -529,6 +531,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Dependencies\u4pak\u4pak.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UnrealModLoader\ModLoaderInfo.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UnrealModLoader\Profiles\DNFDUEL-Win64-Shipping.profile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UnrealModLoader\Profiles\GGST-Win64-Shipping.profile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UnrealModLoader\Tools\AutoInjector\xinput1_3.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UnrealModLoader\UnrealEngineModLauncher.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\UnrealModLoader\UnrealEngineModLoader.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
