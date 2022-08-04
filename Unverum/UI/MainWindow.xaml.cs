@@ -630,8 +630,23 @@ namespace Unverum
         {
             try
             {
-                var discordLink = (managerSelected && GameBox.SelectedIndex == 7) || (!managerSelected && GameFilterBox.SelectedIndex == 7) 
-                    ? "https://discord.gg/Se2XTnA" : "https://discord.gg/tgFrebr";
+                string discordLink;
+                var index = managerSelected ? GameBox.SelectedIndex : GameFilterBox.SelectedIndex;
+                switch (index)
+                {
+                    case 5:
+                        discordLink = "https://discord.gg/GVtG3Zu";
+                        break;
+                    case 7:
+                        discordLink = "https://discord.gg/Se2XTnA";
+                        break;
+                    case 13:
+                        discordLink = "https://discord.gg/mT6NqRdfgr";
+                        break;
+                    default:
+                        discordLink = "https://discord.gg/tgFrebr";
+                        break;
+                }
                 var ps = new ProcessStartInfo(discordLink)
                 {
                     UseShellExecute = true,
