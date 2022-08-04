@@ -1,0 +1,14 @@
+{
+	"BuildId": "8fd5b958-d922-4d4b-a660-2e69b4b9d286",
+	"Modules": 
+	{
+		"ApplicationCore": "AssetRegistryHelper-ApplicationCore.dll",
+		"AssetRegistry": "AssetRegistryHelper-AssetRegistry.dll",
+		"BuildSettings": "AssetRegistryHelper-BuildSettings.dll",
+		"Core": "AssetRegistryHelper-Core.dll",
+		"CoreUObject": "AssetRegistryHelper-CoreUObject.dll",
+		"Json": "AssetRegistryHelper-Json.dll",
+		"Projects": "AssetRegistryHelper-Projects.dll",
+		"TraceLog": "AssetRegistryHelper-TraceLog.dll"
+	}
+}

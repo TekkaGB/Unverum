@@ -23,6 +23,7 @@ namespace Unverum.UI
     {
         public string chosenFileUrl;
         public string chosenFileName;
+        public string chosenFileDescription;
 
         public UpdateFileBox(List<GameBananaItemFile> files, string packageName)
         {
@@ -37,6 +38,7 @@ namespace Unverum.UI
             var item = button.DataContext as GameBananaItemFile;
             chosenFileUrl = item.DownloadUrl;
             chosenFileName = item.FileName;
+            chosenFileDescription = item.Description;
             Close();
         }
 

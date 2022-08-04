@@ -24,6 +24,7 @@ namespace Unverum
         private string MOD_TYPE;
         private string MOD_ID;
         private string fileName;
+        private string fileDescription;
         private bool cancelled;
         private HttpClient client = new();
         private CancellationTokenSource cancellationToken = new();
@@ -49,6 +50,7 @@ namespace Unverum
                     fileBox.ShowDialog();
                     downloadUrl = fileBox.chosenFileUrl;
                     fileName = fileBox.chosenFileName;
+                    fileDescription = fileBox.chosenFileDescription;
                 }
                 if (downloadUrl != null && fileName != null)
                 {
@@ -87,6 +89,7 @@ namespace Unverum
                 string responseString = await client.GetStringAsync(URL);
                 response = JsonSerializer.Deserialize<GameBananaAPIV4>(responseString);
                 fileName = response.Files.Where(x => x.Id == DL_ID).ToArray()[0].FileName;
+                fileDescription = response.Files.Where(x => x.Id == DL_ID).ToArray()[0].Description;
                 return true;
             }
             catch (Exception e)
@@ -195,6 +198,7 @@ namespace Unverum
                             Metadata metadata = new Metadata();
                             metadata.submitter = record.Owner.Name;
                             metadata.description = record.Description;
+                            metadata.filedescription = fileDescription;
                             metadata.preview = record.Image;
                             metadata.homepage = record.Link;
                             metadata.avi = record.Owner.Avatar;
@@ -290,6 +294,7 @@ namespace Unverum
                             Metadata metadata = new Metadata();
                             metadata.submitter = record.Owner.Name;
                             metadata.description = record.Description;
+                            metadata.filedescription = fileDescription;
                             metadata.preview = record.Image;
                             metadata.homepage = record.Link;
                             metadata.avi = record.Owner.Avatar;

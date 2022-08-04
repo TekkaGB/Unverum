@@ -1079,8 +1079,10 @@ namespace Unverum
                 para.Inlines.Add($" {metadata.cat}");
                 descFlow.Blocks.Add(para);
                 var text = "";
-                if (metadata.description != null && metadata.description.Length > 0)
+                if (!String.IsNullOrEmpty(metadata.description))
                     text += $"Description: {metadata.description}\n\n";
+                if (!String.IsNullOrEmpty(metadata.filedescription))
+                    text += $"File Description: {metadata.filedescription}\n\n";
                 if (metadata.homepage != null && metadata.homepage.ToString().Length > 0)
                     text += $"Home Page: {metadata.homepage}";
                 var init = ConvertToFlowParagraph(text);

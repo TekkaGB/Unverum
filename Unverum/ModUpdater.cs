@@ -236,17 +236,28 @@ namespace Unverum
                         fileBox.ShowDialog();
                         downloadUrl = fileBox.chosenFileUrl;
                         fileName = fileBox.chosenFileName;
+                        if (File.Exists($@"{mod}{Global.s}mod.json"))
+                        {
+                            metadata.filedescription = fileBox.chosenFileDescription;
+                            string metadataString = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
+                            File.WriteAllText($@"{mod}{Global.s}mod.json", metadataString);
+                        }
                     }
                     else if (files.Count == 1)
                     {
                         downloadUrl = files.ElementAt(0).DownloadUrl;
                         fileName = files.ElementAt(0).FileName;
+                        if (File.Exists($@"{mod}{Global.s}mod.json"))
+                        {
+                            metadata.filedescription = files.ElementAt(0).Description;
+                            string metadataString = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
+                            File.WriteAllText($@"{mod}{Global.s}mod.json", metadataString);
+                        }
                     }
                     else
                     {
                         Global.logger.WriteLine($"An update is available for {Path.GetFileName(mod)} but no downloadable files are available directly from GameBanana.", LoggerType.Info);
                     }
-                    Uri uri = CreateUri(metadata.homepage.AbsoluteUri);
                     if (item.AlternateFileSources != null)
                     {
                         var choice = MessageBox.Show($"Alternate file sources were found for {Path.GetFileName(mod)}! Would you like to manually update?", "Unverum", MessageBoxButton.YesNo, MessageBoxImage.Question);

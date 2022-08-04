@@ -86,6 +86,42 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper-ApplicationCore.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper-AssetRegistry.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper-BuildSettings.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper-Core.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper-CoreUObject.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper-Json.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper-Projects.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper-TraceLog.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper.modules">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper.target">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\AssetRegistryHelper\AssetRegistryHelper.version">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Dependencies\jfaddslots\common_battle.uasset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
