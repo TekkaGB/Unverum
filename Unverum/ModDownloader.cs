@@ -42,6 +42,7 @@ namespace Unverum
                 {
                     downloadUrl = record.AllFiles[0].DownloadUrl;
                     fileName = record.AllFiles[0].FileName;
+                    fileDescription = record.AllFiles[0].Description;
                 }
                 else if (record.AllFiles.Count > 1)
                 {

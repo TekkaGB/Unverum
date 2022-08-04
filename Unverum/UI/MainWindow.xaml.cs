@@ -37,7 +37,7 @@ namespace Unverum
         private FlowDocument defaultFlow = new FlowDocument();
         private string defaultText = "Unverum Mod Manager is here to help out with all your UE4 Mods!\n\n" +
             "(Right Click Row > Fetch Metadata and confirm the GameBanana URL of the mod to fetch metadata to show here.)";
-        private ObservableCollection<String> LauncherOptions = new ObservableCollection<String>(new string[] { " Executable", " Steam" });
+        private ObservableCollection<String> LauncherOptions = new ObservableCollection<String>(new string[] { "Executable", "Steam" });
         public MainWindow()
         {
             InitializeComponent();
@@ -154,7 +154,8 @@ namespace Unverum
             }
             else if (Global.config.CurrentGame.Equals("Kingdom Hearts III", StringComparison.InvariantCultureIgnoreCase))
                 LauncherOptions[1] = "Epic Games";
-            else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
+            else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase)
+                || Global.config.CurrentGame.Equals("MultiVersus", StringComparison.InvariantCultureIgnoreCase))
                 LauncherOptions.Add("Epic Games");
 
             Directory.CreateDirectory($@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}");
@@ -322,10 +323,12 @@ namespace Unverum
         {
             var index = 0;
             bool emu = true;
+            bool epic = false;
             Application.Current.Dispatcher.Invoke(() =>
             {
                 index = GameBox.SelectedIndex;
                 emu = LauncherOptionsBox.SelectedIndex == 0;
+                epic = LauncherOptionsBox.SelectedIndex == 2;
             });
             var game = (GameFilter)index;
             switch (game)
@@ -353,9 +356,11 @@ namespace Unverum
                 case GameFilter.SMTV:
                     return Setup.SMTV(emu);
                 case GameFilter.KOFXV:
-                    return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe", "KOFXV.exe", "1498570");
+                    return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe", "KOFXV.exe", "1498570", epic);
                 case GameFilter.DNF:
                     return Setup.Generic("DNFDuel.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\DNFDuel\DNFDuel.exe", steamId: "1216060");
+                case GameFilter.MV:
+                    return Setup.Generic("MultiVersus.exe", "MultiVersus", @"C:\Program Files (x86)\Steam\steamapps\common\MultiVersus\MultiVersus.exe", "MultiVersus.exe", "1818750", epic);
             }
             return false;
         }
@@ -530,6 +535,15 @@ namespace Unverum
                             case GameFilter.DNF:
                                 id = "1216060";
                                 break;
+                            case GameFilter.MV:
+                                if (Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex == 1)
+                                    id = "1818750";
+                                else
+                                {
+                                    id = "3a212c0da4f1438e840c21565df4b6fe%3Ac6c05c82429a410384fb5ac46f4ecfde%3A711c5e95dc094ca58e5f16bd48e751d6";
+                                    epic = true;
+                                }
+                                break;
                         }
                         path = epic ? $"com.epicgames.launcher://apps/{id}?action=launch&silent=true" : $"steam://rungameid/{id}";
                     }
@@ -593,6 +607,9 @@ namespace Unverum
                     break;
                 case GameFilter.DNF:
                     id = "16693";
+                    break;
+                case GameFilter.MV:
+                    id = "14946";
                     break;
             }
             try
@@ -1310,7 +1327,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693", "14946" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)
@@ -1787,7 +1804,8 @@ namespace Unverum
                         Index = 1
                     });
                 }
-                if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
+                if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase)
+                    || Global.config.CurrentGame.Equals("MultiVersus", StringComparison.InvariantCultureIgnoreCase))
                 {
                     choices.Add(new Choice()
                     {
@@ -2013,7 +2031,8 @@ namespace Unverum
                     if (LauncherOptions.Count > 2)
                         LauncherOptions.RemoveAt(2);
                 }
-                else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
+                else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase)
+                    || Global.config.CurrentGame.Equals("MultiVersus", StringComparison.InvariantCultureIgnoreCase))
                 {
                     LauncherOptions[0] = "Executable";
                     LauncherOptions[1] = "Steam";

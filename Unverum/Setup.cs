@@ -107,10 +107,10 @@ namespace Unverum
                     return false;
             }
         }
-        public static bool Generic(string exe, string projectName, string defaultPath, string otherExe = null, string steamId = null)
+        public static bool Generic(string exe, string projectName, string defaultPath, string otherExe = null, string steamId = null, bool epic = false)
         {
             // Get install path from registry
-            if (steamId != null)
+            if (steamId != null && !epic)
             {
                 try
                 {
@@ -124,7 +124,8 @@ namespace Unverum
             }
             if (!File.Exists(defaultPath))
             {
-                Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
+                if (!epic)
+                    Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
                 dialog.Filter = otherExe == null ? $"Executable Files ({exe})|{exe}" 

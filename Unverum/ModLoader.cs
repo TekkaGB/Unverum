@@ -166,8 +166,6 @@ namespace Unverum
             var missing = false;
             Dictionary<string, Entry> entries = null;
             HashSet<string> db = null;
-            List<string> AssetRegistries = null;
-            string BaseAssetRegistry = String.Empty;
             string prmFilePaths = String.Empty;
             string sig = null;
             var sigs = Directory.GetFiles(Path.GetDirectoryName(path), "*.sig", SearchOption.TopDirectoryOnly);
@@ -242,30 +240,6 @@ namespace Unverum
                                 db.UnionWith(File.ReadAllLines(file));
                             }
                             break;
-                        case ".bin":
-                            if (Path.GetFileName(file).Equals("AssetRegistry.bin", StringComparison.InvariantCultureIgnoreCase) &&
-                                (Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase)
-                                || Global.config.CurrentGame.Equals("Guilty Gear -Strive-", StringComparison.InvariantCultureIgnoreCase)
-                                || Global.config.CurrentGame.Equals("Granblue Fantasy Versus", StringComparison.InvariantCultureIgnoreCase)
-                                || Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase)))
-                            {
-                                if (missing)
-                                    continue;
-                                var pakName = Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase) ? "RED-WindowsNoEditor.pak" : "pakchunk0-WindowsNoEditor.pak";
-                                if (AssetRegistries == null && TextPatcher.ExtractBaseFiles(pakName, "*AssetRegistry.bin",
-                                        $"RED{Global.s}AssetRegistry.bin"))
-                                    BaseAssetRegistry = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}AssetRegistry.bin";
-                                // Check if entries are still null
-                                if (!File.Exists(BaseAssetRegistry))
-                                {
-                                    missing = true;
-                                    continue;
-                                }
-                                if (AssetRegistries == null)
-                                    AssetRegistries = new();
-                                AssetRegistries.Add(file);
-                            }
-                            break;
                         case ".usm":
                         case ".uasset":
                         case ".mp4":
@@ -328,38 +302,6 @@ namespace Unverum
                 if (Global.config.CurrentGame.Equals("Jump Force", StringComparison.InvariantCultureIgnoreCase))
                     foreach (var prm in Directory.GetDirectories(modPath, "*prm_files", SearchOption.AllDirectories))
                         prmFilePaths += $@"""{prm}"" ";
-            }
-            // Merge AssetRegistry.bins
-            if (AssetRegistries != null && AssetRegistries.Count > 0 && File.Exists(BaseAssetRegistry))
-            {
-                var output = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}AssetRegistry.bin";
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.CreateNoWindow = true;
-                startInfo.UseShellExecute = false;
-                startInfo.FileName = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}AssetRegistryHelper{Global.s}AssetRegistryHelper.exe";
-                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                startInfo.WorkingDirectory = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}AssetRegistryHelper";
-                foreach (var AssetRegistry in AssetRegistries)
-                {
-                    Global.logger.WriteLine($"Merging {AssetRegistry}...", LoggerType.Info);
-                    startInfo.Arguments = $@"""{BaseAssetRegistry}"" -Merge ""{AssetRegistry}"" ""{output}""";
-                    using (Process process = new Process())
-                    {
-                        process.StartInfo = startInfo;
-                        process.Start();
-                        process.WaitForExit();
-                    }
-                    BaseAssetRegistry = output;
-                }
-                var priorityName = String.Empty;
-                foreach (var tilde in Enumerable.Range(0, tildes))
-                    priorityName += "~";
-                priorityName += folderLetter;
-                var folder = $"{path}{Global.s}{priorityName}";
-                Directory.CreateDirectory(folder);
-                PakFiles("RED", folder, sig);
-                Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED", true);
-                Global.logger.WriteLine($"AssetRegistry.bin files merged!", LoggerType.Info);
             }
             // Check if UML is installed if UML mod is used
             if (UML)
