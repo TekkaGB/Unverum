@@ -21,7 +21,7 @@ namespace Unverum
         public static ObservableCollection<Mod> ModList;
         public static void UpdateConfig()
         {
-            config.Configs[config.CurrentGame].ModList = ModList;
+            config.Configs[config.CurrentGame].Loadouts[config.Configs[config.CurrentGame].CurrentLoadout] = ModList;
             string configString = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
             try
             {

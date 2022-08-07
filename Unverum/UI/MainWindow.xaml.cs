@@ -2093,7 +2093,7 @@ namespace Unverum
             }
         }
 
-        private async void SortAlphabeticallyAndGroupEnabled_Click(object sender, RoutedEventArgs e)
+        private void SortAlphabeticallyAndGroupEnabled_Click(object sender, RoutedEventArgs e)
         {
             DataGridColumnHeader colHeader = sender as DataGridColumnHeader;
             if (colHeader != null)
@@ -2110,12 +2110,9 @@ namespace Unverum
                     Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderByDescending(x => x.enabled).ToList());
                     Global.logger.WriteLine("Moved all enabled mods to the top!", LoggerType.Info);
                 }
-                await Task.Run(() =>
+                App.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    App.Current.Dispatcher.Invoke((Action)delegate
-                    {
-                        ModGrid.ItemsSource = Global.ModList;
-                    });
+                    ModGrid.ItemsSource = Global.ModList;
                 });
                 Global.UpdateConfig();
             }
@@ -2152,8 +2149,8 @@ namespace Unverum
             if (e.Key == Key.Enter)
                 Search();
         }
-        private static readonly List<string> FilterBoxList = new string[] { " Featured", " Recent", " Popular" }.ToList();
-        private static readonly List<string> FilterBoxListWhenSearched = new string[] { " Featured", " Recent", " Popular", " - - -" }.ToList();
+        private static readonly List<string> FilterBoxList = new string[] { "Featured", "Recent", "Popular" }.ToList();
+        private static readonly List<string> FilterBoxListWhenSearched = new string[] { "Featured", "Recent", "Popular", "- - -" }.ToList();
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
