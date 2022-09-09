@@ -554,8 +554,6 @@ namespace Unverum
                         UseShellExecute = true,
                         Verb = "open"
                     };
-                    if (Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex == 0 && (GameFilter)GameBox.SelectedIndex == GameFilter.MV)
-                        ps.Arguments = "-fileopenlog";
                     Process.Start(ps);
                 }
                 catch (Exception ex)

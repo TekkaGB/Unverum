@@ -206,7 +206,7 @@ namespace Unverum
             {
                 var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 740130");
                 if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
-                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}Tales of Arise.exe";
+                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}Arise{Global.s}Binaries{Global.s}Win64{Global.s}Tales of Arise.exe";
             }
             catch (Exception e)
             {
