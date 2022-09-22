@@ -880,7 +880,7 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                    <TextBox Margin="5,0,35,0" Background="#353535" BorderBrush="#353535" Padding="4,0,0,0" Grid.Column="5" IsEnabled="False" KeyDown="SearchBar_KeyDown" Name="SearchBar" Height="35" MinWidth="200" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
+                    <TextBox Margin="5,0,35,0" Background="#353535" Foreground="#f2f2f2" BorderBrush="#353535" Padding="4,0,0,0" Grid.Column="5" IsEnabled="False" KeyDown="SearchBar_KeyDown" Name="SearchBar" Height="35" MinWidth="200" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
                     <TextBlock Margin="5,0,35,0" Padding="7,5.5,3,3" Grid.Column="5" IsHitTestVisible="False" Height="35" MinWidth="200" HorizontalAlignment="Left" Text="Search..." VerticalAlignment="Center" Foreground="#f2f2f2">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
