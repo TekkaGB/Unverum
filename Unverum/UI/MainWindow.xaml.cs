@@ -186,6 +186,7 @@ namespace Unverum
             EditLoadoutsButton.IsEnabled = false;
             LoadoutsBox.IsEnabled = false;
             LauncherOptionsBox.IsEnabled = false;
+            ModGridSearchButton.IsEnabled = false;
             App.Current.Dispatcher.Invoke(() =>
             {
                 ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
@@ -412,6 +413,7 @@ namespace Unverum
                 EditLoadoutsButton.IsEnabled = false;
                 LoadoutsBox.IsEnabled = false;
                 LauncherOptionsBox.IsEnabled = false;
+                ModGridSearchButton.IsEnabled = false;
                 Refresh();
                 Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
                 Global.logger.WriteLine($"Building loadout for {Global.config.CurrentGame}", LoggerType.Info);
@@ -426,6 +428,7 @@ namespace Unverum
                     GameBox.IsEnabled = true;
                     EditLoadoutsButton.IsEnabled = true;
                     LoadoutsBox.IsEnabled = true;
+                    ModGridSearchButton.IsEnabled = true;
                     if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                         LauncherOptionsBox.IsEnabled = true;
                     return;
@@ -438,6 +441,7 @@ namespace Unverum
                 GameBox.IsEnabled = true;
                 EditLoadoutsButton.IsEnabled = true;
                 LoadoutsBox.IsEnabled = true;
+                ModGridSearchButton.IsEnabled = true;
                 if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                     LauncherOptionsBox.IsEnabled = true;
             }
@@ -997,6 +1001,7 @@ namespace Unverum
             EditLoadoutsButton.IsEnabled = false;
             LoadoutsBox.IsEnabled = false;
             LauncherOptionsBox.IsEnabled = false;
+            ModGridSearchButton.IsEnabled = false;
             App.Current.Dispatcher.Invoke(() =>
             {
                 ModUpdater.CheckForUpdates($"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", this);
@@ -2170,7 +2175,7 @@ namespace Unverum
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (IsLoaded && managerSelected)
+            if (IsLoaded && managerSelected && ModGridSearchButton.IsEnabled)
             if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
             {
                 switch (e.Key)
@@ -2189,7 +2194,7 @@ namespace Unverum
         }
         private void ModGridSearch()
         {
-            if (!String.IsNullOrEmpty(ModGrid_SearchBar.Text))
+            if (!String.IsNullOrEmpty(ModGrid_SearchBar.Text) && ModGridSearchButton.IsEnabled)
             {
                 object focusedItem = null;
                 ModGrid.SelectedItems.Clear();

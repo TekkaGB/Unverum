@@ -25,15 +25,16 @@ namespace Unverum
             updateCounter = 0;
             if (!Directory.Exists(path))
             {
-                main.GameBox.IsEnabled = false;
-                main.ModGrid.IsEnabled = false;
-                main.ConfigButton.IsEnabled = false;
-                main.LaunchButton.IsEnabled = false;
-                main.OpenModsButton.IsEnabled = false;
-                main.UpdateButton.IsEnabled = false;
-                main.EditLoadoutsButton.IsEnabled = false;
-                main.LoadoutsBox.IsEnabled = false;
-                main.LauncherOptionsBox.IsEnabled = false;
+                main.GameBox.IsEnabled = true;
+                main.ModGrid.IsEnabled = true;
+                main.ConfigButton.IsEnabled = true;
+                main.LaunchButton.IsEnabled = true;
+                main.OpenModsButton.IsEnabled = true;
+                main.UpdateButton.IsEnabled = true;
+                main.EditLoadoutsButton.IsEnabled = true;
+                main.LoadoutsBox.IsEnabled = true;
+                main.LauncherOptionsBox.IsEnabled = true;
+                main.ModGridSearchButton.IsEnabled = true;
                 main.Activate();
                 return;
             }
@@ -99,9 +100,10 @@ namespace Unverum
                 main.ConfigButton.IsEnabled = true;
                 main.LaunchButton.IsEnabled = true;
                 main.OpenModsButton.IsEnabled = true;
+                main.UpdateButton.IsEnabled = true;
                 main.EditLoadoutsButton.IsEnabled = true;
                 main.LoadoutsBox.IsEnabled = true;
-                main.UpdateButton.IsEnabled = true;
+                main.ModGridSearchButton.IsEnabled = true;
                 if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                     main.LauncherOptionsBox.IsEnabled = true;
                 return;
@@ -127,9 +129,10 @@ namespace Unverum
                             main.ConfigButton.IsEnabled = true;
                             main.LaunchButton.IsEnabled = true;
                             main.OpenModsButton.IsEnabled = true;
+                            main.UpdateButton.IsEnabled = true;
                             main.EditLoadoutsButton.IsEnabled = true;
                             main.LoadoutsBox.IsEnabled = true;
-                            main.UpdateButton.IsEnabled = true;
+                            main.ModGridSearchButton.IsEnabled = true;
                             if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                                 main.LauncherOptionsBox.IsEnabled = true;
                             return;
@@ -168,6 +171,7 @@ namespace Unverum
             main.UpdateButton.IsEnabled = true;
             main.EditLoadoutsButton.IsEnabled = true;
             main.LoadoutsBox.IsEnabled = true;
+            main.ModGridSearchButton.IsEnabled = true;
             if (!Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase))
                 main.LauncherOptionsBox.IsEnabled = true;
             main.Activate();
