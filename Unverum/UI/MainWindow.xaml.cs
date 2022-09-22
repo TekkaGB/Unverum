@@ -2167,5 +2167,64 @@ namespace Unverum
                         checkbox.IsChecked = !checkbox.IsChecked;
                 }
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (IsLoaded && managerSelected)
+            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
+            {
+                switch (e.Key)
+                {
+                    case Key.F:
+                        ModGrid_SearchBar.Focus();
+                        break;
+                }
+            }
+        }
+
+        private void ModGrid_SearchBar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyboardDevice.IsKeyDown(Key.Enter))
+                ModGridSearch();
+        }
+        private void ModGridSearch()
+        {
+            if (!String.IsNullOrEmpty(ModGrid_SearchBar.Text))
+            {
+                object focusedItem = null;
+                ModGrid.SelectedItems.Clear();
+                string text = ModGrid_SearchBar.Text;
+                for (int i = 0; i < ModGrid.Items.Count; i++)
+                {
+                    object item = ModGrid.Items[i];
+                    ModGrid.ScrollIntoView(item);
+                    DataGridRow row = (DataGridRow)ModGrid.ItemContainerGenerator.ContainerFromIndex(i);
+                    TextBlock cellContent = ModGrid.Columns[1].GetCellContent(row) as TextBlock;
+                    if (cellContent != null && cellContent.Text.Contains(text, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        ModGrid.SelectedItems.Add(item);
+                        if (ModGrid.SelectedItems.Count == 1)
+                            focusedItem = item;
+                    }
+                }
+                if (focusedItem != null)
+                    ModGrid.ScrollIntoView(focusedItem);
+                else
+                {
+                    ShowMetadata(null);
+                    Global.logger.WriteLine($"No mods found matching {text}", LoggerType.Info);
+                }
+            }
+        }
+
+        private void ModGridSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            ModGridSearch();
+        }
+
+        private void Clear_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ModGrid_SearchBar.Clear();
+        }
     }
 }
