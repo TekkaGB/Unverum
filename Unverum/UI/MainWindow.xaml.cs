@@ -1116,10 +1116,14 @@ namespace Unverum
                 para.Inlines.Add($" {metadata.cat}");
                 descFlow.Blocks.Add(para);
                 var text = "";
+                if (!String.IsNullOrEmpty(metadata.fileName))
+                    text += $"Mod Filename: {metadata.fileName}\n\n";
                 if (!String.IsNullOrEmpty(metadata.description))
                     text += $"Description: {metadata.description}\n\n";
                 if (!String.IsNullOrEmpty(metadata.filedescription))
                     text += $"File Description: {metadata.filedescription}\n\n";
+                if (!String.IsNullOrEmpty(metadata.text))
+                    text += $"Mod Text: {metadata.text}\n\n";
                 if (metadata.homepage != null && metadata.homepage.ToString().Length > 0)
                     text += $"Home Page: {metadata.homepage}";
                 var init = ConvertToFlowParagraph(text);
@@ -1485,6 +1489,7 @@ namespace Unverum
             CatBox.SelectedIndex = 0;
             SubCatBox.SelectedIndex = 0;
             FilterBox.SelectedIndex = 1;
+            NSFWCheckbox.IsChecked = false;
             filterSelect = false;
             RefreshFilter();
             selected = true;

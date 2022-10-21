@@ -23,6 +23,8 @@ namespace Unverum
         public string filedescription { get; set; }
         public Uri homepage { get; set; }
         public DateTime? lastupdate { get; set; }
+        public string text { get; set; }
+        public string fileName { get; set; }
     }
     public class Config
     {

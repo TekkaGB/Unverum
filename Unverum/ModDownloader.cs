@@ -59,7 +59,7 @@ namespace Unverum
                     await DownloadFile(downloadUrl, fileName, new Progress<DownloadProgress>(ReportUpdateProgress),
                         CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Token));
                     if (!cancelled)
-                        await ExtractFile(fileName, fileDescription, game, record);
+                        await ExtractFile(fileName, game, record);
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace Unverum
                 return false;
             }
         }
-        private async Task ExtractFile(string fileName, string description, string game, GameBananaRecord record)
+        private async Task ExtractFile(string fileName, string game, GameBananaRecord record)
         {
             await Task.Run(() =>
             {
@@ -149,8 +149,8 @@ namespace Unverum
                 }
                 string _ArchiveSource = $@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}{fileName}";
                 string _ArchiveType = Path.GetExtension(fileName);
-                string descriptionToAppend = string.IsNullOrEmpty(description) ? "" : " " + string.Concat(description.Split(Path.GetInvalidFileNameChars()));
-                string ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(record.Title.Split(Path.GetInvalidFileNameChars()))}{descriptionToAppend}";
+                string filenameToAppend = string.IsNullOrEmpty(fileName) ? "" : " - " + string.Concat(fileName.Split(Path.GetInvalidFileNameChars())).Split('.')[0];
+                string ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(record.Title.Split(Path.GetInvalidFileNameChars()))}{filenameToAppend}";
                 // Find a unique destination if it already exists
                 var counter = 2;
                 while (Directory.Exists(ArchiveDestination))
@@ -209,6 +209,9 @@ namespace Unverum
                             metadata.cat = record.CategoryName;
                             metadata.caticon = record.Category.Icon;
                             metadata.lastupdate = record.DateUpdated;
+                            metadata.text = record.ConvertedText;
+                            metadata.fileName = fileName;
+
                             string metadataString = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
                             File.WriteAllText($@"{ArchiveDestination}{Global.s}mod.json", metadataString);
                         }
