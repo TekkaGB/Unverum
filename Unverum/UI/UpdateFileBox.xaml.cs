@@ -24,10 +24,11 @@ namespace Unverum.UI
         public string chosenFileUrl;
         public string chosenFileName;
         public string chosenFileDescription;
-
+        public bool selectedDownloadAll;
         public UpdateFileBox(List<GameBananaItemFile> files, string packageName)
         {
             InitializeComponent();
+            selectedDownloadAll = false;
             FileList.ItemsSource = files;
             TitleBox.Text = packageName;
         }
@@ -39,6 +40,12 @@ namespace Unverum.UI
             chosenFileUrl = item.DownloadUrl;
             chosenFileName = item.FileName;
             chosenFileDescription = item.Description;
+            Close();
+        }
+
+        private void DownloadAll_Click(object sender, RoutedEventArgs e)
+        {
+            selectedDownloadAll = true;
             Close();
         }
 
