@@ -26,6 +26,7 @@ namespace Unverum
         private string fileName;
         private string fileDescription;
         private bool cancelled;
+        private bool downloadAll;
         private HttpClient client = new();
         private CancellationTokenSource cancellationToken = new();
         private GameBananaAPIV4 response = new();
@@ -49,17 +50,37 @@ namespace Unverum
                     UpdateFileBox fileBox = new UpdateFileBox(record.AllFiles, record.Title);
                     fileBox.Activate();
                     fileBox.ShowDialog();
+                    downloadAll = fileBox.selectedDownloadAll;
                     downloadUrl = fileBox.chosenFileUrl;
                     fileName = fileBox.chosenFileName;
                     fileDescription = fileBox.chosenFileDescription;
-
                 }
-                if (downloadUrl != null && fileName != null)
+
+                if (downloadAll)
                 {
-                    await DownloadFile(downloadUrl, fileName, new Progress<DownloadProgress>(ReportUpdateProgress),
-                        CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Token));
-                    if (!cancelled)
-                        await ExtractFile(fileName, game, record);
+                    foreach(GameBananaItemFile file in record.AllFiles)
+                    {
+                        downloadUrl = file.DownloadUrl;
+                        fileName = file.FileName;
+                        fileDescription = file.Description;
+                        if (downloadUrl != null && fileName != null)
+                        {
+                            await DownloadFile(downloadUrl, fileName, new Progress<DownloadProgress>(ReportUpdateProgress),
+                                CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Token));
+                            if (!cancelled)
+                                await ExtractFile(fileName, game, record);
+                        }
+                    }
+                }
+                else
+                {
+                    if (downloadUrl != null && fileName != null)
+                    {
+                        await DownloadFile(downloadUrl, fileName, new Progress<DownloadProgress>(ReportUpdateProgress),
+                            CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Token));
+                        if (!cancelled)
+                            await ExtractFile(fileName, game, record);
+                    }
                 }
             }
         }

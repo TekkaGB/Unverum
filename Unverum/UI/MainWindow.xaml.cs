@@ -27,6 +27,9 @@ namespace Unverum
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// 
+    /// TODO: 
+    /// - Make mod directory one level higher and introduce concept of sub-mods which are grouped
     /// </summary>
     public partial class MainWindow : Window
     {

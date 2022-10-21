@@ -20,8 +20,8 @@
             <Grid VerticalAlignment="Center" x:Name="GridItem" Margin="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" FontSize="18" FontWeight="Bold" Foreground="#f2f2f2" Text="{Binding Path=FileName}"/>
                 <TextBlock Grid.Row="1" FontSize="13" Foreground="#a2a2a2">
@@ -45,6 +45,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Padding="10,2,10,2" Background="Transparent" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="25" FontWeight="Bold" Name="TitleBox"/>
         <TextBlock Grid.Row="1" Margin="10,2,10,2" Background="Transparent" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Text="Multiple downloads were found, choose one:"/>
@@ -64,7 +65,14 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <Button Grid.Row="3" HorizontalContentAlignment="Stretch" Margin="5" x:Name="CancelButton" Content=" Cancel" FontSize="18" FontWeight="Bold" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Height="40"  Background="#494949" Foreground="#f2f2f2" Click="CancelButton_Click">
+        <Button Grid.Row="3" HorizontalContentAlignment="Stretch" Margin="5" x:Name="DownloadAllButton" Content=" Download All" FontSize="18" FontWeight="Bold" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Height="40"  Background="#494949" Foreground="#f2f2f2" Click="DownloadAll_Click">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="2"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button Grid.Row="4" HorizontalContentAlignment="Stretch" Margin="5" x:Name="CancelButton" Content=" Cancel" FontSize="18" FontWeight="Bold" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Height="40"  Background="#494949" Foreground="#f2f2f2" Click="CancelButton_Click">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="2"/>
