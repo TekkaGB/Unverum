@@ -52,13 +52,14 @@ namespace Unverum
                     downloadUrl = fileBox.chosenFileUrl;
                     fileName = fileBox.chosenFileName;
                     fileDescription = fileBox.chosenFileDescription;
+
                 }
                 if (downloadUrl != null && fileName != null)
                 {
                     await DownloadFile(downloadUrl, fileName, new Progress<DownloadProgress>(ReportUpdateProgress),
                         CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Token));
                     if (!cancelled)
-                        await ExtractFile(fileName, game, record);
+                        await ExtractFile(fileName, fileDescription, game, record);
                 }
             }
         }
@@ -133,7 +134,7 @@ namespace Unverum
                 return false;
             }
         }
-        private async Task ExtractFile(string fileName, string game, GameBananaRecord record)
+        private async Task ExtractFile(string fileName, string description, string game, GameBananaRecord record)
         {
             await Task.Run(() =>
             {
@@ -148,7 +149,8 @@ namespace Unverum
                 }
                 string _ArchiveSource = $@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}{fileName}";
                 string _ArchiveType = Path.GetExtension(fileName);
-                string ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(record.Title.Split(Path.GetInvalidFileNameChars()))}";
+                string descriptionToAppend = string.IsNullOrEmpty(description) ? "" : " " + string.Concat(description.Split(Path.GetInvalidFileNameChars()));
+                string ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(record.Title.Split(Path.GetInvalidFileNameChars()))}{descriptionToAppend}";
                 // Find a unique destination if it already exists
                 var counter = 2;
                 while (Directory.Exists(ArchiveDestination))
@@ -246,7 +248,7 @@ namespace Unverum
                 string _ArchiveType = Path.GetExtension(fileName);
                 string ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(record.Title.Split(Path.GetInvalidFileNameChars()))}";
                 // Find a unique destination if it already exists
-                var counter = 2;
+                var counter = 10;
                 while (Directory.Exists(ArchiveDestination))
                 {
                     ArchiveDestination = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{game}{Global.s}{string.Concat(record.Title.Split(Path.GetInvalidFileNameChars()))} ({counter})";
