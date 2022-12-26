@@ -360,8 +360,6 @@ namespace Unverum
                     return Setup.Generic("KOFXV_Steam.exe", "KOFXV", @"C:\Program Files (x86)\Steam\steamapps\common\THE KING OF FIGHTERS XV\KOFXV_Steam.exe", "KOFXV.exe", "1498570", epic);
                 case GameFilter.DNF:
                     return Setup.Generic("DNFDuel.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\DNFDuel\DNFDuel.exe", steamId: "1216060");
-                case GameFilter.MV:
-                    return Setup.Generic("MultiVersus.exe", "MultiVersus", @"C:\Program Files (x86)\Steam\steamapps\common\MultiVersus\MultiVersus.exe", "MultiVersus.exe", "1818750", epic);
             }
             return false;
         }
@@ -539,15 +537,6 @@ namespace Unverum
                             case GameFilter.DNF:
                                 id = "1216060";
                                 break;
-                            case GameFilter.MV:
-                                if (Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex == 1)
-                                    id = "1818750";
-                                else
-                                {
-                                    id = "3a212c0da4f1438e840c21565df4b6fe%3Ac6c05c82429a410384fb5ac46f4ecfde%3A711c5e95dc094ca58e5f16bd48e751d6";
-                                    epic = true;
-                                }
-                                break;
                         }
                         path = epic ? $"com.epicgames.launcher://apps/{id}?action=launch&silent=true" : $"steam://rungameid/{id}";
                     }
@@ -611,9 +600,6 @@ namespace Unverum
                     break;
                 case GameFilter.DNF:
                     id = "16693";
-                    break;
-                case GameFilter.MV:
-                    id = "14946";
                     break;
             }
             try
@@ -1347,7 +1333,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693", "14946" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)
@@ -1742,14 +1728,7 @@ namespace Unverum
         private void UniformGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var grid = sender as UniformGrid;
-            if (grid.ActualWidth > 2000)
-                grid.Columns = 6;
-            else if (grid.ActualWidth > 1600) 
-                grid.Columns = 5;
-            else if (grid.ActualWidth > 1200) 
-                grid.Columns = 4;
-            else 
-                grid.Columns = 3;
+            grid.Columns = (int)grid.ActualWidth / 400 + 1;
         }
         private void OnResize(object sender, RoutedEventArgs e)
         {

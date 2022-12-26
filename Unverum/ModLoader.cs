@@ -44,8 +44,6 @@ namespace Unverum
                     Directory.Delete(LogicModsFolder, true);
                 if (Directory.Exists(CoreModsFolder))
                     Directory.Delete(CoreModsFolder, true);
-                if (File.Exists(AutoInjectorDll))
-                    File.Delete(AutoInjectorDll);
                 Global.logger.WriteLine("Restored folders", LoggerType.Info);
             }
             catch (Exception e)

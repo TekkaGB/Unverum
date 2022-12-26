@@ -493,12 +493,6 @@
                                     <TextBlock Text="DNF Duel" VerticalAlignment="Center" FontWeight="Medium"/>
                                 </StackPanel>
                             </ComboBoxItem>
-                            <ComboBoxItem>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="../Assets/Icons/MV.jpg" Width="27" Margin="4,0,10,0"/>
-                                    <TextBlock Text="MultiVersus" VerticalAlignment="Center" FontWeight="Medium"/>
-                                </StackPanel>
-                            </ComboBoxItem>
                         </ComboBox>
                         <Button FontSize="18" FontWeight="Medium" Name="EditLoadoutsButton" Margin="0,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="2" Content="Edit Loadouts" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="EditLoadouts_Click" />
                         <Button FontSize="18" FontWeight="Medium" Name="ConfigButton" Margin="0,0,10,0" Height="35" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="3" Content="Setup" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2" Click="Setup_Click" />
