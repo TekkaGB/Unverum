@@ -21,7 +21,7 @@ namespace Unverum
             foreach (var fileInfo in directoryInfo.GetFiles())
                 System.Threading.Interlocked.Add(ref startDirectorySize, fileInfo.Length);
 
-            if (recursive) //Loop on Sub Direcotries in the Current Directory and Calculate it's files size.
+            if (recursive) //Loop on Sub Directories in the Current Directory and Calculate it's files size.
                 System.Threading.Tasks.Parallel.ForEach(directoryInfo.GetDirectories(), (subDirectory) =>
             System.Threading.Interlocked.Add(ref startDirectorySize, GetDirectorySize(subDirectory, recursive)));
 
