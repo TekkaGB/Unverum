@@ -87,6 +87,14 @@ namespace Unverum
                             continue;
                         }
                     }
+                    // Copy over utoc/ucas if they exist
+                    if (File.Exists(Path.ChangeExtension(path, ".utoc")) && File.Exists(Path.ChangeExtension(path, ".ucas")))
+                    {
+                        var utoc = Path.ChangeExtension(path, ".utoc");
+                        var ucas = Path.ChangeExtension(path, ".ucas");
+                        File.Copy(utoc, utoc.Replace(sourcePath, targetPath).Replace(".utoc", "_9_P.utoc"), true);
+                        File.Copy(ucas, ucas.Replace(sourcePath, targetPath).Replace(".ucas", "_9_P.ucas"), true);
+                    }
                     counter++;
                 }
             }
@@ -355,7 +363,7 @@ namespace Unverum
                 Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}HeroGame", true);
             }
             // Costume Patched placeholder files as lowest priority
-            if (patched != null && (bool)patched)
+            if (patched != null && (bool)patched && Global.config.CurrentGame != "Scarlet Nexus")
             {
                 var baseFolder = $"{path}{Global.s}--Base--";
                 using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Unverum.Resources.CostumePatches.{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Placeholder.--PlaceholderCostumes.pak"))

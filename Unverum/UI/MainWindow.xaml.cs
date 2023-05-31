@@ -714,11 +714,12 @@ namespace Unverum
                 else if (Directory.Exists($"{ContentFolder}{Global.s}CriWareData"))
                     SoundsFolder = $"{ContentFolder}{Global.s}CriWareData";
                 // DBFZ specific
-                bool? CostumePatched = null;
+                bool? Patched = null;
                 if (Global.config.CurrentGame == "Dragon Ball FighterZ"
                     || Global.config.CurrentGame == "Guilty Gear -Strive-"
-                    || Global.config.CurrentGame == "DNF Duel")
-                    CostumePatched = Setup.CheckCostumePatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
+                    || Global.config.CurrentGame == "DNF Duel"
+                    || Global.config.CurrentGame == "Scarlet Nexus")
+                    Patched = Setup.CheckPatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
                 if (!ModLoader.Restart(path, MoviesFolder, SplashFolder, SoundsFolder))
                     return false;
                 var mods = Global.config.Configs[Global.config.CurrentGame].ModList.Where(x => x.enabled).ToList();
@@ -736,7 +737,7 @@ namespace Unverum
                         || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
                         File.Move(file, file.Replace("HeroGame.", "HeroGame-WindowsNoEditor_0_P.", StringComparison.InvariantCultureIgnoreCase), true);
 
-                ModLoader.Build(path, mods, CostumePatched, MoviesFolder, SplashFolder, SoundsFolder);
+                ModLoader.Build(path, mods, Patched, MoviesFolder, SplashFolder, SoundsFolder);
                 return true;
             });
         }

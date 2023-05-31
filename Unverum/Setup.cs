@@ -25,7 +25,7 @@ namespace Unverum
                 }
             }
         }
-        public static bool CheckCostumePatch(string exe)
+        public static bool CheckPatch(string exe)
         {
             // Remove old costume patch for DBFZ
             if (Global.config.CurrentGame == "Dragon Ball FighterZ")
@@ -53,6 +53,9 @@ namespace Unverum
                 $"{Global.s}RED{Global.s}Binaries{Global.s}Win64";
             if (Global.config.CurrentGame == "Dragon Ball FighterZ")
                 PatchPath = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)}";
+            else if (Global.config.CurrentGame == "Scarlet Nexus")
+                PatchPath = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)}" +
+                $"{Global.s}ScarletNexus{Global.s}Binaries{Global.s}Win64";
             // Check if dsound.dll exists
             if (!File.Exists($"{PatchPath}{Global.s}dsound.dll"))
             {
@@ -117,6 +120,12 @@ namespace Unverum
             Directory.CreateDirectory(ModsFolder);
             Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
             Global.config.Configs[Global.config.CurrentGame].Launcher = defaultPath;
+
+            if (Global.config.CurrentGame == "Guilty Gear -Strive-"
+                || Global.config.CurrentGame == "DNF Duel"
+                || Global.config.CurrentGame == "Scarlet Nexus")
+                CheckPatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
+
             Global.UpdateConfig();
             Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
             return true;
@@ -339,7 +348,7 @@ namespace Unverum
                 return false;
             }
 
-            CheckCostumePatch(renamedLauncher);
+            CheckPatch(renamedLauncher);
 
             Directory.CreateDirectory(ModsFolder);
             Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
