@@ -366,7 +366,7 @@ namespace Unverum
             if (patched != null && (bool)patched && Global.config.CurrentGame != "Scarlet Nexus")
             {
                 var baseFolder = $"{path}{Global.s}--Base--";
-                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Unverum.Resources.CostumePatches.{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Placeholder.--PlaceholderCostumes.pak"))
+                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Unverum.Resources.Patches.{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Placeholder.--PlaceholderCostumes.pak"))
                 {
                     Directory.CreateDirectory(baseFolder);
                     using (var stream = new FileStream($"{baseFolder}{Global.s}--PlaceholderCostumes.pak", FileMode.Create, FileAccess.Write))
