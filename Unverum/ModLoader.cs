@@ -357,18 +357,23 @@ namespace Unverum
             // Costume Patched placeholder files as lowest priority
             if (patched != null && (bool)patched)
             {
-                var files = new string[] { "--PlaceholderCostumes--.pak", "--PlaceholderCostumes--.sig" };
-                foreach (var file in files)
+                var baseFolder = $"{path}{Global.s}--Base--";
+                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Unverum.Resources.CostumePatches.{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Placeholder.--PlaceholderCostumes.pak"))
                 {
-                    using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Unverum.Resources.Base.{file}"))
+                    Directory.CreateDirectory(baseFolder);
+                    using (var stream = new FileStream($"{baseFolder}{Global.s}--PlaceholderCostumes.pak", FileMode.Create, FileAccess.Write))
                     {
-                        var baseFolder = $"{path}{Global.s}--Base--";
-                        Directory.CreateDirectory(baseFolder);
-                        using (var stream = new FileStream($"{baseFolder}{Global.s}{file}", FileMode.Create, FileAccess.Write))
-                        {
-                            resource.CopyTo(stream);
-                        }
+                        resource.CopyTo(stream);
                     }
+                }
+                if (sig != null)
+                {
+                    var newSig = $"{baseFolder}{Global.s}--PlaceholderCostumes.sig";
+                    // Copy over original game's .sig
+                    if (File.Exists(sig))
+                        File.Copy(sig, newSig, true);
+                    else
+                        Global.logger.WriteLine($"Couldn't find .sig file to go with {baseFolder}{Global.s}--PlaceholderCostumes.pak", LoggerType.Warning);
                 }
                 Global.logger.WriteLine($"Copied over base costume patch files", LoggerType.Info);
             }

@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Resources\CostumePatches\NewFolder\**" />
+    <EmbeddedResource Remove="Resources\CostumePatches\NewFolder\**" />
+    <None Remove="Resources\CostumePatches\NewFolder\**" />
+    <Page Remove="Resources\CostumePatches\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Assets\Icons\dbfz.png" />
     <None Remove="Assets\Icons\dnf.png" />
     <None Remove="Assets\Icons\ds.png" />
@@ -28,27 +35,39 @@
     <None Remove="Assets\RobotoMono-Regular.ttf" />
     <None Remove="Assets\unverumpreview.png" />
     <None Remove="GameBanana.png" />
-    <None Remove="Resources\Base\--PlaceholderCostumes--.pak" />
-    <None Remove="Resources\Base\--PlaceholderCostumes--.sig" />
-    <None Remove="Resources\CostumePatch.xdelta" />
+    <None Remove="Resources\CostumePatches\DNF Duel\Patch\dsound.dll" />
+    <None Remove="Resources\CostumePatches\DNF Duel\Patch\plugins\config.toml" />
+    <None Remove="Resources\CostumePatches\DNF Duel\Patch\plugins\DNFDuelExtraCostumesPatch.asi" />
+    <None Remove="Resources\CostumePatches\DNF Duel\Placeholder\--PlaceholderCostumes.pak" />
+    <None Remove="Resources\CostumePatches\Dragon Ball FighterZ\Patch\dsound.dll" />
+    <None Remove="Resources\CostumePatches\Dragon Ball FighterZ\Patch\plugins\config.toml" />
+    <None Remove="Resources\CostumePatches\Dragon Ball FighterZ\Patch\plugins\DBFZExtraCostumesPatch.asi" />
+    <None Remove="Resources\CostumePatches\Dragon Ball FighterZ\Patch\plugins\DBFZFileAccessLog.asi" />
+    <None Remove="Resources\CostumePatches\Dragon Ball FighterZ\Placeholder\--PlaceholderCostumes.pak" />
+    <None Remove="Resources\CostumePatches\Guilty Gear -Strive-\Patch\dsound.dll" />
+    <None Remove="Resources\CostumePatches\Guilty Gear -Strive-\Patch\plugins\config.toml" />
+    <None Remove="Resources\CostumePatches\Guilty Gear -Strive-\Patch\plugins\GGSTExtraCostumesPatch.asi" />
+    <None Remove="Resources\CostumePatches\Guilty Gear -Strive-\Placeholder\--PlaceholderCostumes.pak" />
     <None Remove="Resources\JUMP_FORCE.exe" />
     <None Remove="Resources\REDGame.uasset" />
     <None Remove="Resources\REDGame.uexp" />
-    <None Remove="Resources\v1.28_Patch.xdelta" />
-    <None Remove="Resources\v1.29_Patch.xdelta" />
-    <None Remove="Resources\v1.30_Patch.xdelta" />
-    <None Remove="Resources\v1.31_Patch.xdelta" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Base\--PlaceholderCostumes--.pak" />
-    <EmbeddedResource Include="Resources\Base\--PlaceholderCostumes--.sig" />
-    <EmbeddedResource Include="Resources\CostumePatch.xdelta" />
+    <EmbeddedResource Include="Resources\CostumePatches\DNF Duel\Patch\dsound.dll" />
+    <EmbeddedResource Include="Resources\CostumePatches\DNF Duel\Patch\plugins\config.toml" />
+    <EmbeddedResource Include="Resources\CostumePatches\DNF Duel\Patch\plugins\DNFDuelExtraCostumesPatch.asi" />
+    <EmbeddedResource Include="Resources\CostumePatches\DNF Duel\Placeholder\--PlaceholderCostumes.pak" />
+    <EmbeddedResource Include="Resources\CostumePatches\Dragon Ball FighterZ\Patch\dsound.dll" />
+    <EmbeddedResource Include="Resources\CostumePatches\Dragon Ball FighterZ\Patch\plugins\config.toml" />
+    <EmbeddedResource Include="Resources\CostumePatches\Dragon Ball FighterZ\Patch\plugins\DBFZExtraCostumesPatch.asi" />
+    <EmbeddedResource Include="Resources\CostumePatches\Dragon Ball FighterZ\Patch\plugins\DBFZFileAccessLog.asi" />
+    <EmbeddedResource Include="Resources\CostumePatches\Dragon Ball FighterZ\Placeholder\--PlaceholderCostumes.pak" />
+    <EmbeddedResource Include="Resources\CostumePatches\Guilty Gear -Strive-\Patch\dsound.dll" />
+    <EmbeddedResource Include="Resources\CostumePatches\Guilty Gear -Strive-\Patch\plugins\config.toml" />
+    <EmbeddedResource Include="Resources\CostumePatches\Guilty Gear -Strive-\Patch\plugins\GGSTExtraCostumesPatch.asi" />
+    <EmbeddedResource Include="Resources\CostumePatches\Guilty Gear -Strive-\Placeholder\--PlaceholderCostumes.pak" />
     <EmbeddedResource Include="Resources\JUMP_FORCE.exe" />
-    <EmbeddedResource Include="Resources\v1.28_Patch.xdelta" />
-    <EmbeddedResource Include="Resources\v1.29_Patch.xdelta" />
-    <EmbeddedResource Include="Resources\v1.30_Patch.xdelta" />
-    <EmbeddedResource Include="Resources\v1.31_Patch.xdelta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,7 +77,6 @@
     <PackageReference Include="SharpCompress" Version="0.28.1" />
     <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
-    <PackageReference Include="xdelta3.net" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

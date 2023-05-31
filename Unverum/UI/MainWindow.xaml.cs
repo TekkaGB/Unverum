@@ -20,7 +20,6 @@ using Unverum.UI;
 using System.Windows.Controls.Primitives;
 using System.Security.Cryptography;
 using Microsoft.Win32;
-using xdelta3.net;
 using System.Windows.Input;
 
 namespace Unverum
@@ -716,7 +715,9 @@ namespace Unverum
                     SoundsFolder = $"{ContentFolder}{Global.s}CriWareData";
                 // DBFZ specific
                 bool? CostumePatched = null;
-                if (Global.config.CurrentGame == "Dragon Ball FighterZ")
+                if (Global.config.CurrentGame == "Dragon Ball FighterZ"
+                    || Global.config.CurrentGame == "Guilty Gear -Strive-"
+                    || Global.config.CurrentGame == "DNF Duel")
                     CostumePatched = Setup.CheckCostumePatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
                 if (!ModLoader.Restart(path, MoviesFolder, SplashFolder, SoundsFolder))
                     return false;

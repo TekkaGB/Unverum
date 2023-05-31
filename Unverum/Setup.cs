@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using xdelta3.net;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Windows;
 
@@ -26,86 +25,52 @@ namespace Unverum
                 }
             }
         }
-        public static void PatchExe(string exe, string patch)
-        {
-            var source = File.ReadAllBytes(exe);
-            var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream($"Unverum.Resources.{patch}.xdelta"))
-            {
-                byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, buffer.Length);
-                var decoded = Xdelta3Lib.Decode(source, buffer);
-                File.WriteAllBytes(exe, decoded.ToArray());
-            }
-            Global.logger.WriteLine($"Applied Costume Patch to {exe}.", LoggerType.Info);
-        }
         public static bool CheckCostumePatch(string exe)
         {
-            var checksum = GetMD5Checksum(exe).ToLowerInvariant();
-            var originalExe = exe.Replace("-eac-nop-loaded", String.Empty);
-            var originalChecksum = GetMD5Checksum(originalExe).ToLowerInvariant();
-            // Check unpatched exe (without eac tag)
-            switch (originalChecksum)
+            // Remove old costume patch for DBFZ
+            if (Global.config.CurrentGame == "Dragon Ball FighterZ")
             {
-                // Unpatched 1.27 exe
-                case "13a83d1fd8f4c71baaa580c69e6a46cf":
-                    // Patched 1.27 exe
-                    if (!checksum.Equals("2f9c8178fc8a5cdb3ac1ff8fee888f89", StringComparison.InvariantCultureIgnoreCase))
-                    {
+                var checksum = GetMD5Checksum(exe).ToLowerInvariant();
+                var originalExe = exe.Replace("-eac-nop-loaded", String.Empty);
+                // Check if old patch exe is still there
+                switch (checksum)
+                {
+                    // Old patched exes
+                    case "2f9c8178fc8a5cdb3ac1ff8fee888f89":
+                    case "ae356567060af7ffa7d0d9e293fafbd9":
+                    case "8c442c2913b2be5e4a21730c7c15b39f":
+                    case "d21dbaa08aba836a799254b4125967a9":
+                    case "ca33c47b6df1f561a068c627786226df":
                         File.Copy(originalExe, exe, true);
-                        PatchExe(exe, "CostumePatch");
-                    }
-                    else
-                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
-                    return true;
-                // Unpatched 1.28 exe
-                case "1f716cdf0846d1db7bdf2b907fead008":
-                    // Patched 1.28 exe
-                    if (!checksum.Equals("ae356567060af7ffa7d0d9e293fafbd9", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        File.Copy(originalExe, exe, true);
-                        PatchExe(exe, "v1.28_Patch");
-                    }
-                    else
-                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
-                    return true;
-                // Unpatched 1.29 exe
-                case "2ddb93cb518b6036b7725552477117bd":
-                    // Patched 1.29 exe
-                    if (!checksum.Equals("8c442c2913b2be5e4a21730c7c15b39f", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        File.Copy(originalExe, exe, true);
-                        PatchExe(exe, "v1.29_Patch");
-                    }
-                    else
-                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
-                    return true;
-                // Unpatched 1.30 exe
-                case "5762fbde79ae9d1682b725442e121f1c":
-                    // Patched 1.30 exe
-                    if (!checksum.Equals("d21dbaa08aba836a799254b4125967a9", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        File.Copy(originalExe, exe, true);
-                        PatchExe(exe, "v1.30_Patch");
-                    }
-                    else
-                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
-                    return true;
-                // Unpatched 1.31 exe
-                case "b5c3d898809d493cade006e225bcee66":
-                    // Patched 1.31 exe
-                    if (!checksum.Equals("ca33c47b6df1f561a068c627786226df", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        File.Copy(originalExe, exe, true);
-                        PatchExe(exe, "v1.31_Patch");
-                    }
-                    else
-                        Global.logger.WriteLine($"Costume patch already applied to {exe}.", LoggerType.Info);
-                    return true;
-                default:
-                    Global.logger.WriteLine($"{exe} wasn't patched since it's not v1.27-v1.31", LoggerType.Warning);
-                    return false;
+                        break;
+                    default:
+                        if (!File.Exists(exe))
+                            File.Copy(originalExe, exe, true);
+                        break;
+                }
             }
+            var PatchPath = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)}" +
+                $"{Global.s}RED{Global.s}Binaries{Global.s}Win64";
+            if (Global.config.CurrentGame == "Dragon Ball FighterZ")
+                PatchPath = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)}";
+            // Check if dsound.dll exists
+            if (!File.Exists($"{PatchPath}{Global.s}dsound.dll"))
+            {
+                foreach (var file in Assembly.GetExecutingAssembly().GetManifestResourceNames()
+                    .Where(x => x.Contains($"{Global.config.CurrentGame.Replace(" ", "_").Replace("-","_")}.Patch")))
+                    using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(file))
+                    {
+                        var split = file.Split('.');
+                        var index = split.ToList().FindIndex(x => x == "Patch");
+                        var path = $"{PatchPath}{Global.s}{string.Join(Global.s, split[(index + 1)..(split.Length - 1)])}.{split[split.Length - 1]}";
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
+                        using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                        {
+                            resource.CopyTo(stream);
+                        }
+                    }
+            }
+            return true;
         }
         public static bool Generic(string exe, string projectName, string defaultPath, string otherExe = null, string steamId = null, bool epic = false)
         {
