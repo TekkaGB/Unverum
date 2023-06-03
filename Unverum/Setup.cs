@@ -57,23 +57,42 @@ namespace Unverum
                 PatchPath = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)}" +
                 $"{Global.s}ScarletNexus{Global.s}Binaries{Global.s}Win64";
             // Check if files exist
-            if (!File.Exists($"{PatchPath}{Global.s}dsound.dll"))
+            switch (Global.config.CurrentGame)
             {
-                foreach (var file in Assembly.GetExecutingAssembly().GetManifestResourceNames()
-                    .Where(x => x.Contains($"{Global.config.CurrentGame.Replace(" ", "_").Replace("-","_")}.Patch")))
-                    using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(file))
-                    {
-                        var split = file.Split('.');
-                        var index = split.ToList().FindIndex(x => x == "Patch");
-                        var path = $"{PatchPath}{Global.s}{string.Join(Global.s, split[(index + 1)..(split.Length - 1)])}.{split[split.Length - 1]}";
-                        Directory.CreateDirectory(Path.GetDirectoryName(path));
-                        using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
-                        {
-                            resource.CopyTo(stream);
-                        }
-                    }
+                case "Dragon Ball FighterZ":
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}DBFZExtraCostumesPatch.asi"))
+                        GetPatchFiles(PatchPath);
+                    break;
+                case "Guilty Gear -Strive-":
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}GGSTExtraCostumesPatch.asi"))
+                        GetPatchFiles(PatchPath);
+                    break;
+                case "DNF Duel":
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}DNFDuelExtraCostumesPatch.asi"))
+                        GetPatchFiles(PatchPath);
+                    break;
+                case "Scarlet Nexus":
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}ScarletNexusUTOCSigBypass.asi"))
+                        GetPatchFiles(PatchPath);
+                    break;
             }
             return true;
+        }
+        public static void GetPatchFiles(string PatchPath)
+        {
+            foreach (var file in Assembly.GetExecutingAssembly().GetManifestResourceNames()
+                    .Where(x => x.Contains($"{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Patch")))
+                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(file))
+                {
+                    var split = file.Split('.');
+                    var index = split.ToList().FindIndex(x => x == "Patch");
+                    var path = $"{PatchPath}{Global.s}{string.Join(Global.s, split[(index + 1)..(split.Length - 1)])}.{split[split.Length - 1]}";
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                    {
+                        resource.CopyTo(stream);
+                    }
+                }
         }
         public static bool Generic(string exe, string projectName, string defaultPath, string otherExe = null, string steamId = null, bool epic = false)
         {
