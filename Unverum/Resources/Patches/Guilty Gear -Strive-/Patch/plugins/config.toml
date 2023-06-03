@@ -2,4 +2,4 @@ Enable_Console = false
 File_Access_Logging = false
 Loose_File_Loading = true
 Costumes_Patch = true
-Random_Costumes = true
+Random_Costumes = false

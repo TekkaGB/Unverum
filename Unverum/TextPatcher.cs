@@ -88,9 +88,7 @@ namespace Unverum
                     args = "-a 4";
                     break;
             }
-            startInfo.Arguments = $@"-Y {args} -f ""{filter}"" unreal_tournament_4.bms ""{pak}"" ""{outputFolder}""";
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardInput = true;
+            startInfo.Arguments = $@"-Q -Y {args} -f ""{filter}"" unreal_tournament_4.bms ""{pak}"" ""{outputFolder}""";
             Global.logger.WriteLine($"Extracting base files for patching...", LoggerType.Info);
             using (Process process = new Process())
             {

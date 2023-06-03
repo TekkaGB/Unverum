@@ -56,7 +56,7 @@ namespace Unverum
             else if (Global.config.CurrentGame == "Scarlet Nexus")
                 PatchPath = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)}" +
                 $"{Global.s}ScarletNexus{Global.s}Binaries{Global.s}Win64";
-            // Check if dsound.dll exists
+            // Check if files exist
             if (!File.Exists($"{PatchPath}{Global.s}dsound.dll"))
             {
                 foreach (var file in Assembly.GetExecutingAssembly().GetManifestResourceNames()
@@ -348,11 +348,13 @@ namespace Unverum
                 return false;
             }
 
-            CheckPatch(renamedLauncher);
 
             Directory.CreateDirectory(ModsFolder);
             Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
             Global.config.Configs[Global.config.CurrentGame].Launcher = renamedLauncher;
+
+            CheckPatch(renamedLauncher);
+
             Global.UpdateConfig();
             Global.logger.WriteLine($"Setup completed!", LoggerType.Info);
             return true;
