@@ -104,8 +104,8 @@ Yes. It'll look for .awb, .mp4, .bmp, .uasset, and .usm files to replace within 
 ### Is this safe? My antivirus is getting set off.
 Yes this application is safe. Antivirus tends to trigger false alarms, especially due to it needing to be connected to the internet in order to be compatible with 1-click installations. You can check out the source code for yourself if your suspicious of anything as well.
 
-### Why won’t Unverum open?
-I made it so only one instance is running at a time so if it’s already running, the app won’t open. Check to see if you can end the process in task manager or even restart your pc if you don’t know how to do that. 
+### Why won't Unverum open?
+I made it so only one instance is running at a time so if it's already running, the app won't open. Check to see if you can end the process in task manager or even restart your pc if you don't know how to do that. 
 
 ### Why doesn't Unverum have permissions to copy over files?
 Try running as administrator or checking to see if any antivirus is preventing the application from operating on files.
