@@ -2,7 +2,7 @@
 Unverum Mod Manager is a tool that allows gamers to download, install, and manage mods for several Unreal Engine 4 anime games.  The name Unverum comes from the Latin translation of real, verum.
 
 ## Supported Games
-- Dragon Ball FIghterZ
+- Dragon Ball FighterZ
 - My Hero One's Justice 2
 - Granblue Fantasy: Versus
 - Guilty Gear -Strive
