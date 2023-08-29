@@ -388,7 +388,7 @@ namespace Unverum
 
         }
 
-        // TODO: disable Launch/Build if current launcher option setup isnt complete
+        // TODO: disable Launch/Build if current launcher option setup isn't complete
         public static bool SMTV(bool emu)
         {
             if (emu)
@@ -397,7 +397,7 @@ namespace Unverum
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
                 dialog.Filter = "Emulator Exe|yuzu.exe; Ryujinx.exe";
-                dialog.Title = "Select Exectuable for Emulator (yuzu.exe or Ryujinx.exe)";
+                dialog.Title = "Select Executable for Emulator (yuzu.exe or Ryujinx.exe)";
                 dialog.Multiselect = false;
                 dialog.InitialDirectory = Global.assemblyLocation;
                 dialog.ShowDialog();
