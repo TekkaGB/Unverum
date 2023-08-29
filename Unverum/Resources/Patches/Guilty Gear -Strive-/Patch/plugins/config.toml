@@ -1,5 +1,6 @@
 Enable_Console = false
 File_Access_Logging = false
-Loose_File_Loading = true
-Costumes_Patch = true
+Loose_File_Loading = false
+Costumes_Patch = false
 Random_Costumes = false
+Log_Script_Errors = false

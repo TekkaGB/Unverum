@@ -66,6 +66,14 @@ namespace Unverum
                 case "Guilty Gear -Strive-":
                     if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}GGSTExtraCostumesPatch.asi"))
                         GetPatchFiles(PatchPath);
+                    // Replace older version of patch
+                    else if (GetMD5Checksum($"{PatchPath}{Global.s}plugins{Global.s}GGSTExtraCostumesPatch.asi").Equals("017be1fac86be4799f9cbb80c3e0591e", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        File.Delete($"{PatchPath}{Global.s}plugins{Global.s}GGSTExtraCostumesPatch.asi");
+                        if (File.Exists($"{PatchPath}{Global.s}plugins{Global.s}config.toml"))
+                            File.Delete($"{PatchPath}{Global.s}plugins{Global.s}config.toml");
+                        GetPatchFiles(PatchPath);
+                    }
                     break;
                 case "DNF Duel":
                     if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}DNFDuelExtraCostumesPatch.asi"))
