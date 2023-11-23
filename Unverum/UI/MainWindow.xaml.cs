@@ -165,6 +165,7 @@ namespace Unverum
             ModsWatcher.Deleted += OnModified;
             ModsWatcher.Renamed += OnModified;
 
+            RefreshAll();
             Refresh();
 
             ModsWatcher.EnableRaisingEvents = true;
@@ -205,7 +206,7 @@ namespace Unverum
         }
         private void OnModified(object sender, FileSystemEventArgs e)
         {
-            Refresh();
+             ;
             Global.UpdateConfig();
             // Bring window to front after download is done
             App.Current.Dispatcher.Invoke((Action)delegate
@@ -273,7 +274,60 @@ namespace Unverum
             Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
             Global.logger.WriteLine("Refreshed!", LoggerType.Info);
         }
+        private void RefreshAll()
+        {
+            var currentModDirectory = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
+            var currlist = Global.config.Configs[Global.config.CurrentGame].CurrentLoadout;
+            foreach (var list in Global.config.Configs[Global.config.CurrentGame].Loadouts)
+            {
+                // Add new folders found in Mods to the ModList
+                foreach (var mod in Directory.GetDirectories(currentModDirectory))
+                {
+                    if (list.Value.ToList().Where(x => x.name == Path.GetFileName(mod)).Count() == 0)
+                    {
+                        Mod m = new Mod();
+                        m.name = Path.GetFileName(mod);
+                        m.enabled = false;
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            list.Value.Add(m);
+                        });
+                    }
+                }
+                // Remove deleted folders that are still in the ModList
+                foreach (var mod in list.Value.ToList())
+                {
+                    if (!Directory.GetDirectories(currentModDirectory).ToList().Select(x => Path.GetFileName(x)).Contains(mod.name))
+                    {
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            list.Value.Remove(mod);
+                        });
+                        continue;
+                    }
+                    // Update all paks found
+                    if (mod.paks == null)
+                        mod.paks = new();
+                    foreach (var file in Directory.GetFiles($"{currentModDirectory}{Global.s}{mod.name}", "*.*", SearchOption.AllDirectories))
+                    {
+                        if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                            && !mod.paks.ContainsKey(file))
+                            mod.paks.Add(file, true); // Enable all paks when first added
+                    }
+                    // Remove all paks that no longer exist
+                    foreach (var pak in mod.paks.Keys)
+                    {
+                        if (!File.Exists(pak))
+                            mod.paks.Remove(pak);
+                    }
+                }
+ 
+                Global.logger.WriteLine($"Total {list.Value.Count} mods in {list.Key}", LoggerType.Info);
+            }
 
+            Global.config.Configs[Global.config.CurrentGame].CurrentLoadout = currlist;
+            Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
+        }
         // Events for Enabled checkboxes
         private void OnChecked(object sender, RoutedEventArgs e)
         {
@@ -2006,6 +2060,7 @@ namespace Unverum
                 Directory.CreateDirectory(currentModDirectory);
                 ModsWatcher.Path = currentModDirectory;
                 Global.logger.WriteLine($"Game switched to {Global.config.CurrentGame}", LoggerType.Info);
+                RefreshAll();
                 Refresh();
                 Global.UpdateConfig();
                 if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
