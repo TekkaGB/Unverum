@@ -206,7 +206,7 @@ namespace Unverum
         }
         private void OnModified(object sender, FileSystemEventArgs e)
         {
-             ;
+            Refresh();
             Global.UpdateConfig();
             // Bring window to front after download is done
             App.Current.Dispatcher.Invoke((Action)delegate
