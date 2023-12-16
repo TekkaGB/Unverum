@@ -242,7 +242,7 @@ namespace Unverum
                                     missing = true;
                                     continue;
                                 }
-                                Global.logger.WriteLine($"Appending dblist.txt from {mod}...", LoggerType.Info);
+                                Global.logger.WriteLine($"Appending dblist.txt from {mod.name}...", LoggerType.Info);
                                 db.UnionWith(File.ReadAllLines(file));
                             }
                             break;
