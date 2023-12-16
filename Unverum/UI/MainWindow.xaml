@@ -435,6 +435,12 @@
                             </ComboBoxItem>
                             <ComboBoxItem>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/GBVSR.jpg" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Granblue Fantasy Versus: Rising" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="../Assets/Icons/ggs.png" Width="27" Margin="4,0,10,0"/>
                                     <TextBlock Text="Guilty Gear -Strive-" VerticalAlignment="Center" FontWeight="Medium"/>
                                 </StackPanel>
@@ -574,7 +580,6 @@
 						<Setter Property="Height" Value="17"/>
 						<Setter Property="FontSize" Value="12"/>
 						<Setter Property="FontWeight" Value="SemiBold"/>
-						<EventSetter Event="Click" Handler="SortAlphabeticallyAndGroupEnabled_Click"/>
 					</Style>
 				</DataGrid.ColumnHeaderStyle>
                                 <DataGrid.ContextMenu>
@@ -779,6 +784,12 @@
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="../Assets/Icons/gbvs.png" Width="27" Margin="4,0,10,0"/>
                                 <TextBlock Text="Granblue Fantasy: Versus" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/GBVSR.jpg" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Granblue Fantasy Versus: Rising" VerticalAlignment="Center" FontWeight="Medium"/>
                             </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>

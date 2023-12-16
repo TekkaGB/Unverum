@@ -97,8 +97,10 @@ namespace Unverum
             if (Global.config.Configs == null)
             {
                 Global.config.CurrentGame = (((GameBox.SelectedValue as ComboBoxItem).Content as StackPanel).Children[1] as TextBlock).Text.Trim().Replace(":", String.Empty);
-                Global.config.Configs = new();
-                Global.config.Configs.Add(Global.config.CurrentGame, new());
+                Global.config.Configs = new()
+                {
+                    { Global.config.CurrentGame, new() }
+                };
             }
             else
                 GameBox.SelectedIndex = Global.games.IndexOf(Global.config.CurrentGame);
@@ -339,6 +341,8 @@ namespace Unverum
                     return Setup.MHOJ2();
                 case GameFilter.GBVS:
                     return Setup.Generic("GBVS.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\Granblue Fantasy Versus\GBVS.exe", steamId: "1090630");
+                case GameFilter.GBVSR:
+                    return Setup.GBVSR();
                 case GameFilter.GGS:
                     return Setup.Generic("GGST.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\GUILTY GEAR -STRIVE-\GGST.exe", steamId: "1384160");
                 case GameFilter.JF:
@@ -502,6 +506,12 @@ namespace Unverum
                             case GameFilter.GBVS:
                                 id = "1090630";
                                 break;
+                            case GameFilter.GBVSR:
+                                if (!path.ToLowerInvariant().Contains("demo"))
+                                    id = "2157560";
+                                else
+                                    id = "2667960";
+                                break;
                             case GameFilter.GGS:
                                 id = "1384160";
                                 break;
@@ -546,6 +556,8 @@ namespace Unverum
                         UseShellExecute = true,
                         Verb = "open"
                     };
+                    if (Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex == 0 && (GameFilter)GameBox.SelectedIndex == GameFilter.GBVSR)
+                        ps.Arguments = "-fileopenlog";
                     Process.Start(ps);
                 }
                 catch (Exception ex)
@@ -569,6 +581,9 @@ namespace Unverum
                     break;
                 case GameFilter.GBVS:
                     id = "8897";
+                    break;
+                case GameFilter.GBVSR:
+                    id = "19552";
                     break;
                 case GameFilter.GGS:
                     id = "11534";
@@ -1335,7 +1350,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693" };
+                var gameIDS = new string[] { "6246", "11605", "8897", "19552", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)
@@ -2032,8 +2047,7 @@ namespace Unverum
                     if (LauncherOptions.Count > 2)
                         LauncherOptions.RemoveAt(2);
                 }
-                else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase)
-                    || Global.config.CurrentGame.Equals("MultiVersus", StringComparison.InvariantCultureIgnoreCase))
+                else if (Global.config.CurrentGame.Equals("The King of Fighters XV", StringComparison.InvariantCultureIgnoreCase))
                 {
                     LauncherOptions[0] = "Executable";
                     LauncherOptions[1] = "Steam";
@@ -2079,31 +2093,6 @@ namespace Unverum
             }
         }
 
-        private void SortAlphabeticallyAndGroupEnabled_Click(object sender, RoutedEventArgs e)
-        {
-            DataGridColumnHeader colHeader = sender as DataGridColumnHeader;
-            if (colHeader != null)
-            {
-                if (colHeader.Column.Header.Equals("Name"))
-                {
-                    // Sort alphabetically
-                    Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderBy(x => x.name, new NaturalSort()).ToList());
-                    Global.logger.WriteLine("Sorted alphanumerically!", LoggerType.Info);
-                }
-                else if (colHeader.Column.Header.Equals("Enabled"))
-                {
-                    // Move all enabled mods to top
-                    Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderByDescending(x => x.enabled).ToList());
-                    Global.logger.WriteLine("Moved all enabled mods to the top!", LoggerType.Info);
-                }
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    ModGrid.ItemsSource = Global.ModList;
-                });
-                Global.UpdateConfig();
-            }
-            e.Handled = true;
-        }
         private void Search()
         {
             if (!filterSelect && IsLoaded && !String.IsNullOrWhiteSpace(SearchBar.Text))

@@ -270,12 +270,13 @@ namespace Unverum
                                     (Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase)
                                     || Global.config.CurrentGame.Equals("Guilty Gear -Strive-", StringComparison.InvariantCultureIgnoreCase)
                                     || Global.config.CurrentGame.Equals("Granblue Fantasy Versus", StringComparison.InvariantCultureIgnoreCase)
+                                    || Global.config.CurrentGame.Equals("Granblue Fantasy Versus Rising", StringComparison.InvariantCultureIgnoreCase)
                                     || Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase)))
                             {
                                     if (missing)
                                         continue;
                                     var pakName = Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase) ? "RED-WindowsNoEditor.pak" : "pakchunk0-WindowsNoEditor.pak";
-                                    if (entries == null && TextPatcher.ExtractBaseFiles(pakName, "*INT/REDGame.*", 
+                                    if (entries == null && TextPatcher.ExtractBaseFiles(pakName, "RED/Content/Localization/INT/REDGame",
                                             $"RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
                                             entries = TextPatcher.GetEntries();
                                     // Check if entries are still null

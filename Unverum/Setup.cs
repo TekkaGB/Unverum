@@ -150,6 +150,58 @@ namespace Unverum
             Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
             return true;
         }
+        public static bool GBVSR()
+        {
+            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\Granblue Fantasy Versus Rising\GBVSR.exe";
+            try
+            {
+                var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 2157560");
+                if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
+                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}GBVSR.exe";
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 2667960");
+                    if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
+                        defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}GBVSR.exe";
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            if (!File.Exists(defaultPath))
+            {
+                Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.DefaultExt = ".exe";
+                dialog.Filter = $"Executable Files (GBVSR.exe)|GBVSR.exe";
+                dialog.Title = $"Select GBVSR.exe from your Steam Install folder";
+                dialog.Multiselect = false;
+                dialog.InitialDirectory = Global.assemblyLocation;
+                dialog.ShowDialog();
+                if (!String.IsNullOrEmpty(dialog.FileName)
+                    && Path.GetFileName(dialog.FileName).Equals("GBVSR.exe", StringComparison.InvariantCultureIgnoreCase))
+                    defaultPath = dialog.FileName;
+                else if (!String.IsNullOrEmpty(dialog.FileName))
+                {
+                    Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
+                    return false;
+                }
+                else
+                    return false;
+            }
+            var parent = Path.GetDirectoryName(defaultPath);
+            var ModsFolder = $"{parent}{Global.s}RED{Global.s}Content{Global.s}Paks{Global.s}~mods";
+            Directory.CreateDirectory(ModsFolder);
+            Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
+            Global.config.Configs[Global.config.CurrentGame].Launcher = defaultPath;
+            Global.UpdateConfig();
+            Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
+            return true;
+        }
         public static bool MHOJ2()
         {
             var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\My Hero Ones Justice 2\HeroGame\Binaries\Win64\MHOJ2.exe";

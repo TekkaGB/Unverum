@@ -22,6 +22,7 @@
     <None Remove="Assets\Icons\dnf.png" />
     <None Remove="Assets\Icons\ds.png" />
     <None Remove="Assets\Icons\gbvs.png" />
+    <None Remove="Assets\Icons\GBVSR.jpg" />
     <None Remove="Assets\Icons\ggs.png" />
     <None Remove="Assets\Icons\im.png" />
     <None Remove="Assets\Icons\jf.png" />
@@ -89,6 +90,7 @@
     <Resource Include="Assets\Icons\dnf.png" />
     <Resource Include="Assets\Icons\ds.png" />
     <Resource Include="Assets\Icons\gbvs.png" />
+    <Resource Include="Assets\Icons\GBVSR.jpg" />
     <Resource Include="Assets\Icons\ggs.png" />
     <Resource Include="Assets\Icons\im.png" />
     <Resource Include="Assets\Icons\jf.png" />
@@ -144,6 +146,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Dependencies\u4pak\u4pak.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\umodel\LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\umodel\SDL2_64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\umodel\umodel_64.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Dependencies\UnrealModLoader\ModLoaderInfo.ini">
