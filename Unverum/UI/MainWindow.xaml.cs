@@ -1805,6 +1805,21 @@ namespace Unverum
                         Index = 1
                     });
                 }
+                else if (Global.config.CurrentGame.Equals("Granblue Fantasy Versus Rising", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    choices.Add(new Choice()
+                    {
+                        OptionText = "Launch through Executable",
+                        OptionSubText = "Launches the executable directly with -fileopenlog argument",
+                        Index = 0
+                    });
+                    choices.Add(new Choice()
+                    {
+                        OptionText = $"Launch through {store}",
+                        OptionSubText = $"Uses the {store} shortcut to launch. Need to manually add -fileopenlog to\nManage > Properties... > General > Launch Options on Steam for mods to work",
+                        Index = 1
+                    });
+                }
                 else
                 {
                     choices.Add(new Choice()
