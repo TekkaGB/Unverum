@@ -5,6 +5,7 @@ Unverum Mod Manager is a tool that allows gamers to download, install, and manag
 - Dragon Ball FighterZ
 - My Hero One's Justice 2
 - Granblue Fantasy: Versus
+- Granblue Fantasy Versus: Rising
 - Guilty Gear -Strive
 - Jump Force
 - Kingdom Hearts III
@@ -45,7 +46,7 @@ Unverum also supports auto updates for mods downloaded from GameBanana using the
 Self updates for Unverum are also supported so you don't need to keep checking back here to see if you have the latest version. These are checked everytime on launch.
 
 ## Game Specific Functionalities
-###Dragon Ball FighterZ
+### Dragon Ball FighterZ
 Included in the Unverum download is Lean's materials that some DBFZ mods utilize. It would be best to keep that as the highest priority as enabled. Note that the Costume Patcher mod is integrated with Unverum. On setup, the exe is patched and the placeholder costume files are always placed as the lowest priority on build.
 
 ### My Hero One's Justice 2
@@ -69,8 +70,16 @@ Note that mods will go under a subfolder called Unverum Mods so that any other m
 
 .pak files will automatically be put in the correct directory under romfs and .pchtxt and .ips files will automatically be put in the correct directory under exefs. Any Sound folder found in a mod folder will be copied and pasted as is over `.../Unverum Mods/romfs/Project/Content/Sound`
 
+## Costume Patching for ArcSys Games
+Unverum automatically installs DeathChaos's costume patches for Dragon Ball FighterZ, Guilty Gear -Strive-, and DNF Duel. For more information check out these pages:
+- https://gamebanana.com/mods/435009
+- https://gamebanana.com/mods/4369251
+
+## UE4SS
+Unverum is also capable of installing UE4SS mods. Anything in a LogicMods folder will go in the proper LogicMods folder location and anything in a `ue4ss` folder will go in the proper ../Binaries/Win64/Mods folder. The mods.txt file in the mods folder will also be automatically edited to enable all of the added mods.
+
 ## Text Patching
-As of v1.2.0, Unverum now supports modularly patching specific parts of REDAsset.uexp/uasset which contains all the text for Dragon Ball FighterZ, Guilty Gear -STRIVE-, Granblue Fantasy: Versus, and DNF Duel.  Unverum looks for a text.json in each mod folder. 
+As of v1.2.0, Unverum now supports modularly patching specific parts of REDAsset.uexp/uasset which contains all the text for Dragon Ball FighterZ, Guilty Gear -STRIVE-, Granblue Fantasy: Versus, Granblue Fantasy Versus: Rising, and DNF Duel.  Unverum looks for a text.json in each mod folder. 
 
 An example of how it's setup would be:
 ```
