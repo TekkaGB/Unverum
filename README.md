@@ -73,7 +73,7 @@ Note that mods will go under a subfolder called Unverum Mods so that any other m
 ## Costume Patching for ArcSys Games
 Unverum automatically installs DeathChaos's costume patches for Dragon Ball FighterZ, Guilty Gear -Strive-, and DNF Duel. For more information check out these pages:
 - https://gamebanana.com/mods/435009
-- https://gamebanana.com/mods/4369251
+- https://gamebanana.com/mods/436925
 
 ## UE4SS
 Unverum is also capable of installing UE4SS mods. Anything in a LogicMods folder will go in the proper LogicMods folder location and anything in a `ue4ss` folder will go in the proper ../Binaries/Win64/Mods folder. The mods.txt file in the mods folder will also be automatically edited to enable all of the added mods.
