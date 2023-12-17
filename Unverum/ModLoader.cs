@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using SearchOption = System.IO.SearchOption;
 
 namespace Unverum
 {
@@ -36,14 +38,21 @@ namespace Unverum
                     RestoreDirectory(splash);
                 if (!String.IsNullOrEmpty(sound) && Directory.Exists(sound))
                     RestoreDirectory(sound);
-                // UnrealModLoader paths
+                // Remove UE4SS Files
                 var LogicModsFolder = $"{Path.GetDirectoryName(path)}{Global.s}LogicMods";
-                var CoreModsFolder = $"{Path.GetDirectoryName(Path.GetDirectoryName(path))}{Global.s}CoreMods";
-                var AutoInjectorDll = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Binaries{Global.s}Win64{Global.s}xinput1_3.dll";
+                var Win64Folder = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Binaries{Global.s}Win64";
+                var ue4ssModsFolder = $"{Win64Folder}{Global.s}Mods";
+                List<string> ue4ssFiles = new() { "opengl32.dll", "patternsleuth_bind.dll", "ue4ss.dll", "UE4SS-settings.ini" };
+                foreach (var ue4ssFile in ue4ssFiles) 
+                {
+                    var file = $"{Win64Folder}{Global.s}{ue4ssFile}";
+                    if (File.Exists(file))
+                        File.Delete(file);
+                }
+                if (Directory.Exists(ue4ssModsFolder))
+                    Directory.Delete(ue4ssModsFolder, true);
                 if (Directory.Exists(LogicModsFolder))
                     Directory.Delete(LogicModsFolder, true);
-                if (Directory.Exists(CoreModsFolder))
-                    Directory.Delete(CoreModsFolder, true);
                 Global.logger.WriteLine("Restored folders", LoggerType.Info);
             }
             catch (Exception e)
@@ -181,9 +190,9 @@ namespace Unverum
             var tildes = 0;
             // UnrealModLoader paths
             var LogicModsFolder = $"{Path.GetDirectoryName(path)}{Global.s}LogicMods";
-            var CoreModsFolder = $"{Path.GetDirectoryName(Path.GetDirectoryName(path))}{Global.s}CoreMods";
             var Win64Folder = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Binaries{Global.s}Win64";
-            var UML = false;
+            var ue4ssModsFolder = $"{Win64Folder}{Global.s}Mods";
+            var ue4ss = false;
             foreach (var mod in mods)
             {
                 var priorityName = String.Empty;
@@ -203,23 +212,27 @@ namespace Unverum
                         tildes++;
                     }
                 }
-                foreach (var coreModDirectory in Directory.GetDirectories(modPath, "*CoreMods", SearchOption.AllDirectories))
-                    foreach (var coreMod in Directory.GetFiles(coreModDirectory, "*", SearchOption.AllDirectories))
+                // Copy over UE4SS Mods
+                foreach (var ue4ssModDirectory in Directory.GetDirectories(modPath, "*ue4ss", SearchOption.AllDirectories))
+                    foreach (var ue4ssMod in Directory.GetFiles(ue4ssModDirectory, "*", SearchOption.AllDirectories))
                     {
-                        Directory.CreateDirectory(CoreModsFolder);
-                        var newPath = coreMod.Replace(Path.GetDirectoryName(coreMod), CoreModsFolder);
-                        File.Copy(coreMod, newPath, true);
-                        Global.logger.WriteLine($"Copying over {coreMod} to {newPath}", LoggerType.Info);
-                        UML = true;
+                        // Don't copy over the mods.txt file if they have their own
+                        if (Path.GetFileName(ue4ssMod).Equals("mods.txt", StringComparison.InvariantCultureIgnoreCase))
+                            continue;
+                        var newPath = ue4ssMod.Replace(ue4ssModDirectory, ue4ssModsFolder);
+                        Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+                        File.Copy(ue4ssMod, newPath, true);
+                        Global.logger.WriteLine($"Copying over {ue4ssMod} to {newPath}", LoggerType.Info);
+                        ue4ss = true;
                     }
                 foreach (var logicModDirectory in Directory.GetDirectories(modPath, "*LogicMods", SearchOption.AllDirectories))
                     foreach (var logicMod in Directory.GetFiles(logicModDirectory, "*", SearchOption.AllDirectories))
                     {
-                        Directory.CreateDirectory(LogicModsFolder);
-                        var newPath = logicMod.Replace(Path.GetDirectoryName(logicMod), LogicModsFolder);
+                        var newPath = logicMod.Replace(logicModDirectory, LogicModsFolder);
+                        Directory.CreateDirectory(Path.GetDirectoryName(newPath));
                         File.Copy(logicMod, newPath, true);
                         Global.logger.WriteLine($"Copying over {logicMod} to {newPath}", LoggerType.Info);
-                        UML = true;
+                        ue4ss = true;
                     }
                 foreach (var file in Directory.GetFiles(modPath, "*", SearchOption.AllDirectories))
                 {
@@ -310,25 +323,35 @@ namespace Unverum
                     foreach (var prm in Directory.GetDirectories(modPath, "*prm_files", SearchOption.AllDirectories))
                         prmFilePaths += $@"""{prm}"" ";
             }
-            // Check if UML is installed if UML mod is used
-            if (UML)
+            // Check if UE4SS is installed if UE4SS mod is used
+            if (ue4ss)
             {
-                var dllPath = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}UnrealModLoader{Global.s}UnrealEngineModLoader.dll";
-                if (!File.Exists(dllPath))
-                    Global.logger.WriteLine($"Unable to use UnrealModLoader mods {dllPath} does not exist", LoggerType.Warning);
-                else
+                // Copy over UE4SS install files
+                FileSystem.CopyDirectory($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}ue4ss", Win64Folder);
+                // Edit mods.txt to enable added folders
+                var modsFile = $"{Win64Folder}{Global.s}Mods{Global.s}mods.txt";
+                var lines = File.ReadAllLines(modsFile).ToList();
+                List<string> defaultMods = new()
                 {
-                    var AutoInjectorDll = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}UnrealModLoader{Global.s}Tools{Global.s}AutoInjector{Global.s}xinput1_3.dll";
-                    if (!File.Exists(AutoInjectorDll))
-                        Global.logger.WriteLine($"Unable to use UnrealModLoader mods {AutoInjectorDll} does not exist", LoggerType.Warning);
-                    else
-                    {
-                        if (!File.Exists($"{Win64Folder}{Global.s}xinput1_3.dll"))
-                            File.Copy(AutoInjectorDll, $"{Win64Folder}{Global.s}xinput1_3.dll", true);
-                        var iniText = $"[INFO]\nLoaderPath={dllPath}";
-                        File.WriteAllText($"{Win64Folder}{Global.s}ModLoaderInfo.ini", iniText);
-                    }
+                    "CheatManagerEnablerMod",
+                    "ActorDumperMod",
+                    "ConsoleCommandsMod",
+                    "ConsoleEnablerMod",
+                    "SplitScreenMod",
+                    "LineTraceMod",
+                    "BPModLoaderMod",
+                    "BPML_GenericFunctions",
+                    "jsbLuaProfilerMod",
+                    "shared",
+                    "Keybinds"
+                };
+                foreach (var directory in Directory.GetDirectories(ue4ssModsFolder, "*", SearchOption.TopDirectoryOnly)) 
+                {
+                    var mod = Path.GetFileName(directory);
+                    if (!defaultMods.Contains(mod))
+                        lines.Insert(lines.Count - 1, $"{mod} : 1");
                 }
+                File.WriteAllLines(modsFile, lines);
             }
             // Create pak if text was patched
             if (entries != null)

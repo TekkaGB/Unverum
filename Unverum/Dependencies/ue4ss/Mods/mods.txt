@@ -1,0 +1,10 @@
+﻿CheatManagerEnablerMod : 1
+ActorDumperMod : 0
+ConsoleCommandsMod : 1
+ConsoleEnablerMod : 1
+SplitScreenMod : 0
+LineTraceMod : 0
+BPModLoaderMod : 1
+BPML_GenericFunctions : 1
+jsbLuaProfilerMod : 0
+Keybinds : 1
