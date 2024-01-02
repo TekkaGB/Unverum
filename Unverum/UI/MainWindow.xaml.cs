@@ -2216,5 +2216,39 @@ namespace Unverum
         {
             ModGrid_SearchBar.Clear();
         }
+        private async void SortAlphabeticallyAndGroupEnabled_Click(object sender, RoutedEventArgs e)
+        {
+            DataGridColumnHeader colHeader = sender as DataGridColumnHeader;
+            if (colHeader != null)
+            {
+                if (colHeader.Column.Header.Equals("Name"))
+                {
+                    var choice = MessageBox.Show($"Confirm sorting all mods alphanumerically?", "Unverum", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (choice == MessageBoxResult.No)
+                        return;
+                    // Sort alphanumerically
+                    Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderBy(x => x.name, new NaturalSort()).ToList());
+                    Global.logger.WriteLine("Sorted alphanumerically!", LoggerType.Info);
+                }
+                else if (colHeader.Column.Header.Equals("Enabled"))
+                {
+                    var choice = MessageBox.Show($"Confirm moving all enabled mods to the top?", "Unverum", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (choice == MessageBoxResult.No)
+                        return;
+                    // Move all enabled mods to top
+                    Global.ModList = new ObservableCollection<Mod>(Global.ModList.ToList().OrderByDescending(x => x.enabled).ToList());
+                    Global.logger.WriteLine("Moved all enabled mods to the top!", LoggerType.Info);
+                }
+                await Task.Run(() =>
+                {
+                    App.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        ModGrid.ItemsSource = Global.ModList;
+                    });
+                });
+                Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
+            }
+            e.Handled = true;
+        }
     }
 }

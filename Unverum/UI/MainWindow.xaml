@@ -580,7 +580,8 @@
 						<Setter Property="Height" Value="17"/>
 						<Setter Property="FontSize" Value="12"/>
 						<Setter Property="FontWeight" Value="SemiBold"/>
-					</Style>
+                        <EventSetter Event="Click" Handler="SortAlphabeticallyAndGroupEnabled_Click"/>
+                    </Style>
 				</DataGrid.ColumnHeaderStyle>
                                 <DataGrid.ContextMenu>
                                     <ContextMenu>
