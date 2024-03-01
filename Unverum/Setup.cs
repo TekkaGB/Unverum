@@ -60,7 +60,8 @@ namespace Unverum
             switch (Global.config.CurrentGame)
             {
                 case "Dragon Ball FighterZ":
-                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}DBFZExtraCostumesPatch.asi"))
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}DBFZExtraCostumesPatch.asi")
+                        || GetMD5Checksum($"{PatchPath}{Global.s}plugins{Global.s}DBFZExtraCostumesPatch.asi").Equals("e99c11be64f7fb81e8b2eebdff72b164", StringComparison.InvariantCultureIgnoreCase))
                         GetPatchFiles(PatchPath);
                     break;
                 case "Guilty Gear -Strive-":
