@@ -42,7 +42,7 @@ namespace Unverum
                 var LogicModsFolder = $"{Path.GetDirectoryName(path)}{Global.s}LogicMods";
                 var Win64Folder = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Binaries{Global.s}Win64";
                 var ue4ssModsFolder = $"{Win64Folder}{Global.s}Mods";
-                List<string> ue4ssFiles = new() { "opengl32.dll", "patternsleuth_bind.dll", "ue4ss.dll", "UE4SS-settings.ini" };
+                List<string> ue4ssFiles = new() { "opengl32.dll", "patternsleuth_bind.dll", "ue4ss.dll", "UE4SS-settings.ini", "dwmapi.dll" };
                 foreach (var ue4ssFile in ue4ssFiles) 
                 {
                     var file = $"{Win64Folder}{Global.s}{ue4ssFile}";

@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
     <AssemblyName>Unverum</AssemblyName>
-    <AssemblyVersion>2.5.1.0</AssemblyVersion>
+    <AssemblyVersion>2.5.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +29,6 @@
     <None Remove="Assets\Icons\kh3.png" />
     <None Remove="Assets\Icons\KOFXV.jpg" />
     <None Remove="Assets\Icons\mhoj2.png" />
-    <None Remove="Assets\Icons\MV.jpg" />
     <None Remove="Assets\Icons\smtv.png" />
     <None Remove="Assets\Icons\sn.png" />
     <None Remove="Assets\Icons\toa.png" />
@@ -97,7 +96,6 @@
     <Resource Include="Assets\Icons\kh3.png" />
     <Resource Include="Assets\Icons\KOFXV.jpg" />
     <Resource Include="Assets\Icons\mhoj2.png" />
-    <Resource Include="Assets\Icons\MV.jpg" />
     <Resource Include="Assets\Icons\smtv.png" />
     <Resource Include="Assets\Icons\sn.png" />
     <Resource Include="Assets\Icons\toa.png" />
@@ -146,6 +144,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Dependencies\u4pak\u4pak.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dependencies\ue4ss\dwmapi.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Dependencies\ue4ss\Mods\ActorDumperMod\Scripts\main.lua">
@@ -197,12 +198,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Dependencies\ue4ss\Mods\SplitScreenMod\Scripts\main.lua">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Dependencies\ue4ss\opengl32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Dependencies\ue4ss\patternsleuth_bind.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Dependencies\ue4ss\UE4SS-settings.ini">

@@ -853,12 +853,6 @@
                                 <TextBlock Text="DNF Duel" VerticalAlignment="Center" FontWeight="Medium"/>
                             </StackPanel>
                         </ComboBoxItem>
-                        <ComboBoxItem>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="../Assets/Icons/MV.jpg" Width="27" Margin="4,0,10,0"/>
-                                <TextBlock Text="MultiVersus" VerticalAlignment="Center" FontWeight="Medium"/>
-                            </StackPanel>
-                        </ComboBoxItem>
                     </ComboBox>
                     <ComboBox Margin="5,0,0,0" Grid.Column="1" IsEnabled="False" Name="FilterBox" Height="35" MinWidth="130" HorizontalAlignment="Stretch" FontSize="18"  FontWeight="Medium" SelectionChanged="FilterSelectionChanged"/>
                     <ComboBox Margin="5,0,0,0" Grid.Column="2" IsEnabled="False" FontWeight="Medium" FontSize="18" Name="TypeBox" Height="35" HorizontalAlignment="Stretch" MinWidth="100" SelectionChanged="TypeFilterSelectionChanged">

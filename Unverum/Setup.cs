@@ -202,14 +202,15 @@ namespace Unverum
             Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
             return true;
         }
-        public static bool MHOJ2()
+
+        public static bool Win64FolderSetup(string exe, string projectName, string gameName, string steamId)
         {
-            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\My Hero Ones Justice 2\HeroGame\Binaries\Win64\MHOJ2.exe";
+            var defaultPath = $@"C:\Program Files (x86)\Steam\steamapps\common\{gameName}\{projectName}\Binaries\Win64\{exe}";
             try
             {
-                var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 1058450");
+                var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {steamId}");
                 if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
-                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}MHOJ2.exe";
+                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}{projectName}{Global.s}Binaries{Global.s}Win64{Global.s}{exe}";
             }
             catch (Exception e)
             {
@@ -219,13 +220,13 @@ namespace Unverum
                 Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
                 OpenFileDialog dialog = new OpenFileDialog();
                 dialog.DefaultExt = ".exe";
-                dialog.Filter = $"Executable Files (MHOJ2.exe)|MHOJ2.exe";
-                dialog.Title = $"Select MHOJ2.exe from your Steam Install folder";
+                dialog.Filter = $"Executable Files ({exe})|{exe}";
+                dialog.Title = $"Select {exe} from your Steam Install folder";
                 dialog.Multiselect = false;
                 dialog.InitialDirectory = Global.assemblyLocation;
                 dialog.ShowDialog();
                 if (!String.IsNullOrEmpty(dialog.FileName)
-                    && Path.GetFileName(dialog.FileName).Equals("MHOJ2.exe", StringComparison.InvariantCultureIgnoreCase))
+                    && Path.GetFileName(dialog.FileName).Equals(exe, StringComparison.InvariantCultureIgnoreCase))
                     defaultPath = dialog.FileName;
                 else if (!String.IsNullOrEmpty(dialog.FileName))
                 {
@@ -235,51 +236,8 @@ namespace Unverum
                 else
                     return false;
             }
-            var parent = defaultPath.Replace($"{Global.s}HeroGame{Global.s}Binaries{Global.s}Win64{Global.s}MHOJ2.exe", String.Empty);
-            var paks = $"{parent}{Global.s}HeroGame{Global.s}Content{Global.s}Paks";
-            var ModsFolder = $"{paks}{Global.s}~mods";
-            Directory.CreateDirectory(ModsFolder);
-            Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
-            Global.config.Configs[Global.config.CurrentGame].Launcher = defaultPath;
-            Global.UpdateConfig();
-            Global.logger.WriteLine($"Setup completed for {Global.config.CurrentGame}!", LoggerType.Info);
-            return true;
-        }
-        public static bool ToA()
-        {
-            var defaultPath = @"C:\Program Files (x86)\Steam\steamapps\common\Tales of Arise\Arise\Binaries\Win64\Tales of Arise.exe";
-            try
-            {
-                var key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 740130");
-                if (!String.IsNullOrEmpty(key.GetValue("InstallLocation") as string))
-                    defaultPath = $"{key.GetValue("InstallLocation") as string}{Global.s}Arise{Global.s}Binaries{Global.s}Win64{Global.s}Tales of Arise.exe";
-            }
-            catch (Exception e)
-            {
-            }
-            if (!File.Exists(defaultPath))
-            {
-                Global.logger.WriteLine($"Couldn't find install path in registry, select path to exe instead", LoggerType.Warning);
-                OpenFileDialog dialog = new OpenFileDialog();
-                dialog.DefaultExt = ".exe";
-                dialog.Filter = $"Executable Files (Tales of Arise.exe)|Tales of Arise.exe";
-                dialog.Title = $"Select Tales of Arise.exe from your Steam Install folder";
-                dialog.Multiselect = false;
-                dialog.InitialDirectory = Global.assemblyLocation;
-                dialog.ShowDialog();
-                if (!String.IsNullOrEmpty(dialog.FileName)
-                    && Path.GetFileName(dialog.FileName).Equals("Tales of Arise.exe", StringComparison.InvariantCultureIgnoreCase))
-                    defaultPath = dialog.FileName;
-                else if (!String.IsNullOrEmpty(dialog.FileName))
-                {
-                    Global.logger.WriteLine($"Invalid .exe chosen", LoggerType.Error);
-                    return false;
-                }
-                else
-                    return false;
-            }
-            var parent = defaultPath.Replace($"{Global.s}Arise{Global.s}Binaries{Global.s}Win64{Global.s}Tales of Arise.exe", String.Empty);
-            var paks = $"{parent}{Global.s}Arise{Global.s}Content{Global.s}Paks";
+            var parent = defaultPath.Replace($"{Global.s}{projectName}{Global.s}Binaries{Global.s}Win64{Global.s}{exe}", String.Empty);
+            var paks = $"{parent}{Global.s}{projectName}{Global.s}Content{Global.s}Paks";
             var ModsFolder = $"{paks}{Global.s}~mods";
             Directory.CreateDirectory(ModsFolder);
             Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;

@@ -338,7 +338,7 @@ namespace Unverum
                 case GameFilter.DBFZ:
                     return Setup.DBFZ();
                 case GameFilter.MHOJ2:
-                    return Setup.MHOJ2();
+                    return Setup.Win64FolderSetup("MHOJ2.exe", "HeroGame", "My Hero Ones Justice 2", "1058450");
                 case GameFilter.GBVS:
                     return Setup.Generic("GBVS.exe", "RED", @"C:\Program Files (x86)\Steam\steamapps\common\Granblue Fantasy Versus\GBVS.exe", steamId: "1090630");
                 case GameFilter.GBVSR:
@@ -352,7 +352,7 @@ namespace Unverum
                 case GameFilter.SN:
                     return Setup.Generic("ScarletNexus.exe", "ScarletNexus", @"C:\Program Files (x86)\Steam\steamapps\common\ScarletNexus\ScarletNexus.exe", steamId: "775500");
                 case GameFilter.ToA:
-                    return Setup.ToA();
+                    return Setup.Win64FolderSetup("Tales of Arise.exe", "Arise", "Tales of Arise", "740130");
                 case GameFilter.DS:
                     return Setup.Generic("APK.exe", "APK", @"C:\Program Files (x86)\Steam\steamapps\common\Demon Slayer\APK.exe", steamId: "1490890");
                 case GameFilter.IM:
@@ -643,9 +643,6 @@ namespace Unverum
                         break;
                     case 7:
                         discordLink = "https://discord.gg/Se2XTnA";
-                        break;
-                    case 13:
-                        discordLink = "https://discord.gg/mT6NqRdfgr";
                         break;
                     default:
                         discordLink = "https://discord.gg/tgFrebr";
