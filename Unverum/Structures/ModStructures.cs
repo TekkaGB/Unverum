@@ -50,6 +50,13 @@ namespace Unverum
         public ObservableCollection<Mod> ModList { get; set; }
         public string CurrentLoadout { get; set; }
         public Dictionary<string, ObservableCollection<Mod>> Loadouts { get; set; }
+        public void DisableAllMods(string loadout)
+        {
+            foreach (var mod in Loadouts[loadout])
+            {
+                mod.enabled = false;
+            }
+        }
     }
     public class Choice
     {
