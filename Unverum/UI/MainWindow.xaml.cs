@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -141,7 +141,7 @@ namespace Unverum
                 (!Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase)
                 && Global.config.Configs[Global.config.CurrentGame].LauncherOptionIndex == 0 &&
                 (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
-                || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher) 
+                || String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].Launcher)
                 || !File.Exists(Global.config.Configs[Global.config.CurrentGame].Launcher))))
             {
                 LaunchButton.IsEnabled = false;
@@ -167,8 +167,8 @@ namespace Unverum
             ModsWatcher.Deleted += OnModified;
             ModsWatcher.Renamed += OnModified;
 
+            RefreshAll();
             Refresh();
-
             ModsWatcher.EnableRaisingEvents = true;
 
             defaultFlow.Blocks.Add(ConvertToFlowParagraph(defaultText));
@@ -274,6 +274,60 @@ namespace Unverum
             });
             Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
             Global.logger.WriteLine("Refreshed!", LoggerType.Info);
+        }
+        private void RefreshAll()
+        {
+            var currentModDirectory = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
+            var currlist = Global.config.Configs[Global.config.CurrentGame].CurrentLoadout;
+            foreach (var list in Global.config.Configs[Global.config.CurrentGame].Loadouts)
+            {
+                // Add new folders found in Mods to the ModList
+                foreach (var mod in Directory.GetDirectories(currentModDirectory))
+                {
+                    if (list.Value.ToList().Where(x => x.name == Path.GetFileName(mod)).Count() == 0)
+                    {
+                        Mod m = new Mod();
+                        m.name = Path.GetFileName(mod);
+                        m.enabled = false;
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            list.Value.Add(m);
+                        });
+                    }
+                }
+                // Remove deleted folders that are still in the ModList
+                foreach (var mod in list.Value.ToList())
+                {
+                    if (!Directory.GetDirectories(currentModDirectory).ToList().Select(x => Path.GetFileName(x)).Contains(mod.name))
+                    {
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            list.Value.Remove(mod);
+                        });
+                        continue;
+                    }
+                    // Update all paks found
+                    if (mod.paks == null)
+                        mod.paks = new();
+                    foreach (var file in Directory.GetFiles($"{currentModDirectory}{Global.s}{mod.name}", "*.*", SearchOption.AllDirectories))
+                    {
+                        if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                            && !mod.paks.ContainsKey(file))
+                            mod.paks.Add(file, true); // Enable all paks when first added
+                    }
+                    // Remove all paks that no longer exist
+                    foreach (var pak in mod.paks.Keys)
+                    {
+                        if (!File.Exists(pak))
+                            mod.paks.Remove(pak);
+                    }
+                }
+
+                Global.logger.WriteLine($"Total {list.Value.Count} mods in {list.Key}", LoggerType.Info);
+            }
+
+            Global.config.Configs[Global.config.CurrentGame].CurrentLoadout = currlist;
+            Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
         }
 
         // Events for Enabled checkboxes
@@ -745,9 +799,9 @@ namespace Unverum
                 });
                 if ((GameFilter)index == GameFilter.MHOJ2)
                     foreach (var file in Directory.GetFiles(Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder), "*", SearchOption.TopDirectoryOnly))
-                    if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
-                        || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
-                        File.Move(file, file.Replace("HeroGame.", "HeroGame-WindowsNoEditor_0_P.", StringComparison.InvariantCultureIgnoreCase), true);
+                        if (Path.GetExtension(file).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                            || Path.GetExtension(file).Equals(".sig", StringComparison.InvariantCultureIgnoreCase))
+                            File.Move(file, file.Replace("HeroGame.", "HeroGame-WindowsNoEditor_0_P.", StringComparison.InvariantCultureIgnoreCase), true);
 
                 ModLoader.Build(path, mods, Patched, MoviesFolder, SplashFolder, SoundsFolder);
                 return true;
@@ -972,8 +1026,8 @@ namespace Unverum
                     }
                 }
             }
-            else if (choice.choice != null && (int)choice.choice == 1) 
-            { 
+            else if (choice.choice != null && (int)choice.choice == 1)
+            {
                 var folderName = $"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}";
                 if (Directory.Exists(folderName))
                 {
@@ -1081,7 +1135,7 @@ namespace Unverum
                         BitmapImage bm = new BitmapImage(metadata.upic);
                         Image image = new Image();
                         image.Source = bm;
-                        image.Height= 25;
+                        image.Height = 25;
                         para.Inlines.Add(image);
                     }
                     else
@@ -1103,8 +1157,8 @@ namespace Unverum
                     Preview.Source = bitmap;
                     PreviewBG.Source = null;
                 }
-                    para = new Paragraph();
-                    para.Inlines.Add("Category: ");
+                para = new Paragraph();
+                para.Inlines.Add("Category: ");
                 if (metadata.caticon != null && metadata.caticon.ToString().Length > 0)
                 {
                     BitmapImage bm = new BitmapImage(metadata.caticon);
@@ -1872,7 +1926,7 @@ namespace Unverum
             if (!IsLoaded || Global.config == null)
                 return;
             handle = true;
-            
+
         }
         private void LauncherOptionsBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1912,21 +1966,33 @@ namespace Unverum
             var choices = new List<Choice>();
             choices.Add(new Choice()
             {
-                OptionText = "Add New Loadout",
+                OptionText = "Add New Loadout - Enabled",
                 OptionSubText = "Adds a new loadout starting with all mods enabled in alphanumeric order",
                 Index = 0
             });
             choices.Add(new Choice()
             {
+                OptionText = "Add New Loadout - Disabled",
+                OptionSubText = "Adds a new loadout starting with all mods diabled in alphanumeric order",
+                Index = 1
+            });
+            choices.Add(new Choice()
+            {
+                OptionText = "Copy Loadout",
+                OptionSubText = "Creates a copy of current loadout",
+                Index = 2
+            });
+            choices.Add(new Choice()
+            {
                 OptionText = $"Rename Current Loadout",
                 OptionSubText = $"Changes the name of the current loadout",
-                Index = 1
+                Index = 3
             });
             choices.Add(new Choice()
             {
                 OptionText = $"Delete Current Loadout",
                 OptionSubText = $"Deletes current loadout and switches to first available one",
-                Index = 2
+                Index = 4
             });
             Dispatcher.Invoke(() =>
             {
@@ -1947,8 +2013,33 @@ namespace Unverum
                             }
                             ShowMetadata(null);
                             break;
-                        // Rename current loadout
+                        // Add new Blank loadout
                         case 1:
+                            var blankLoadoutWindow = new EditWindow(null, false);
+                            blankLoadoutWindow.ShowDialog();
+                            if (!String.IsNullOrEmpty(blankLoadoutWindow.loadout))
+                            {
+                                Global.LoadoutItems.Add(blankLoadoutWindow.loadout);
+                                LoadoutsBox.SelectedItem = blankLoadoutWindow.loadout;
+                                Global.config.Configs[Global.config.CurrentGame].DisableAllMods(blankLoadoutWindow.loadout);
+                            }
+                            ShowMetadata(null);
+                            break;
+                        // Copy current loadout
+                        case 2:
+                            if (true)
+                            {
+                                // Insert new name at index of original loadout
+                                Global.LoadoutItems.Insert(Global.LoadoutItems.IndexOf(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout) + 1, Global.config.Configs[Global.config.CurrentGame].CurrentLoadout + " - Copy");
+                                // Copy over current loadout
+                                Global.config.Configs[Global.config.CurrentGame].Loadouts.Add(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout + " - Copy", Global.ModList);
+                                // Delete current loadout
+                                // Trigger selection changed event
+                                LoadoutsBox.SelectedItem = Global.config.Configs[Global.config.CurrentGame].CurrentLoadout + " - Copy";
+                            }
+                            break;
+                        // Rename current loadout
+                        case 3:
                             var renameLoadoutWindow = new EditWindow(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout, false);
                             renameLoadoutWindow.ShowDialog();
                             if (!String.IsNullOrEmpty(renameLoadoutWindow.loadout))
@@ -1965,7 +2056,7 @@ namespace Unverum
                             }
                             break;
                         // Delete current loadout
-                        case 2:
+                        case 4:
                             if (Global.config.Configs[Global.config.CurrentGame].Loadouts.Count == 1)
                             {
                                 Global.logger.WriteLine("Unable to delete current loadout since there is only one", LoggerType.Error);
@@ -2033,6 +2124,7 @@ namespace Unverum
                 Directory.CreateDirectory(currentModDirectory);
                 ModsWatcher.Path = currentModDirectory;
                 Global.logger.WriteLine($"Game switched to {Global.config.CurrentGame}", LoggerType.Info);
+                RefreshAll();
                 Refresh();
                 Global.UpdateConfig();
                 if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
@@ -2085,8 +2177,8 @@ namespace Unverum
                 DescriptionWindow.Document = defaultFlow;
                 var bitmap = new BitmapImage(new Uri("pack://application:,,,/Unverum;component/Assets/unverumpreview.png"));
                 Preview.Source = bitmap;
-                PreviewBG.Source = null; 
-                
+                PreviewBG.Source = null;
+
                 Global.logger.WriteLine("Checking for updates...", LoggerType.Info);
                 GameBox.IsEnabled = false;
                 ModGrid.IsEnabled = false;
@@ -2158,15 +2250,15 @@ namespace Unverum
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (IsLoaded && managerSelected && ModGridSearchButton.IsEnabled)
-            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
-            {
-                switch (e.Key)
+                if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
                 {
-                    case Key.F:
-                        ModGrid_SearchBar.Focus();
-                        break;
+                    switch (e.Key)
+                    {
+                        case Key.F:
+                            ModGrid_SearchBar.Focus();
+                            break;
+                    }
                 }
-            }
         }
 
         private void ModGrid_SearchBar_KeyDown(object sender, KeyEventArgs e)
