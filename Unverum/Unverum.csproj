@@ -44,10 +44,6 @@
     <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZExtraCostumesPatch.asi" />
     <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZFileAccessLog.asi" />
     <None Remove="Resources\Patches\Dragon Ball FighterZ\Placeholder\--PlaceholderCostumes.pak" />
-    <None Remove="Resources\Patches\Guilty Gear -Strive-\Patch\dsound.dll" />
-    <None Remove="Resources\Patches\Guilty Gear -Strive-\Patch\plugins\config.toml" />
-    <None Remove="Resources\Patches\Guilty Gear -Strive-\Patch\plugins\GGSTExtraCostumesPatch.asi" />
-    <None Remove="Resources\Patches\Guilty Gear -Strive-\Placeholder\--PlaceholderCostumes.pak" />
     <None Remove="Resources\JUMP_FORCE.exe" />
     <None Remove="Resources\Patches\Scarlet Nexus\Patch\dsound.dll" />
     <None Remove="Resources\Patches\Scarlet Nexus\Patch\plugins\ScarletNexusUTOCSigBypass.asi" />
@@ -65,10 +61,6 @@
     <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZExtraCostumesPatch.asi" />
     <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZFileAccessLog.asi" />
     <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Placeholder\--PlaceholderCostumes.pak" />
-    <EmbeddedResource Include="Resources\Patches\Guilty Gear -Strive-\Patch\dsound.dll" />
-    <EmbeddedResource Include="Resources\Patches\Guilty Gear -Strive-\Patch\plugins\config.toml" />
-    <EmbeddedResource Include="Resources\Patches\Guilty Gear -Strive-\Patch\plugins\GGSTExtraCostumesPatch.asi" />
-    <EmbeddedResource Include="Resources\Patches\Guilty Gear -Strive-\Placeholder\--PlaceholderCostumes.pak" />
     <EmbeddedResource Include="Resources\JUMP_FORCE.exe" />
     <EmbeddedResource Include="Resources\Patches\Scarlet Nexus\Patch\dsound.dll" />
     <EmbeddedResource Include="Resources\Patches\Scarlet Nexus\Patch\plugins\ScarletNexusUTOCSigBypass.asi" />

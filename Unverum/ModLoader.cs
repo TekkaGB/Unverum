@@ -387,28 +387,28 @@ namespace Unverum
                 Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}HeroGame", true);
             }
             // Costume Patched placeholder files as lowest priority
-            if (patched != null && (bool)patched && Global.config.CurrentGame != "Scarlet Nexus")
-            {
-                var baseFolder = $"{path}{Global.s}--Base--";
-                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Unverum.Resources.Patches.{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Placeholder.--PlaceholderCostumes.pak"))
-                {
-                    Directory.CreateDirectory(baseFolder);
-                    using (var stream = new FileStream($"{baseFolder}{Global.s}--PlaceholderCostumes.pak", FileMode.Create, FileAccess.Write))
-                    {
-                        resource.CopyTo(stream);
-                    }
-                }
-                if (sig != null)
-                {
-                    var newSig = $"{baseFolder}{Global.s}--PlaceholderCostumes.sig";
-                    // Copy over original game's .sig
-                    if (File.Exists(sig))
-                        File.Copy(sig, newSig, true);
-                    else
-                        Global.logger.WriteLine($"Couldn't find .sig file to go with {baseFolder}{Global.s}--PlaceholderCostumes.pak", LoggerType.Warning);
-                }
-                Global.logger.WriteLine($"Copied over base costume patch files", LoggerType.Info);
-            }
+//             if (patched != null && (bool)patched && Global.config.CurrentGame != "Scarlet Nexus")
+//             {
+//                 var baseFolder = $"{path}{Global.s}--Base--";
+//                 using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Unverum.Resources.Patches.{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Placeholder.--PlaceholderCostumes.pak"))
+//                 {
+//                     Directory.CreateDirectory(baseFolder);
+//                     using (var stream = new FileStream($"{baseFolder}{Global.s}--PlaceholderCostumes.pak", FileMode.Create, FileAccess.Write))
+//                     {
+//                         resource.CopyTo(stream);
+//                     }
+//                 }
+//                 if (sig != null)
+//                 {
+//                     var newSig = $"{baseFolder}{Global.s}--PlaceholderCostumes.sig";
+//                     // Copy over original game's .sig
+//                     if (File.Exists(sig))
+//                         File.Copy(sig, newSig, true);
+//                     else
+//                         Global.logger.WriteLine($"Couldn't find .sig file to go with {baseFolder}{Global.s}--PlaceholderCostumes.pak", LoggerType.Warning);
+//                 }
+//                 Global.logger.WriteLine($"Copied over base costume patch files", LoggerType.Info);
+//             }
             if (!String.IsNullOrEmpty(prmFilePaths))
             {
                 Global.logger.WriteLine($"Adding slots...", LoggerType.Info);
