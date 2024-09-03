@@ -35,15 +35,6 @@
     <None Remove="Assets\RobotoMono-Regular.ttf" />
     <None Remove="Assets\unverumpreview.png" />
     <None Remove="GameBanana.png" />
-    <None Remove="Resources\Patches\DNF Duel\Patch\dsound.dll" />
-    <None Remove="Resources\Patches\DNF Duel\Patch\plugins\config.toml" />
-    <None Remove="Resources\Patches\DNF Duel\Patch\plugins\DNFDuelExtraCostumesPatch.asi" />
-    <None Remove="Resources\Patches\DNF Duel\Placeholder\--PlaceholderCostumes.pak" />
-    <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\dsound.dll" />
-    <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\config.toml" />
-    <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZExtraCostumesPatch.asi" />
-    <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZFileAccessLog.asi" />
-    <None Remove="Resources\Patches\Dragon Ball FighterZ\Placeholder\--PlaceholderCostumes.pak" />
     <None Remove="Resources\JUMP_FORCE.exe" />
     <None Remove="Resources\Patches\Scarlet Nexus\Patch\dsound.dll" />
     <None Remove="Resources\Patches\Scarlet Nexus\Patch\plugins\ScarletNexusUTOCSigBypass.asi" />
@@ -52,15 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Patches\DNF Duel\Patch\dsound.dll" />
-    <EmbeddedResource Include="Resources\Patches\DNF Duel\Patch\plugins\config.toml" />
-    <EmbeddedResource Include="Resources\Patches\DNF Duel\Patch\plugins\DNFDuelExtraCostumesPatch.asi" />
-    <EmbeddedResource Include="Resources\Patches\DNF Duel\Placeholder\--PlaceholderCostumes.pak" />
-    <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\dsound.dll" />
-    <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\config.toml" />
-    <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZExtraCostumesPatch.asi" />
-    <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZFileAccessLog.asi" />
-    <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Placeholder\--PlaceholderCostumes.pak" />
     <EmbeddedResource Include="Resources\JUMP_FORCE.exe" />
     <EmbeddedResource Include="Resources\Patches\Scarlet Nexus\Patch\dsound.dll" />
     <EmbeddedResource Include="Resources\Patches\Scarlet Nexus\Patch\plugins\ScarletNexusUTOCSigBypass.asi" />
