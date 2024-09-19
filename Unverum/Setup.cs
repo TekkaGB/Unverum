@@ -59,6 +59,21 @@ namespace Unverum
             // Check if files exist
             switch (Global.config.CurrentGame)
             {
+                case "Dragon Ball FighterZ":
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}DBFZExtraCostumesPatch.asi")
+                        || GetMD5Checksum($"{PatchPath}{Global.s}plugins{Global.s}DBFZExtraCostumesPatch.asi").Equals("e99c11be64f7fb81e8b2eebdff72b164", StringComparison.InvariantCultureIgnoreCase)
+                        || GetMD5Checksum($"{PatchPath}{Global.s}plugins{Global.s}DBFZExtraCostumesPatch.asi").Equals("960d0f042522485a56665e156c0d9820", StringComparison.InvariantCultureIgnoreCase))
+                        GetPatchFiles(PatchPath);
+                    break;
+                case "Guilty Gear -Strive-":
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}GGSTExtraCostumesPatch.asi")
+                        || GetMD5Checksum($"{PatchPath}{Global.s}plugins{Global.s}GGSTExtraCostumesPatch.asi").Equals("eaf85139c48938534a14651e7f413b04", StringComparison.InvariantCultureIgnoreCase))
+                        GetPatchFiles(PatchPath);
+                    break;
+                case "DNF Duel":
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}DNFDuelExtraCostumesPatch.asi"))
+                        GetPatchFiles(PatchPath);
+                    break;
                 case "Scarlet Nexus":
                     if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}ScarletNexusUTOCSigBypass.asi"))
                         GetPatchFiles(PatchPath);
