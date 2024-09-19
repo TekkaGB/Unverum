@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
     <AssemblyName>Unverum</AssemblyName>
-    <AssemblyVersion>2.5.5.0</AssemblyVersion>
+    <AssemblyVersion>2.5.6.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,10 +35,6 @@
     <None Remove="Assets\RobotoMono-Regular.ttf" />
     <None Remove="Assets\unverumpreview.png" />
     <None Remove="GameBanana.png" />
-    <None Remove="Resources\Patches\DNF Duel\Patch\dsound.dll" />
-    <None Remove="Resources\Patches\DNF Duel\Patch\plugins\config.toml" />
-    <None Remove="Resources\Patches\DNF Duel\Patch\plugins\DNFDuelExtraCostumesPatch.asi" />
-    <None Remove="Resources\Patches\DNF Duel\Placeholder\--PlaceholderCostumes.pak" />
     <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\dsound.dll" />
     <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\config.toml" />
     <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZExtraCostumesPatch.asi" />
@@ -52,10 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Patches\DNF Duel\Patch\dsound.dll" />
-    <EmbeddedResource Include="Resources\Patches\DNF Duel\Patch\plugins\config.toml" />
-    <EmbeddedResource Include="Resources\Patches\DNF Duel\Patch\plugins\DNFDuelExtraCostumesPatch.asi" />
-    <EmbeddedResource Include="Resources\Patches\DNF Duel\Placeholder\--PlaceholderCostumes.pak" />
     <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\dsound.dll" />
     <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\config.toml" />
     <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZExtraCostumesPatch.asi" />
