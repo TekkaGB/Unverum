@@ -782,8 +782,6 @@ namespace Unverum
                 // DBFZ specific
                 bool? Patched = null;
                 if (Global.config.CurrentGame == "Dragon Ball FighterZ"
-                    || Global.config.CurrentGame == "Guilty Gear -Strive-"
-                    || Global.config.CurrentGame == "DNF Duel"
                     || Global.config.CurrentGame == "Scarlet Nexus")
                     Patched = Setup.CheckPatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
                 if (!ModLoader.Restart(path, MoviesFolder, SplashFolder, SoundsFolder))
