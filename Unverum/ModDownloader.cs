@@ -166,6 +166,9 @@ namespace Unverum
                     case "THE IDOLM@STER STARLIT SEASON":
                         game = "IDOLM@STER";
                         break;
+                    case "Dragon Ball: Sparking! ZERO":
+                        game = "Dragon Ball Sparking! ZERO";
+                        break;
                 }
                 string _ArchiveSource = $@"{Global.assemblyLocation}{Global.s}Downloads{Global.s}{fileName}";
                 string _ArchiveType = Path.GetExtension(fileName);

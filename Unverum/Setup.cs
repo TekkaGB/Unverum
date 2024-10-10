@@ -56,6 +56,9 @@ namespace Unverum
             else if (Global.config.CurrentGame == "Scarlet Nexus")
                 PatchPath = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)}" +
                 $"{Global.s}ScarletNexus{Global.s}Binaries{Global.s}Win64";
+            else if (Global.config.CurrentGame == "Dragon Ball Sparking! ZERO")
+                PatchPath = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].Launcher)}" +
+                $"{Global.s}SparkingZERO{Global.s}Binaries{Global.s}Win64";
             // Check if files exist
             switch (Global.config.CurrentGame)
             {
@@ -69,13 +72,17 @@ namespace Unverum
                     if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}ScarletNexusUTOCSigBypass.asi"))
                         GetPatchFiles(PatchPath);
                     break;
+                case "Dragon Ball Sparking! ZERO":
+                    if (!File.Exists($"{PatchPath}{Global.s}plugins{Global.s}DBSparkingZeroUTOCBypass.asi"))
+                        GetPatchFiles(PatchPath);
+                    break;
             }
             return true;
         }
         public static void GetPatchFiles(string PatchPath)
         {
             foreach (var file in Assembly.GetExecutingAssembly().GetManifestResourceNames()
-                    .Where(x => x.Contains($"{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Patch")))
+                    .Where(x => x.Contains($"{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_").Replace("!", "_")}.Patch")))
                 using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(file))
                 {
                     var split = file.Split('.');
@@ -134,8 +141,7 @@ namespace Unverum
             Global.config.Configs[Global.config.CurrentGame].ModsFolder = ModsFolder;
             Global.config.Configs[Global.config.CurrentGame].Launcher = defaultPath;
 
-            if (Global.config.CurrentGame == "Guilty Gear -Strive-"
-                || Global.config.CurrentGame == "DNF Duel"
+            if (Global.config.CurrentGame == "Dragon Ball Sparking! ZERO"
                 || Global.config.CurrentGame == "Scarlet Nexus")
                 CheckPatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
 

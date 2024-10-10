@@ -14,6 +14,7 @@ namespace Unverum
     public enum GameFilter
     {
         DBFZ,
+        DBSZ,
         MHOJ2,
         GBVS,
         GBVSR,
@@ -121,63 +122,19 @@ namespace Unverum
             }
             // Different starting endpoint if requesting all mods instead of specific category
             if (search != null)
-            {
                 url += $"ByName?_sName=*{search}*&_idGameRow=";
-                switch (game)
-                {
-                    case GameFilter.DBFZ:
-                        url += "6246&";
-                        break;
-                    case GameFilter.MHOJ2:
-                        url += "11605&";
-                        break;
-                    case GameFilter.GBVS:
-                        url += "8897&";
-                        break;
-                    case GameFilter.GBVSR:
-                        url += "19552&";
-                        break;
-                    case GameFilter.GGS:
-                        url += "11534&";
-                        break;
-                    case GameFilter.JF:
-                        url += "7019&";
-                        break;
-                    case GameFilter.KHIII:
-                        url += "9219&";
-                        break;
-                    case GameFilter.SN:
-                        url += "12028&";
-                        break;
-                    case GameFilter.ToA:
-                        url += "13821&";
-                        break;
-                    case GameFilter.DS:
-                        url += "14246&";
-                        break;
-                    case GameFilter.IM:
-                        url += "14247&";
-                        break;
-                    case GameFilter.SMTV:
-                        url += "14768&";
-                        break;
-                    case GameFilter.KOFXV:
-                        url += "15769&";
-                        break;
-                    case GameFilter.DNF:
-                        url += "16693&";
-                        break;
-                }
-            }
             else if (category.ID != null)
                 url += "ByCategory?";
             else
-            {
                 url += $"ByGame?_aGameRowIds[]=";
+            if (category.ID == null)
                 switch (game)
                 {
                     case GameFilter.DBFZ:
                         url += "6246&";
+                        break;
+                    case GameFilter.DBSZ:
+                        url += "21179&";
                         break;
                     case GameFilter.MHOJ2:
                         url += "11605&";
@@ -218,7 +175,6 @@ namespace Unverum
                     case GameFilter.DNF:
                         url += "16693&";
                         break;
-                }
             }
             // Consistent args
             url += $"_csvProperties=_sName,_sModelName,_sProfileUrl,_aSubmitter,_tsDateUpdated,_tsDateAdded,_aPreviewMedia,_sText,_sDescription,_aCategory,_aRootCategory,_aGame,_nViewCount," +

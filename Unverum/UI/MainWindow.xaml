@@ -423,6 +423,12 @@
                             </ComboBoxItem>
                             <ComboBoxItem>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="../Assets/Icons/DBSZ.jpg" Width="27" Margin="4,0,10,0"/>
+                                    <TextBlock Text="Dragon Ball Sparking! ZERO" VerticalAlignment="Center" FontWeight="Medium"/>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="../Assets/Icons/mhoj2.png" Width="27" Margin="4,0,10,0"/>
                                     <TextBlock Text="My Hero One's Justice 2" VerticalAlignment="Center" FontWeight="Medium"/>
                                 </StackPanel>
@@ -773,6 +779,12 @@
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="../Assets/Icons/dbfz.png" Width="27" Margin="4,0,10,0"/>
                                 <TextBlock Text="Dragon Ball FighterZ" VerticalAlignment="Center" FontWeight="Medium"/>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="../Assets/Icons/DBSZ.jpg" Width="27" Margin="4,0,10,0"/>
+                                <TextBlock Text="Dragon Ball Sparking! ZERO" VerticalAlignment="Center" FontWeight="Medium"/>
                             </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>

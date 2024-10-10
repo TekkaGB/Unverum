@@ -7,18 +7,12 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\unverum.ico</ApplicationIcon>
     <AssemblyName>Unverum</AssemblyName>
-    <AssemblyVersion>2.5.7.0</AssemblyVersion>
+    <AssemblyVersion>2.6.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Resources\Patches\NewFolder\**" />
-    <EmbeddedResource Remove="Resources\Patches\NewFolder\**" />
-    <None Remove="Resources\Patches\NewFolder\**" />
-    <Page Remove="Resources\Patches\NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Assets\Icons\dbfz.png" />
+    <None Remove="Assets\Icons\DBSZ.jpg" />
     <None Remove="Assets\Icons\dnf.png" />
     <None Remove="Assets\Icons\ds.png" />
     <None Remove="Assets\Icons\gbvs.png" />
@@ -41,6 +35,8 @@
     <None Remove="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZFileAccessLog.asi" />
     <None Remove="Resources\Patches\Dragon Ball FighterZ\Placeholder\--PlaceholderCostumes.pak" />
     <None Remove="Resources\JUMP_FORCE.exe" />
+    <None Remove="Resources\Patches\Dragon Ball Sparking! ZERO\Patch\dsound.dll" />
+    <None Remove="Resources\Patches\Dragon Ball Sparking! ZERO\Patch\plugins\DBSparkingZeroUTOCBypass.asi" />
     <None Remove="Resources\Patches\Scarlet Nexus\Patch\dsound.dll" />
     <None Remove="Resources\Patches\Scarlet Nexus\Patch\plugins\ScarletNexusUTOCSigBypass.asi" />
     <None Remove="Resources\REDGame.uasset" />
@@ -54,6 +50,8 @@
     <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Patch\plugins\DBFZFileAccessLog.asi" />
     <EmbeddedResource Include="Resources\Patches\Dragon Ball FighterZ\Placeholder\--PlaceholderCostumes.pak" />
     <EmbeddedResource Include="Resources\JUMP_FORCE.exe" />
+    <EmbeddedResource Include="Resources\Patches\Dragon Ball Sparking! ZERO\Patch\dsound.dll" />
+    <EmbeddedResource Include="Resources\Patches\Dragon Ball Sparking! ZERO\Patch\plugins\DBSparkingZeroUTOCBypass.asi" />
     <EmbeddedResource Include="Resources\Patches\Scarlet Nexus\Patch\dsound.dll" />
     <EmbeddedResource Include="Resources\Patches\Scarlet Nexus\Patch\plugins\ScarletNexusUTOCSigBypass.asi" />
   </ItemGroup>
@@ -70,6 +68,7 @@
   <ItemGroup>
     <Resource Include="Assets\GameBanana.png" />
     <Resource Include="Assets\Icons\dbfz.png" />
+    <Resource Include="Assets\Icons\DBSZ.jpg" />
     <Resource Include="Assets\Icons\dnf.png" />
     <Resource Include="Assets\Icons\ds.png" />
     <Resource Include="Assets\Icons\gbvs.png" />

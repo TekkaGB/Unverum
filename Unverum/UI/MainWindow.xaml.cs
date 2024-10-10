@@ -391,6 +391,8 @@ namespace Unverum
             {
                 case GameFilter.DBFZ:
                     return Setup.DBFZ();
+                case GameFilter.DBSZ:
+                    return Setup.Generic("SparkingZERO.exe", "SparkingZERO", @"C:\Program Files (x86)\Steam\steamapps\common\SparkingZERO\SparkingZERO.exe", steamId: "1790600");
                 case GameFilter.MHOJ2:
                     return Setup.Win64FolderSetup("MHOJ2.exe", "HeroGame", "My Hero Ones Justice 2", "1058450");
                 case GameFilter.GBVS:
@@ -630,6 +632,9 @@ namespace Unverum
                 case GameFilter.DBFZ:
                     id = "6246";
                     break;
+                case GameFilter.DBSZ:
+                    id = "21179";
+                    break;
                 case GameFilter.MHOJ2:
                     id = "11605";
                     break;
@@ -782,7 +787,8 @@ namespace Unverum
                 // DBFZ specific
                 bool? Patched = null;
                 if (Global.config.CurrentGame == "Dragon Ball FighterZ"
-                    || Global.config.CurrentGame == "Scarlet Nexus")
+                    || Global.config.CurrentGame == "Scarlet Nexus"
+                    || Global.config.CurrentGame == "Dragon Ball Sparking! ZERO")
                     Patched = Setup.CheckPatch(Global.config.Configs[Global.config.CurrentGame].Launcher);
                 if (!ModLoader.Restart(path, MoviesFolder, SplashFolder, SoundsFolder))
                     return false;
@@ -1399,7 +1405,7 @@ namespace Unverum
             {
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize categories and games
-                var gameIDS = new string[] { "6246", "11605", "8897", "19552", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693" };
+                var gameIDS = new string[] { "6246", "21179", "11605", "8897", "19552", "11534", "7019", "9219", "12028", "13821", "14246", "14247", "14768", "15769", "16693" };
                 var types = new string[] { "Mod", "Wip", "Sound" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)

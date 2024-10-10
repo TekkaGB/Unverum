@@ -387,7 +387,7 @@ namespace Unverum
                 Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}HeroGame", true);
             }
             // Costume Patched placeholder files as lowest priority
-            if (patched != null && (bool)patched && Global.config.CurrentGame != "Scarlet Nexus")
+            if (patched != null && (bool)patched && Global.config.CurrentGame != "Scarlet Nexus" && Global.config.CurrentGame != "Dragon Ball Sparking! ZERO")
             {
                 var baseFolder = $"{path}{Global.s}--Base--";
                 using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Unverum.Resources.Patches.{Global.config.CurrentGame.Replace(" ", "_").Replace("-", "_")}.Placeholder.--PlaceholderCostumes.pak"))
