@@ -556,6 +556,9 @@ namespace Unverum
                                 Global.logger.WriteLine($"Mods will not work since DBFZ is being launched through Steam", LoggerType.Warning);
                                 id = "678950";
                                 break;
+                            case GameFilter.DBSZ:
+                                id = "1790600";
+                                break;
                             case GameFilter.MHOJ2:
                                 id = "1058450";
                                 break;
