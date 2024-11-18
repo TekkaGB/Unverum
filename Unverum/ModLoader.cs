@@ -6,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using System.Windows.Controls;
 using SearchOption = System.IO.SearchOption;
 
 namespace Unverum
@@ -20,6 +23,13 @@ namespace Unverum
                 // Delete everything in mods folder
                 Directory.Delete(path, true);
                 Directory.CreateDirectory(path);
+                // Delete everything in SZModLib Mods folder
+                if (Global.config.CurrentGame.Equals("Dragon Ball Sparking! ZERO", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var modLibPath = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Mods";
+                    if (Directory.Exists(modLibPath))
+                        Directory.Delete(modLibPath, true);
+                }
                 // Delete everything in patches folder for Switch games
                 if (!String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].PatchesFolder))
                 {
@@ -175,12 +185,73 @@ namespace Unverum
             else
                 Global.logger.WriteLine($"Failed to create pak!", LoggerType.Error);
         }
+        // Incrementally rename DBColorZ duplicate jsons
+        private static string GetUniqueColorFileName(string filePath)
+        {
+            string directory = Path.GetDirectoryName(filePath);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
+            string extension = Path.GetExtension(filePath);
+
+            // Extract base name and number
+            var match = Regex.Match(fileNameWithoutExtension, @"^(.*Color)(\d+)$");
+            if (!match.Success)
+            {
+                return filePath; // If it doesn't match the pattern, return the original filePath
+            }
+
+            string baseName = match.Groups[1].Value; // Part before the number
+            int number = int.Parse(match.Groups[2].Value); // Extract the number
+
+            // Increment number if there's a conflict
+            while (File.Exists(filePath))
+            {
+                number++;
+                string newFileName = $"{baseName}{number}{extension}";
+                filePath = Path.Combine(directory, newFileName);
+            }
+
+            return filePath;
+        }
+        private static void CopyDirectoryWithRename(string sourceDir, string destDir)
+        {
+            foreach (string sourceFilePath in Directory.GetFiles(sourceDir))
+            {
+                string fileName = Path.GetFileName(sourceFilePath);
+                string destFilePath = Path.Combine(destDir, fileName);
+
+                // Check if the file matches the [Any Text]Color#.json pattern
+                if (IsColorFile(fileName))
+                {
+                    destFilePath = GetUniqueColorFileName(destFilePath);
+                }
+                Directory.CreateDirectory(Path.GetDirectoryName(destFilePath));
+                File.Copy(sourceFilePath, destFilePath, true);
+            }
+
+            foreach (string sourceSubDir in Directory.GetDirectories(sourceDir))
+            {
+                string subDirName = Path.GetFileName(sourceSubDir);
+                string destSubDirPath = Path.Combine(destDir, subDirName);
+
+                // Recursively copy subdirectories
+                CopyDirectoryWithRename(sourceSubDir, destSubDirPath);
+            }
+        }
+        private static bool IsColorFile(string fileName)
+        {
+            // Check if the filename matches the pattern [Any Text]Color#.json
+            return Regex.IsMatch(
+                fileName,
+                @"^.*Color\d+\.json$"
+            );
+        }
         // Copy over mod files in order of ModList
         public static void Build(string path, List<Mod> mods, bool? patched, string movies, string splash, string sound)
         {
             var missing = false;
             Dictionary<string, Entry> entries = null;
             HashSet<string> db = null;
+            List<string> JsonFiles = null;
             string prmFilePaths = String.Empty;
             string sig = null;
             var sigs = Directory.GetFiles(Path.GetDirectoryName(path), "*.sig", SearchOption.TopDirectoryOnly);
@@ -192,7 +263,13 @@ namespace Unverum
             var LogicModsFolder = $"{Path.GetDirectoryName(path)}{Global.s}LogicMods";
             var Win64Folder = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Binaries{Global.s}Win64";
             var ue4ssModsFolder = $"{Win64Folder}{Global.s}Mods";
+            // SZModLib paths
+            var SZModLibPath = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Mods";
+            var ZSJsonPath = $"{SZModLibPath}{Global.s}ZeroSparkV1{Global.s}Json";
+            var SZColorPath = $"{SZModLibPath}{Global.s}DBColorZ{Global.s}Colors";
             var ue4ss = false;
+            var DBColorZ = false;
+            var SZModLib = false;
             foreach (var mod in mods)
             {
                 var priorityName = String.Empty;
@@ -201,8 +278,26 @@ namespace Unverum
                 priorityName += folderLetter;
                 var folder = $"{path}{Global.s}{priorityName}{Global.s}{mod.name}";
                 var modPath = $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}{Global.s}{mod.name}";
+                // If mod contains .uplugin, copy over entire directory as is to SZModLib Mods folder and skip
+                var uplugins = Directory.EnumerateFiles(modPath, "*.uplugin", SearchOption.AllDirectories);
+                List<string> SZMods = null;
+                if (uplugins.Count() > 0)
+                {
+                    SZMods = uplugins.Select(path => Path.GetDirectoryName(path)).ToList();
+                    foreach (var SZMod in SZMods)
+                    {
+                        Directory.CreateDirectory(SZModLibPath);
+                        Global.logger.WriteLine($"Adding SZModLib Mod: {Path.GetFileName(SZMod)}", LoggerType.Info);
+                        CopyDirectoryWithRename(SZMod, $"{SZModLibPath}{Global.s}{Path.GetFileName(SZMod)}");
+                        SZModLib = true;
+                    }
+                }
+                var paks = mod.paks;
+                // Ignore paks in SZModLib mods
+                if (SZMods != null)
+                    paks = paks.Where(x => !SZMods.Any(filter => x.Key.Contains(filter, StringComparison.OrdinalIgnoreCase))).ToDictionary(kv => kv.Key, kv => kv.Value);
                 // Copy over .paks and .sigs to ~mods folder in order
-                if (CopyFolder(mod.paks, modPath, folder, sig) > 0)
+                if (CopyFolder(paks, modPath, folder, sig) > 0)
                 {
                     Global.logger.WriteLine($"Copied paks and sigs from {mod.name} over to {folder}", LoggerType.Info);
                     folderLetter++;
@@ -234,7 +329,11 @@ namespace Unverum
                         Global.logger.WriteLine($"Copying over {logicMod} to {newPath}", LoggerType.Info);
                         ue4ss = true;
                     }
-                foreach (var file in Directory.GetFiles(modPath, "*", SearchOption.AllDirectories))
+                var files = Directory.GetFiles(modPath, "*", SearchOption.AllDirectories);
+                // Ignore files in SZModLib mods
+                if (SZMods != null)
+                    files = files.Where(x => !SZMods.Any(filter => x.Contains(filter, StringComparison.OrdinalIgnoreCase))).ToArray();
+                foreach (var file in files)
                 {
                     var ext = Path.GetExtension(file).ToLowerInvariant();
                     switch (ext)
@@ -279,6 +378,10 @@ namespace Unverum
                                 File.Copy(file, $"{Global.config.Configs[Global.config.CurrentGame].PatchesFolder}{Global.s}{Path.GetFileName(file)}", true);
                             break;
                         case ".json":
+                            // Skip mod details json
+                            if (Path.GetFileName(file).Equals("mod.json", StringComparison.InvariantCultureIgnoreCase))
+                                break;
+                            // Text patching json
                             if (Path.GetFileName(file).Equals("text.json", StringComparison.InvariantCultureIgnoreCase) &&
                                     (Global.config.CurrentGame.Equals("Dragon Ball FighterZ", StringComparison.InvariantCultureIgnoreCase)
                                     || Global.config.CurrentGame.Equals("Guilty Gear -Strive-", StringComparison.InvariantCultureIgnoreCase)
@@ -314,6 +417,31 @@ namespace Unverum
                                     {
                                         entries = TextPatcher.ReplaceEntry(replacement, entries);
                                     }
+                                break;
+                            }
+                            // SZModLib json mods
+                            if (Global.config.CurrentGame.Equals("Dragon Ball Sparking! ZERO", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                using JsonDocument document = JsonDocument.Parse(File.ReadAllText(file));
+                                // ZeroSpark json mods has field ZeroSparkVersion
+                                if (document.RootElement.TryGetProperty("ZeroSparkVersion", out _))
+                                {
+                                    Global.logger.WriteLine($"Adding ZeroSpark JSON: {Path.GetFileName(file)}", LoggerType.Info);
+                                    Directory.CreateDirectory(ZSJsonPath);
+                                    File.Copy(file, $"{ZSJsonPath}{Global.s}{Path.GetFileName(file)}", true);
+                                    if (JsonFiles == null)
+                                        JsonFiles = new();
+                                    JsonFiles.Add(Path.GetFileNameWithoutExtension(file));
+                                }
+                                // DBColorZ json mods has field presetName
+                                else if (document.RootElement.TryGetProperty("presetName", out _))
+                                {
+                                    Directory.CreateDirectory(SZColorPath);
+                                    var colorOutputPath = GetUniqueColorFileName($"{SZColorPath}{Global.s}{Path.GetFileName(file)}");
+                                    Global.logger.WriteLine($"Adding DBColorZ JSON: {Path.GetFileName(colorOutputPath)}", LoggerType.Info);
+                                    File.Copy(file, colorOutputPath, true);
+                                    DBColorZ = true;
+                                }
                             }
                             break;
                     }
@@ -385,6 +513,33 @@ namespace Unverum
                 Directory.CreateDirectory(folder);
                 PakFiles("HeroGame", folder, sig);
                 Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}HeroGame", true);
+            }
+            // Check if SZModLib dependency exists if needed
+            if (SZModLib)
+                if (!File.Exists($"{SZModLibPath}{Global.s}SZModLib{Global.s}SZModLib.uplugin"))
+                    Global.logger.WriteLine($"SZModLib dependency not found, please make sure to install and include it in mod loadout for all mods to work", LoggerType.Warning);
+            // Check if DBColorZ dependency exists if needed
+            if (DBColorZ)
+                if (!File.Exists($"{SZModLibPath}{Global.s}DBColorZ{Global.s}DBColorZ.uplugin"))
+                    Global.logger.WriteLine($"DBColorZ dependency not found, please make sure to install and include it in mod loadout for all mods to work", LoggerType.Warning);
+            // Add Unverum field to JsonFiles.json
+            if (JsonFiles != null)
+            {
+                if (!File.Exists($"{ZSJsonPath}{Global.s}JsonFiles.json"))
+                    Global.logger.WriteLine($"ZeroSpark dependency not found, please make sure to install and include it in mod loadout for all mods to work", LoggerType.Warning);
+                else
+                {
+                    JsonNode? jsonObject = JsonNode.Parse(File.ReadAllText($"{ZSJsonPath}{Global.s}JsonFiles.json"));
+                    if (jsonObject != null)
+                    {
+                        var jsonArray = new JsonArray();
+                        foreach (var JsonFile in JsonFiles)
+                            jsonArray.Add(JsonFile);
+                        jsonObject["Unverum"] = jsonArray;
+                        string updatedJson = jsonObject.ToJsonString();
+                        File.WriteAllText($"{ZSJsonPath}{Global.s}JsonFiles.json", updatedJson);
+                    }
+                }
             }
             // Costume Patched placeholder files as lowest priority
             if (patched != null && (bool)patched && Global.config.CurrentGame != "Scarlet Nexus" && Global.config.CurrentGame != "Dragon Ball Sparking! ZERO")

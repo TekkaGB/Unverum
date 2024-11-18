@@ -392,7 +392,7 @@ namespace Unverum
                 case GameFilter.DBFZ:
                     return Setup.DBFZ();
                 case GameFilter.DBSZ:
-                    return Setup.Generic("SparkingZERO.exe", "SparkingZERO", @"C:\Program Files (x86)\Steam\steamapps\common\SparkingZERO\SparkingZERO.exe", steamId: "1790600");
+                    return Setup.Generic("SparkingZERO.exe", "SparkingZERO", @"C:\Program Files (x86)\Steam\steamapps\common\DRAGON BALL Sparking! ZERO\SparkingZERO.exe", steamId: "1790600");
                 case GameFilter.MHOJ2:
                     return Setup.Win64FolderSetup("MHOJ2.exe", "HeroGame", "My Hero Ones Justice 2", "1058450");
                 case GameFilter.GBVS:
