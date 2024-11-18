@@ -265,7 +265,7 @@ namespace Unverum
             var ue4ssModsFolder = $"{Win64Folder}{Global.s}Mods";
             // SZModLib paths
             var SZModLibPath = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Mods";
-            var ZSJsonPath = $"{SZModLibPath}{Global.s}ZeroSparkV1{Global.s}Json";
+            var ZSJsonPath = $"{SZModLibPath}{Global.s}ZeroSpark{Global.s}Json";
             var SZColorPath = $"{SZModLibPath}{Global.s}DBColorZ{Global.s}Colors";
             var ue4ss = false;
             var DBColorZ = false;
