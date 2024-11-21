@@ -24,7 +24,7 @@ namespace Unverum
             outputWindow = textBox;
         }
 
-        public void WriteLine(string text, LoggerType type)
+        public void Write(string text, LoggerType type, bool meta = false)
         {
             string color = "#F2F2F2";
             string header = "";
@@ -46,8 +46,13 @@ namespace Unverum
             // Call on UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                outputWindow.AppendText($"[{DateTime.Now}] [{header}] {text}\n", color);
+                outputWindow.AppendText(meta ? $"[{DateTime.Now}] [{header}] {text}" : $"{text}", color);
             });
+        }
+
+        public void WriteLine(string text, LoggerType type)
+        {
+            Write($"{text}\n", type, true);
         }
     }
 
