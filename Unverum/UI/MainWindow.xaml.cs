@@ -476,8 +476,8 @@ namespace Unverum
                 if (Directory.EnumerateFileSystemEntries(Global.config.Configs[Global.config.CurrentGame].ModsFolder).Any()
                     && !Directory.Exists(Path.Combine(Global.config.Configs[Global.config.CurrentGame].ModsFolder, "a")))
                 {
-                    var dialogResult = MessageBox.Show($@"Unverum detected previously installed mods in {Global.config.Configs[Global.config.CurrentGame].ModsFolder}. " +
-                        $@"Would you like to copy over mods to Unverum before deleting them?", $@"Notification", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    var dialogResult = MessageBox.Show($@"Unverum detected manually installed mods in {Global.config.Configs[Global.config.CurrentGame].ModsFolder}. " +
+                        $@"Would you like to copy over these mods to Unverum before it DELETES them?", $@"Notification", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (dialogResult == MessageBoxResult.Yes)
                     {
                         Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder, 
