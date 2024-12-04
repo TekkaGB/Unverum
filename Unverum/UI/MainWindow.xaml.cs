@@ -226,7 +226,7 @@ namespace Unverum
                 {
                     Mod m = new Mod();
                     m.name = Path.GetFileName(mod);
-                    m.enabled = true;
+                    m.enabled = false;
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
                         Global.ModList.Add(m);
@@ -472,6 +472,18 @@ namespace Unverum
                 LauncherOptionsBox.IsEnabled = false;
                 ModGridSearchButton.IsEnabled = false;
                 Refresh();
+                // Check if mods from before Unverum install existed
+                if (Directory.EnumerateFileSystemEntries(Global.config.Configs[Global.config.CurrentGame].ModsFolder).Any()
+                    && !Directory.Exists(Path.Combine(Global.config.Configs[Global.config.CurrentGame].ModsFolder, "a")))
+                {
+                    var dialogResult = MessageBox.Show($@"Unverum detected previously installed mods in {Global.config.Configs[Global.config.CurrentGame].ModsFolder}. " +
+                        $@"Would you like to copy over mods to Unverum before deleting them?", $@"Notification", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (dialogResult == MessageBoxResult.Yes)
+                    {
+                        Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder, 
+                            $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", true);
+                    }
+                }
                 Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
                 Global.logger.WriteLine($"Building loadout for {Global.config.CurrentGame}", LoggerType.Info);
                 if (!await Build(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
