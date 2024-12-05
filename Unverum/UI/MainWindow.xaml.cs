@@ -456,6 +456,25 @@ namespace Unverum
             });
             GameBox.IsEnabled = true;
         }
+        private static void CopyDirectory(string sourceDir, string destinationDir)
+        {
+            // Ensure the destination directory exists
+            Directory.CreateDirectory(destinationDir);
+
+            // Copy all files
+            foreach (var file in Directory.GetFiles(sourceDir))
+            {
+                string destFile = Path.Combine(destinationDir, Path.GetFileName(file));
+                File.Copy(file, destFile, true);
+            }
+
+            // Recursively copy all subdirectories
+            foreach (var subdir in Directory.GetDirectories(sourceDir))
+            {
+                string destSubDir = Path.Combine(destinationDir, Path.GetFileName(subdir));
+                CopyDirectory(subdir, destSubDir);
+            }
+        }
         private async void Launch_Click(object sender, RoutedEventArgs e)
         {
             // Build Mod Loadout
@@ -473,15 +492,18 @@ namespace Unverum
                 ModGridSearchButton.IsEnabled = false;
                 Refresh();
                 // Check if mods from before Unverum install existed
-                if (Directory.EnumerateFileSystemEntries(Global.config.Configs[Global.config.CurrentGame].ModsFolder).Any()
-                    && !Directory.Exists(Path.Combine(Global.config.Configs[Global.config.CurrentGame].ModsFolder, "a")))
+                Regex regex = new Regex(@"(^~*[a-z]$|^--Base--$)");
+                var manuallyInstalledMods = Directory.GetDirectories(Global.config.Configs[Global.config.CurrentGame].ModsFolder)
+                .Where(folder => !regex.IsMatch(Path.GetFileName(folder)));
+                if (manuallyInstalledMods.Count() > 0)
                 {
                     var dialogResult = MessageBox.Show($@"Unverum detected manually installed mods in {Global.config.Configs[Global.config.CurrentGame].ModsFolder}. " +
                         $@"Would you like to copy over these mods to Unverum before it DELETES them?", $@"Notification", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (dialogResult == MessageBoxResult.Yes)
                     {
-                        Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder, 
-                            $@"{Global.assemblyLocation}{Global.s}Mods{Global.s}{Global.config.CurrentGame}", true);
+                        foreach (var manuallyInstalledMod in manuallyInstalledMods)
+                            CopyDirectory(manuallyInstalledMod,
+                                Path.Combine(Global.assemblyLocation, "Mods", Global.config.CurrentGame, Path.GetFileName(manuallyInstalledMod)));
                     }
                 }
                 Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
