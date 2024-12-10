@@ -508,7 +508,7 @@ namespace Unverum
                 }
                 Directory.CreateDirectory(Global.config.Configs[Global.config.CurrentGame].ModsFolder);
                 Global.logger.WriteLine($"Building loadout for {Global.config.CurrentGame}", LoggerType.Info);
-                if (!await Build(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
+                if (!await BuildDiff(Global.config.Configs[Global.config.CurrentGame].ModsFolder))
                 {
                     Global.logger.WriteLine($"Failed to build loadout, not building and launching", LoggerType.Error);
                     ModGrid.IsEnabled = true;
@@ -798,6 +798,100 @@ namespace Unverum
                         }
                     }
                 }
+        }
+
+        private async Task<bool> BuildDiff(string path)
+        {
+            return await Task.Run(() =>
+            {
+                string sig = Directory.GetFiles(Path.GetDirectoryName(path), "*.sig", SearchOption.TopDirectoryOnly)
+                    .FirstOrDefault();
+
+                var ctx = new InstallContext(sig, null, null, null);
+
+                var modFiles = Global.config.Configs[Global.config.CurrentGame].ModList
+                    .Where(x => x.enabled)
+                    .Select(m => new ModFileMeta(m))
+                    .Reverse()
+                    .ToList();
+
+
+                var fmt = $"D{modFiles.Count().ToString().Length}";
+
+                var wantSrcDst = modFiles
+                    .Select(m => m.GetFiles(ctx))
+                    .SelectMany((files, i) => 
+                        files.ToImmutableDictionary(
+                            mapping => mapping.Key, 
+                            mapping => Path.Join(path, i.ToString(fmt), mapping.Value))
+                    ).ToImmutableDictionary(pair => pair.Key, pair => pair.Value);
+
+                var wantFiles = wantSrcDst.Select(pair => pair.Value).ToHashSet();
+
+                if (wantSrcDst.Count != wantFiles.Count)
+                {
+                    var dupes = wantSrcDst.GroupBy(pair => pair.Value)
+                        .Where(g => g.Count() > 1)
+                        .SelectMany(g => g.Key)
+                        .ToList();
+                    Global.logger.WriteLine($"Duplicate Files found in mods {string.Join(",", dupes)}", LoggerType.Warning);
+                }
+
+
+                var tmp = Path.Join(path, "mod_data.tmp");
+                try
+                {
+                    File.Delete(tmp);
+                }
+                catch (Exception e)
+                {
+                    Global.logger.WriteLine($"Failed delete tmp file {tmp}: {e.Message}", LoggerType.Error);
+                    return false;
+                }
+
+                var existingFiles = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToHashSet();
+
+                if (existingFiles.SetEquals(wantFiles))
+                {
+                    Global.logger.WriteLine($"~mods up-to-date.", LoggerType.Info);
+                    return true;
+                }
+
+                try
+                {
+                    var toDelete = existingFiles.Except(wantFiles).ToList();
+                    var toCopy = wantFiles.Except(existingFiles).ToList();
+
+                    toDelete.ForEach(s =>
+                    {
+                        Global.logger.WriteLine($"Deleting {s}", LoggerType.Info);
+                        File.Delete(s);
+                    });
+
+                    wantSrcDst.Where(pair => toCopy.Contains(pair.Value))
+                        .ToList()
+                        .ForEach(srcDst =>
+                        {
+                            Global.logger.Write($"Writing {srcDst.Value}..", LoggerType.Info, true);
+                            Directory.CreateDirectory(Path.GetDirectoryName(srcDst.Value) ?? throw new InvalidOperationException());
+                            
+                            // Copy to tmp first to ensure file at srcDst.Value is always complete
+                            File.Copy(srcDst.Key, tmp, true);
+                            File.Move(tmp, srcDst.Value, true);
+
+                            Global.logger.Write("Done\n", LoggerType.Info);
+                        });
+                }
+                catch (Exception e)
+                {
+                    Global.logger.WriteLine($"Failed to build ~mods {e.Message}", LoggerType.Error);
+                    return false;
+                }
+
+                // TODO: delete empty dirs
+
+                return true;
+            });
         }
 
         private async Task<bool> Build(string path)
