@@ -53,7 +53,7 @@ namespace Unverum
                 var Win64Folder = $"{Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path)))}{Global.s}Binaries{Global.s}Win64";
                 var ue4ssModsFolder = $"{Win64Folder}{Global.s}Mods";
                 List<string> ue4ssFiles = new() { "opengl32.dll", "patternsleuth_bind.dll", "ue4ss.dll", "UE4SS-settings.ini", "dwmapi.dll" };
-                foreach (var ue4ssFile in ue4ssFiles) 
+                foreach (var ue4ssFile in ue4ssFiles)
                 {
                     var file = $"{Win64Folder}{Global.s}{ue4ssFile}";
                     if (File.Exists(file))
@@ -120,21 +120,21 @@ namespace Unverum
 
             // Copy over Sound folder to proper location for SMTV if it exists
             if (Global.config.CurrentGame.Equals("Shin Megami Tensei V", StringComparison.InvariantCultureIgnoreCase))
-            foreach (var path in Directory.GetDirectories(sourcePath, "*.*", SearchOption.AllDirectories))
-            {
-                var SoundFolder = Global.config.Configs[Global.config.CurrentGame].PatchesFolder.Replace("exefs", $"romfs{Global.s}Project{Global.s}Content{Global.s}Sound");
-                if (Path.GetFileName(path).Equals("Sound", StringComparison.InvariantCultureIgnoreCase))
+                foreach (var path in Directory.GetDirectories(sourcePath, "*.*", SearchOption.AllDirectories))
                 {
-                    foreach(var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+                    var SoundFolder = Global.config.Configs[Global.config.CurrentGame].PatchesFolder.Replace("exefs", $"romfs{Global.s}Project{Global.s}Content{Global.s}Sound");
+                    if (Path.GetFileName(path).Equals("Sound", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var newPath = file.Replace(path, SoundFolder);
-                        Directory.CreateDirectory(Path.GetDirectoryName(newPath));
-                        Global.logger.WriteLine($"Copying over {file} to {newPath}", LoggerType.Info);
-                        File.Copy(file, newPath, true);
+                        foreach (var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+                        {
+                            var newPath = file.Replace(path, SoundFolder);
+                            Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+                            Global.logger.WriteLine($"Copying over {file} to {newPath}", LoggerType.Info);
+                            File.Copy(file, newPath, true);
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
             return counter;
         }
 
@@ -389,34 +389,39 @@ namespace Unverum
                                     || Global.config.CurrentGame.Equals("Granblue Fantasy Versus Rising", StringComparison.InvariantCultureIgnoreCase)
                                     || Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase)))
                             {
-                                    if (missing)
-                                        continue;
-                                    var pakName = Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase) ? "RED-WindowsNoEditor.pak" : "pakchunk0-WindowsNoEditor.pak";
-                                    if (entries == null && TextPatcher.ExtractBaseFiles(pakName, "RED/Content/Localization/INT/REDGame",
-                                            $"RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp"))
-                                            entries = TextPatcher.GetEntries();
-                                    // Check if entries are still null
-                                    if (entries == null)
-                                    {
-                                        missing = true;
-                                        continue;
-                                    }
-                                    
-                                    var text = File.ReadAllText(file);
-                                    TextEntries replacements;
-                                    try
-                                    {
-                                        replacements = JsonSerializer.Deserialize<TextEntries>(text);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        Global.logger.WriteLine(e.Message, LoggerType.Error);
-                                        continue;
-                                    }
-                                    foreach (var replacement in replacements.Entries)
-                                    {
-                                        entries = TextPatcher.ReplaceEntry(replacement, entries);
-                                    }
+                                if (missing)
+                                    continue;
+                                var pakName = Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase) ? "RED-WindowsNoEditor.pak" : "pakchunk0-WindowsNoEditor.pak";
+                                var text = File.ReadAllText(file);
+
+                                if (!set_localization(text))
+                                {
+                                    continue;
+                                }
+                                if (entries == null && TextPatcher.ExtractBaseFiles(pakName, $"RED/Content/Localization/{Global.loc}/REDGame",
+                                        $"RED{Global.s}Content{Global.s}Localization{Global.s}{Global.loc}{Global.s}REDGame.uexp"))
+                                    entries = TextPatcher.GetEntries();
+                                // Check if entries are still null
+                                if (entries == null)
+                                {
+                                    missing = true;
+                                    continue;
+                                }
+
+                                TextEntries replacements;
+                                try
+                                {
+                                    replacements = JsonSerializer.Deserialize<TextEntries>(text);
+                                }
+                                catch (Exception e)
+                                {
+                                    Global.logger.WriteLine(e.Message, LoggerType.Error);
+                                    continue;
+                                }
+                                foreach (var replacement in replacements.Entries)
+                                {
+                                    entries = TextPatcher.ReplaceEntry(replacement, entries);
+                                }
                                 break;
                             }
                             // SZModLib json mods
@@ -473,7 +478,7 @@ namespace Unverum
                     "shared",
                     "Keybinds"
                 };
-                foreach (var directory in Directory.GetDirectories(ue4ssModsFolder, "*", SearchOption.TopDirectoryOnly)) 
+                foreach (var directory in Directory.GetDirectories(ue4ssModsFolder, "*", SearchOption.TopDirectoryOnly))
                 {
                     var mod = Path.GetFileName(directory);
                     if (!defaultMods.Contains(mod))
@@ -591,6 +596,34 @@ namespace Unverum
                 Global.logger.WriteLine($"Slots added!", LoggerType.Info);
             }
             Global.logger.WriteLine("Finished building!", LoggerType.Info);
+        }
+        private static bool set_localization(string text)
+        {
+            //Look for language to modify
+            var jsonText = JsonNode.Parse(text);
+            if (jsonText?["language"] != null)
+            {
+                var loc = jsonText["language"]?.ToString();
+                //For now we can only edit one language, it can be changed in the future
+                if (Global.loc != "" && Global.loc != loc)
+                {
+                    Global.logger.WriteLine($"Language modification was set on {Global.loc}, {loc} will be ignored", LoggerType.Warning);
+                    return false;
+                }
+                var testPath = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}{loc}{Global.s}REDGame.uasset";
+                if (!File.Exists(testPath))
+                {
+                    Global.logger.WriteLine($"No folder corresponding with {loc}, Text Patching won't be applied for this file.", LoggerType.Error);
+                    return false;
+                }
+                Global.loc = loc;
+                Global.logger.WriteLine($"'language' key found with {Global.loc} value for Text Patching", LoggerType.Info);
+            }
+            else
+            {
+                Global.logger.WriteLine($"No 'language' key found. Default language set to INT", LoggerType.Info);
+            }
+            return true;
         }
     }
 }

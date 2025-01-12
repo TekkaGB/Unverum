@@ -18,6 +18,7 @@ namespace Unverum
     {
         public string header { get; set; }
         public string text { get; set; }
+        public string loc { get; set; }
     }
     public static class TextPatcher
     {
@@ -140,7 +141,7 @@ namespace Unverum
         }
         public static Dictionary<string, Entry> GetEntries()
         {
-            var file = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
+            var file = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}{Global.loc}{Global.s}REDGame.uexp";
             if (!File.Exists(file) || !File.Exists(Path.ChangeExtension(file, ".uasset")))
                 return null;
             var bytes = File.ReadAllBytes(file);
@@ -148,6 +149,7 @@ namespace Unverum
             var allText = Encoding.Unicode.GetString(bytes[54..(bytes.Length - 4)]);
             // Split by the delimiter 0x0D0A
             var entries = allText.Split("\r\n");
+            Global.logger.WriteLine($"Successfully extracted base files for patching", LoggerType.Info);
             var counter = 0;
             var dict = new Dictionary<string, Entry>();
             // Convert array of strings to dictionary
@@ -185,12 +187,11 @@ namespace Unverum
             // Delete previous text files if they exist
             if (Directory.Exists($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED"))
                 Directory.Delete($"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED", true);
-            var inputUexp = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
-            var inputUasset = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset";
-            var outputUexp = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
-            var outputUasset = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset";
+            var inputUexp = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}{Global.loc}{Global.s}REDGame.uexp";
+            var inputUasset = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}{Global.loc}{Global.s}REDGame.uasset";
+            var outputUexp = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}{Global.loc}{Global.s}REDGame.uexp";
+            var outputUasset = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}{Global.loc}{Global.s}REDGame.uasset";
             var bytes = File.ReadAllBytes(inputUexp).ToList();
-            Global.logger.WriteLine($"Test", LoggerType.Info);
             bytes.RemoveRange(54, bytes.Count - 54);
             // Append dictionary of entries
             foreach (var key in dict.Keys)

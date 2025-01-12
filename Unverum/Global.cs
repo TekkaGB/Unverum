@@ -19,6 +19,7 @@ namespace Unverum
         public static List<string> games;
         public static ObservableCollection<String> LoadoutItems;
         public static ObservableCollection<Mod> ModList;
+        public static string loc = "";
         public static void UpdateConfig()
         {
             config.Configs[config.CurrentGame].Loadouts[config.Configs[config.CurrentGame].CurrentLoadout] = ModList;
