@@ -24,7 +24,7 @@ namespace Unverum
         public static bool ExtractBaseFiles(string pakName, string filter, string extractedPath)
         {
             var outputFolder = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}";
-            var umodel = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}umodel{Global.s}umodel_64.exe"; 
+            var umodel = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}umodel{Global.s}umodel_64.exe";
             var quickbms = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}quickbms{Global.s}quickbms_4gb_files.exe";
             var ue4bms = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}quickbms{Global.s}unreal_tournament_4.bms";
             var resourcesPath = $"{outputFolder}{Global.s}{extractedPath}";
@@ -35,7 +35,7 @@ namespace Unverum
                 Global.logger.WriteLine($"Missing dependencies, text patching will not work (Try redownloading)", LoggerType.Error);
                 return false;
             }
-            var pak = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder)}{Global.s}{pakName}";;
+            var pak = $"{Path.GetDirectoryName(Global.config.Configs[Global.config.CurrentGame].ModsFolder)}{Global.s}{pakName}"; ;
             if (!File.Exists(pak))
             {
                 Global.logger.WriteLine($"Couldn't find {pak} to extract text files from, text patching will not work", LoggerType.Error);
@@ -190,6 +190,7 @@ namespace Unverum
             var outputUexp = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uexp";
             var outputUasset = $"{Global.assemblyLocation}{Global.s}Dependencies{Global.s}u4pak{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}INT{Global.s}REDGame.uasset";
             var bytes = File.ReadAllBytes(inputUexp).ToList();
+            Global.logger.WriteLine($"Test", LoggerType.Info);
             bytes.RemoveRange(54, bytes.Count - 54);
             // Append dictionary of entries
             foreach (var key in dict.Keys)
