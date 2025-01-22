@@ -60,7 +60,7 @@ namespace Unverum
             if (feed != null)
                 feed.Clear();
         }
-        public static async Task GetFeed(int page, GameFilter game, TypeFilter type, FeedFilter filter, GameBananaCategory category, GameBananaCategory subcategory, int perPage, bool nsfw, string search)
+        public static async Task GetFeed(int page, GameFilter game, TypeFilter type, FeedFilter filter, GameBananaCategory category, GameBananaCategory subcategory, int perPage, bool nsfw, string search, bool zs, bool colorz)
         {
             error = false;
             if (feed == null)
@@ -70,7 +70,7 @@ namespace Unverum
                 feed.Remove(feed.Aggregate((l, r) => DateTime.Compare(l.Value.TimeFetched, r.Value.TimeFetched) < 0 ? l : r).Key);
             using (var httpClient = new HttpClient())
             {
-                var requestUrl = GenerateUrl(page, game, type, filter, category, subcategory, perPage, nsfw, search);
+                var requestUrl = GenerateUrl(page, game, type, filter, category, subcategory, perPage, nsfw, search, zs, colorz);
                 if (feed.ContainsKey(requestUrl) && feed[requestUrl].IsValid)
                 {
                     CurrentFeed = feed[requestUrl];
@@ -81,6 +81,22 @@ namespace Unverum
                 {
                     var response = await httpClient.GetAsync(requestUrl);
                     var records = JsonSerializer.Deserialize<ObservableCollection<GameBananaRecord>>(await response.Content.ReadAsStringAsync());
+                    if (game == GameFilter.DBSZ)
+                    {
+                        if (zs)
+                        {
+                            // Remove all records from the JSON (ZeroSpark) category
+                            foreach (var record in records.Where(x => x.Category.ID == 33583).ToList())
+                                records.Remove(record);
+                        }
+                        if (colorz)
+                        {
+                            // Remove all records in the Skins category that has ColorZ in the title
+                            foreach (var record in records.Where(x => x.Category.ID == 32453 
+                            && x.Title.Contains("ColorZ", StringComparison.InvariantCultureIgnoreCase)).ToList())
+                                records.Remove(record);
+                        }
+                    }
                     CurrentFeed.Records = records;
                     // Get record count from header
                     var numRecords = response.GetHeader("X-GbApi-Metadata_nRecordCount");
@@ -104,7 +120,7 @@ namespace Unverum
                     feed[requestUrl] = CurrentFeed;
             }
         }
-        private static string GenerateUrl(int page, GameFilter game, TypeFilter type, FeedFilter filter, GameBananaCategory category, GameBananaCategory subcategory, int perPage, bool nsfw, string search)
+        private static string GenerateUrl(int page, GameFilter game, TypeFilter type, FeedFilter filter, GameBananaCategory category, GameBananaCategory subcategory, int perPage, bool nsfw, string search, bool zs, bool colorz)
         {
             // Base
             var url = "https://gamebanana.com/apiv6/";
@@ -202,6 +218,14 @@ namespace Unverum
             
             // Get page number
             url += $"&_nPage={page}";
+            // Make url unique for SZ exclusion filters
+            if (game == GameFilter.DBSZ)
+            {
+                if (zs)
+                    url += "&zs";
+                if (colorz)
+                    url += "&colorz";
+            }
             return url;
         }
     }

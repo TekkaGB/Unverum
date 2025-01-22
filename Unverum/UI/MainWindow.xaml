@@ -926,6 +926,18 @@
                             <TextBlock Margin="10" Text="Go to gamebanana.com" Foreground="#f2f2f2" FontWeight="Medium" FontSize="18" VerticalAlignment="Center" />
                         </Border>
                     </Popup>
+                    <StackPanel x:Name="SZFilters" Orientation="Horizontal" HorizontalAlignment="Left" Grid.ColumnSpan="8" Grid.Row="2" Margin="10,5,5,5">
+                        <CheckBox Name="ZsJsonCheckbox" IsEnabled="False" Unchecked="ZsJsonCheckbox_Checked" Checked="ZsJsonCheckbox_Checked"  Margin="0,0,5,0" VerticalAlignment="Center" />
+                        <TextBlock Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" FontWeight="Medium">
+                            Exclude ZeroSpark<LineBreak/>
+                            Jsons
+                        </TextBlock>
+                        <CheckBox Name="ColorZCheckbox" IsEnabled="False" Unchecked="ColorZCheckbox_Checked"  Checked="ColorZCheckbox_Checked"  Margin="15,0,5,0" VerticalAlignment="Center" />
+                        <TextBlock Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" FontWeight="Medium">
+                            Exclude ColorZ<LineBreak/>
+                            Jsons
+                        </TextBlock>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="8" Grid.Row="2">
                         <Button IsEnabled="False" Name="PageLeft" Click="DecrementPage" Content="&lt;" HorizontalAlignment="Right" Margin="0,0,15,0" FontSize="18" FontWeight="Medium"  Height="35" Width="35" Background="#181818" BorderBrush="#252525" Foreground="#f2f2f2"/>
                         <TextBlock Name="Page" Text="Page 1" Foreground="#f2f2f2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Medium" />

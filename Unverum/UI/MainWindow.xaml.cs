@@ -105,7 +105,7 @@ namespace Unverum
             else
                 GameBox.SelectedIndex = Global.games.IndexOf(Global.config.CurrentGame);
 
-            if (GameBox.SelectedIndex == 5)
+            if (GameBox.SelectedIndex == 7)
                 DiscordButton.Visibility = Visibility.Collapsed;
 
             if (String.IsNullOrEmpty(Global.config.Configs[Global.config.CurrentGame].CurrentLoadout))
@@ -734,10 +734,7 @@ namespace Unverum
                 var index = managerSelected ? GameBox.SelectedIndex : GameFilterBox.SelectedIndex;
                 switch (index)
                 {
-                    case 5:
-                        discordLink = "https://discord.gg/GVtG3Zu";
-                        break;
-                    case 7:
+                    case 9:
                         discordLink = "https://discord.gg/Se2XTnA";
                         break;
                     default:
@@ -1587,23 +1584,39 @@ namespace Unverum
         private void OnBrowserTabSelected(object sender, RoutedEventArgs e)
         {
             managerSelected = false;
-            if (!selected)
-            {
-                InitializeBrowser();
-            }
-            if (GameFilterBox.SelectedIndex != 5)
+            if (GameFilterBox.SelectedIndex != 7)
                 DiscordButton.Visibility = Visibility.Visible;
             else
                 DiscordButton.Visibility = Visibility.Collapsed;
+            if (GameFilterBox.SelectedIndex == 1)
+                SZFilters.Visibility = Visibility.Visible;
+            else
+                SZFilters.Visibility = Visibility.Collapsed;
+            if (!selected)
+            {
+                InitializeBrowser();
+                if (GameBox.SelectedIndex != 7)
+                    DiscordButton.Visibility = Visibility.Visible;
+                else
+                    DiscordButton.Visibility = Visibility.Collapsed;
+                if (GameBox.SelectedIndex == 1)
+                    SZFilters.Visibility = Visibility.Visible;
+                else
+                    SZFilters.Visibility = Visibility.Collapsed;
+            }
         }
         bool managerSelected = true;
         private void OnManagerTabSelected(object sender, RoutedEventArgs e)
         {
             managerSelected = true;
-            if (GameBox.SelectedIndex != 5)
+            if (GameBox.SelectedIndex != 7)
                 DiscordButton.Visibility = Visibility.Visible;
             else
                 DiscordButton.Visibility = Visibility.Collapsed;
+            if (GameFilterBox.SelectedIndex == 1)
+                SZFilters.Visibility = Visibility.Visible;
+            else
+                SZFilters.Visibility = Visibility.Collapsed;
         }
 
         private static int page = 1;
@@ -1629,6 +1642,8 @@ namespace Unverum
         private async void RefreshFilter()
         {
             NSFWCheckbox.IsEnabled = false;
+            ZsJsonCheckbox.IsEnabled = false;
+            ColorZCheckbox.IsEnabled = false;
             SearchBar.IsEnabled = false;
             SearchButton.IsEnabled = false;
             GameFilterBox.IsEnabled = false;
@@ -1652,7 +1667,7 @@ namespace Unverum
             PageRight.IsEnabled = false;
             var search = searched ? SearchBar.Text : null;
             await FeedGenerator.GetFeed(page, (GameFilter)GameFilterBox.SelectedIndex, (TypeFilter)TypeBox.SelectedIndex, (FeedFilter)FilterBox.SelectedIndex, (GameBananaCategory)CatBox.SelectedItem,
-                (GameBananaCategory)SubCatBox.SelectedItem, (PerPageBox.SelectedIndex + 1) * 10, (bool)NSFWCheckbox.IsChecked, search);
+                (GameBananaCategory)SubCatBox.SelectedItem, (PerPageBox.SelectedIndex + 1) * 10, (bool)NSFWCheckbox.IsChecked, search, (bool)ZsJsonCheckbox.IsChecked, (bool)ColorZCheckbox.IsChecked);
             FeedBox.ItemsSource = FeedGenerator.CurrentFeed.Records;
             if (FeedGenerator.error)
             {
@@ -1709,6 +1724,8 @@ namespace Unverum
             SearchBar.IsEnabled = true;
             SearchButton.IsEnabled = true;
             NSFWCheckbox.IsEnabled = true;
+            ZsJsonCheckbox.IsEnabled = true;
+            ColorZCheckbox.IsEnabled = true;
             ClearCacheButton.IsEnabled = true;
         }
 
@@ -1744,10 +1761,14 @@ namespace Unverum
             {
                 SearchBar.Clear();
                 searched = false;
-                if (GameFilterBox.SelectedIndex != 5)
+                if (GameFilterBox.SelectedIndex != 7)
                     DiscordButton.Visibility = Visibility.Visible;
                 else
                     DiscordButton.Visibility = Visibility.Collapsed;
+                if (GameFilterBox.SelectedIndex == 1)
+                    SZFilters.Visibility = Visibility.Visible;
+                else
+                    SZFilters.Visibility = Visibility.Collapsed;
                 filterSelect = true;
                 if (!searched)
                 {
@@ -2120,10 +2141,14 @@ namespace Unverum
         {
             if (handle)
             {
-                if (GameBox.SelectedIndex == 5)
+                if (GameBox.SelectedIndex == 7)
                     DiscordButton.Visibility = Visibility.Collapsed;
                 else
                     DiscordButton.Visibility = Visibility.Visible;
+                if (GameFilterBox.SelectedIndex == 1)
+                    SZFilters.Visibility = Visibility.Visible;
+                else
+                    SZFilters.Visibility = Visibility.Collapsed;
                 Global.config.CurrentGame = (((GameBox.SelectedValue as ComboBoxItem).Content as StackPanel).Children[1] as TextBlock).Text.Trim().Replace(":", String.Empty);
 
                 if (!Global.config.Configs.ContainsKey(Global.config.CurrentGame))
@@ -2379,6 +2404,18 @@ namespace Unverum
                 Global.config.Configs[Global.config.CurrentGame].ModList = Global.ModList;
             }
             e.Handled = true;
+        }
+
+        private void ZsJsonCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!filterSelect && IsLoaded)
+                RefreshFilter();
+        }
+
+        private void ColorZCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!filterSelect && IsLoaded)
+                RefreshFilter();
         }
     }
 }
