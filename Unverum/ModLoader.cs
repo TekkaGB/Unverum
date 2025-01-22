@@ -517,16 +517,16 @@ namespace Unverum
             // Check if SZModLib dependency exists if needed
             if (SZModLib)
                 if (!File.Exists($"{SZModLibPath}{Global.s}SZModLib{Global.s}SZModLib.uplugin"))
-                    Global.logger.WriteLine($"SZModLib dependency not found, please make sure to install and include it in mod loadout for all mods to work", LoggerType.Warning);
+                    Global.logger.WriteLine($"SZModLib dependency not found, please make sure to install \"SparkingZERO Mod Loader\" via GameBanana or the Mod Browsing section of Unverum and include it in mod loadout for all mods to work", LoggerType.Warning);
             // Check if DBColorZ dependency exists if needed
             if (DBColorZ)
                 if (!File.Exists($"{SZModLibPath}{Global.s}DBColorZ{Global.s}DBColorZ.uplugin"))
-                    Global.logger.WriteLine($"DBColorZ dependency not found, please make sure to install and include it in mod loadout for all mods to work", LoggerType.Warning);
+                    Global.logger.WriteLine($"DBColorZ dependency not found, please make sure to install \"DBColorZ: The Sparking Zero Color Customizer\" via GameBanana or the Mod Browsing section of Unverum and include it in mod loadout for all mods to work", LoggerType.Warning);
             // Add Unverum field to JsonFiles.json
             if (JsonFiles != null)
             {
                 if (!File.Exists($"{ZSJsonPath}{Global.s}JsonFiles.json"))
-                    Global.logger.WriteLine($"ZeroSpark dependency not found, please make sure to install and include it in mod loadout for all mods to work", LoggerType.Warning);
+                    Global.logger.WriteLine($"ZeroSpark dependency not found, please make sure to install \"SparkingZERO Mod Loader\" via GameBanana or the Mod Browsing section of Unverum and include it in mod loadout for all mods to work", LoggerType.Warning);
                 else
                 {
                     JsonNode? jsonObject = JsonNode.Parse(File.ReadAllText($"{ZSJsonPath}{Global.s}JsonFiles.json"));
