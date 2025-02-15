@@ -394,10 +394,8 @@ namespace Unverum
                                 var pakName = Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase) ? "RED-WindowsNoEditor.pak" : "pakchunk1-WindowsNoEditor.pak";
                                 var text = File.ReadAllText(file);
 
-                                if (!set_localization(text))
-                                {
-                                    // continue;
-                                }
+                                set_localization(text);
+
                                 if (entries == null && TextPatcher.ExtractBaseFiles(pakName, $"RED/Content/Localization/{Global.loc}/REDGame",
                                         $"RED{Global.s}Content{Global.s}Localization{Global.s}{Global.loc}{Global.s}REDGame.uexp"))
                                     entries = TextPatcher.GetEntries();
