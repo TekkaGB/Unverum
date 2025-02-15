@@ -391,12 +391,12 @@ namespace Unverum
                             {
                                 if (missing)
                                     continue;
-                                var pakName = Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase) ? "RED-WindowsNoEditor.pak" : "pakchunk0-WindowsNoEditor.pak";
+                                var pakName = Global.config.CurrentGame.Equals("DNF Duel", StringComparison.InvariantCultureIgnoreCase) ? "RED-WindowsNoEditor.pak" : "pakchunk1-WindowsNoEditor.pak";
                                 var text = File.ReadAllText(file);
 
                                 if (!set_localization(text))
                                 {
-                                    continue;
+                                    // continue;
                                 }
                                 if (entries == null && TextPatcher.ExtractBaseFiles(pakName, $"RED/Content/Localization/{Global.loc}/REDGame",
                                         $"RED{Global.s}Content{Global.s}Localization{Global.s}{Global.loc}{Global.s}REDGame.uexp"))
@@ -610,18 +610,13 @@ namespace Unverum
                     Global.logger.WriteLine($"Language modification was set on {Global.loc}, {loc} will be ignored", LoggerType.Warning);
                     return false;
                 }
-                var testPath = $"{Global.assemblyLocation}{Global.s}Resources{Global.s}{Global.config.CurrentGame}{Global.s}RED{Global.s}Content{Global.s}Localization{Global.s}{loc}{Global.s}REDGame.uasset";
-                if (!File.Exists(testPath))
-                {
-                    Global.logger.WriteLine($"No folder corresponding with {loc}, Text Patching won't be applied for this file.", LoggerType.Error);
-                    return false;
-                }
                 Global.loc = loc;
                 Global.logger.WriteLine($"'language' key found with {Global.loc} value for Text Patching", LoggerType.Info);
             }
             else
             {
-                Global.logger.WriteLine($"No 'language' key found. Default language set to INT", LoggerType.Info);
+                Global.loc = "INT";
+                Global.logger.WriteLine($"No 'language' key found. Default language set to {Global.loc}", LoggerType.Error);
             }
             return true;
         }
