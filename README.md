@@ -84,6 +84,7 @@ As of v1.2.0, Unverum now supports modularly patching specific parts of REDAsset
 An example of how it's setup would be:
 ```
 {
+  "language": "FRA",
   "Entries": [
     {
       "header": "CHARA_NAME_L_HTN",
@@ -105,6 +106,8 @@ This example replaces each instance of Hit with Pepsiman in the game DBFZ.
 You can put as many entries as you want.  The headers can be found in the hex of REDAsset.uexp which are followed by the text that goes with it.  You would want to put the header of the part you would want to replace.  The text property is what you would want to replace the text that goes with the header specified.
 
 Note that for each game update, Unverum would have to update the base files used to match the current version of the game.  If you're tech savvy enough, you can manually replace the files found under the Resources folder if I take too long.
+
+With this version of Unverum, you can patch the entries of the language you want to change. If you have edited lines from the French version, just add the "language" key with the "FRA" value. Unverum will then replace all lines as usual but for the French language.
 
 ## FAQ
 ### Are music/splash/movie mods supported?
