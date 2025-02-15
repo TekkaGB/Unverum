@@ -18,7 +18,6 @@ namespace Unverum
     {
         public string header { get; set; }
         public string text { get; set; }
-        public string loc { get; set; }
     }
     public static class TextPatcher
     {
